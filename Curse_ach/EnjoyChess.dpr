@@ -9,7 +9,8 @@ uses
   EnjoyChessVCLExplorer in 'EnjoyChessVCLExplorer.pas' {frmExplorer},
   EnjoyChessSolver in 'EnjoyChessSolver.pas',
   EnjoyChessCheckMoves in 'EnjoyChessCheckMoves.pas',
-  EnjoyChessSounds in 'EnjoyChessSounds.pas';
+  EnjoyChessSounds in 'EnjoyChessSounds.pas',
+  EnjoyChessVCLSettings in 'EnjoyChessVCLSettings.pas' {frmSettings};
 
 {$R *.res}
 
@@ -18,8 +19,5 @@ begin
   Application.MainFormOnTaskbar := True;
   Application.CreateForm(TfrmWelcomeWindow, frmWelcomeWindow);
   Application.CreateForm(TdtmdData, dtmdData);
-  Application.CreateForm(TfrmAnalysis, frmAnalysis);
-  Application.CreateForm(TfrmGameForm, frmGameForm);
-  Application.CreateForm(TfrmExplorer, frmExplorer);
   Application.Run;
 end.
