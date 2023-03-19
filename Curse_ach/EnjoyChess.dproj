@@ -126,30 +126,30 @@
         <DelphiCompile Include="$(MainSource)">
             <MainSource>MainSource</MainSource>
         </DelphiCompile>
-        <DCCReference Include="StageWelcome.pas">
-            <Form>Form1</Form>
+        <DCCReference Include="EnjoyChessVCLWelcomeWindow.pas">
+            <Form>frmWelcomeWindow</Form>
             <FormType>dfm</FormType>
         </DCCReference>
-        <DCCReference Include="Data.pas">
-            <Form>DataModule1</Form>
+        <DCCReference Include="EnjoyChessDataModule.pas">
+            <Form>dtmdData</Form>
             <FormType>dfm</FormType>
             <DesignClass>TDataModule</DesignClass>
         </DCCReference>
-        <DCCReference Include="StageAnalysis.pas">
-            <Form>Form2</Form>
+        <DCCReference Include="EnjoyChessVCLAnalysis.pas">
+            <Form>frmAnalysis</Form>
             <FormType>dfm</FormType>
         </DCCReference>
-        <DCCReference Include="StageGame.pas">
-            <Form>Form3</Form>
+        <DCCReference Include="EnjoyChessVCLGameForm.pas">
+            <Form>frmGameForm</Form>
             <FormType>dfm</FormType>
         </DCCReference>
-        <DCCReference Include="Explorer.pas">
-            <Form>Form4</Form>
+        <DCCReference Include="EnjoyChessVCLExplorer.pas">
+            <Form>frmExplorer</Form>
             <FormType>dfm</FormType>
         </DCCReference>
-        <DCCReference Include="Solver.pas"/>
-        <DCCReference Include="CheckMoves.pas"/>
-        <DCCReference Include="ProvideMoves.pas"/>
+        <DCCReference Include="EnjoyChessSolver.pas"/>
+        <DCCReference Include="EnjoyChessCheckMoves.pas"/>
+        <DCCReference Include="EnjoyChessSounds.pas"/>
         <BuildConfiguration Include="Release">
             <Key>Cfg_2</Key>
             <CfgParent>Base</CfgParent>
