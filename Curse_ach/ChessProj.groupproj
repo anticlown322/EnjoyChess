@@ -1,0 +1,36 @@
+﻿<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+    <PropertyGroup>
+        <ProjectGuid>{740E3736-8CCE-423A-B7BB-E2EB983BC506}</ProjectGuid>
+    </PropertyGroup>
+    <ItemGroup>
+        <Projects Include="EnjoyChess.dproj">
+            <Dependencies/>
+        </Projects>
+    </ItemGroup>
+    <ProjectExtensions>
+        <Borland.Personality>Default.Personality.12</Borland.Personality>
+        <Borland.ProjectType/>
+        <BorlandProject>
+            <Default.Personality/>
+        </BorlandProject>
+    </ProjectExtensions>
+    <Target Name="EnjoyChess">
+        <MSBuild Projects="EnjoyChess.dproj"/>
+    </Target>
+    <Target Name="EnjoyChess:Clean">
+        <MSBuild Projects="EnjoyChess.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="EnjoyChess:Make">
+        <MSBuild Projects="EnjoyChess.dproj" Targets="Make"/>
+    </Target>
+    <Target Name="Build">
+        <CallTarget Targets="EnjoyChess"/>
+    </Target>
+    <Target Name="Clean">
+        <CallTarget Targets="EnjoyChess:Clean"/>
+    </Target>
+    <Target Name="Make">
+        <CallTarget Targets="EnjoyChess:Make"/>
+    </Target>
+    <Import Project="$(BDS)\Bin\CodeGear.Group.Targets" Condition="Exists('$(BDS)\Bin\CodeGear.Group.Targets')"/>
+</Project>
