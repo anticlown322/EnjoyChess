@@ -10,7 +10,8 @@ uses
   EnjoyChessSolver in 'EnjoyChessSolver.pas',
   EnjoyChessVCLSettings in 'EnjoyChessVCLSettings.pas' {frmSettings},
   Vcl.Themes,
-  Vcl.Styles;
+  Vcl.Styles,
+  EnjoyChessMoves in 'EnjoyChessMoves.pas';
 
 {$R *.res}
 
