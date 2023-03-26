@@ -1,4 +1,4 @@
-program EnjoyChess;
+Program EnjoyChess;
 
 uses
   Vcl.Forms,
@@ -8,19 +8,16 @@ uses
   EnjoyChessVCLGameForm in 'EnjoyChessVCLGameForm.pas' {frmGameForm},
   EnjoyChessVCLExplorer in 'EnjoyChessVCLExplorer.pas' {frmExplorer},
   EnjoyChessSolver in 'EnjoyChessSolver.pas',
-  EnjoyChessCheckMoves in 'EnjoyChessCheckMoves.pas',
-  EnjoyChessSounds in 'EnjoyChessSounds.pas',
   EnjoyChessVCLSettings in 'EnjoyChessVCLSettings.pas' {frmSettings},
   Vcl.Themes,
   Vcl.Styles;
 
 {$R *.res}
 
-begin
-  Application.Initialize;
-  Application.MainFormOnTaskbar := True;
-  TStyleManager.TrySetStyle('Smokey Quartz Kamri');
-  Application.CreateForm(TfrmWelcomeWindow, frmWelcomeWindow);
-  Application.CreateForm(TdtmdData, dtmdData);
+Begin
+    Application.Initialize;
+    Application.MainFormOnTaskbar := False;
+    Application.CreateForm(TFrmWelcomeWindow, FrmWelcomeWindow);
+  Application.CreateForm(TDtmdData, DtmdData);
   Application.Run;
-end.
+End.
