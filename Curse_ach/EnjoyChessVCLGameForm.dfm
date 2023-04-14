@@ -2244,6 +2244,8 @@ object frmGameForm: TfrmGameForm
         Margins.Bottom = 10
         Anchors = [akLeft, akTop, akRight, akBottom]
         Color = 3683890
+        Constraints.MaxHeight = 193
+        Constraints.MaxWidth = 174
         ParentBackground = False
         TabOrder = 0
         object lbGameMode: TLabel

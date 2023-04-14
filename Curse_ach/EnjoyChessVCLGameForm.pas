@@ -90,8 +90,8 @@ Type
             IsLightSquare: Boolean);
         Procedure InitializeBoard();
         Function CellSize(): Integer;
-        Procedure UpdateScreen();
         Function Cell(CoordX, CoordY: Integer): TBoardCell;
+        Procedure UpdateScreen();
     End;
 
 Var
@@ -124,6 +124,29 @@ End;
 Procedure TfrmGameForm.FormDestroy(Sender: TObject);
 Begin
     ChessEngine.Free;
+End;
+
+{обработка левой подпанели}
+
+Procedure TfrmGameForm.UpdateScreen();
+    Procedure UpdateCaption(Caption: String);
+    Begin
+        LbGameState.Caption := Caption;
+    End;
+
+Begin
+    PbBoard.Invalidate;
+    Case ChessEngine.GameState Of
+        WhiteWin:
+            UpdateCaption('Белые выиграли!');
+        BlackWin:
+            UpdateCaption('Черные выиграли!');
+        Draw:
+            UpdateCaption('Ничья!');
+        Playing:
+            UpdateCaption('Идет игра...');
+    End;
+    If ChessEngine.GameState In [WhiteWin, BlackWin, Draw] Then;
 End;
 
 { Обработка панелей-кнопок на SplitView }
@@ -283,27 +306,6 @@ End;
 Function TfrmGameForm.Cell(CoordX, CoordY: Integer): TBoardCell;
 Begin
     Cell := ChessEngine.Board[CoordX, CoordY];
-End;
-
-Procedure TfrmGameForm.UpdateScreen();
-    Procedure UpdateCaption(Caption: String);
-    Begin
-        LbGameState.Caption := Caption;
-    End;
-
-Begin
-    PbBoard.Invalidate;
-    Case ChessEngine.GameState Of
-        WhiteWin:
-            UpdateCaption('Белые выиграли!');
-        BlackWin:
-            UpdateCaption('Черные выиграли!');
-        Draw:
-            UpdateCaption('Ничья!');
-        Playing:
-            UpdateCaption('Идет игра...');
-    End;
-    If ChessEngine.GameState In [WhiteWin, BlackWin, Draw] Then; //
 End;
 
 End.

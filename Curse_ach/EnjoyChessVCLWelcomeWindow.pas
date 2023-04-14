@@ -153,7 +153,6 @@ Procedure TfrmWelcomeWindow.BbtStartAnalysisClick(Sender: TObject);
 Begin
     FrmWelcomeWindow.Hide;
 
-    // If Not(Assigned(FrmAnalysis)) Then
     FrmAnalysis := TFrmAnalysis.Create(Self);
     FrmAnalysis.Show;
 End;
@@ -162,7 +161,6 @@ Procedure TfrmWelcomeWindow.BbtStartGameClick(Sender: TObject);
 Begin
     FrmWelcomeWindow.Hide;
 
-    // If Not(Assigned(FrmGameForm)) Then
     FrmGameForm := TfrmGameForm.Create(Self);
     FrmGameForm.Show;
 End;
