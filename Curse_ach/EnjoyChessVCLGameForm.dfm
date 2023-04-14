@@ -6,8 +6,8 @@ object frmGameForm: TfrmGameForm
   ClientHeight = 461
   ClientWidth = 884
   Color = clBtnFace
-  Constraints.MinHeight = 90
-  Constraints.MinWidth = 200
+  Constraints.MinHeight = 350
+  Constraints.MinWidth = 350
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
   Font.Height = -11

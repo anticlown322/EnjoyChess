@@ -86,7 +86,7 @@ Type
         Procedure FormDestroy(Sender: TObject);
     Private
         ChessEngine: TChessEngine;
-        Procedure DrawCell(CoordX, CoordY: Integer; CellRect: TRect; BoardCanvas: TCanvas;
+        Procedure DrawCell(Col, Row: Integer; CellRect: TRect; BoardCanvas: TCanvas;
             IsLightSquare: Boolean);
         Procedure InitializeBoard();
         Function CellSize(): Integer;
@@ -207,7 +207,7 @@ Const
     ROW_COUNT = 8;
     COL_COUNT = 8;
 Var
-    CoordX, CoordY, CellSide: Integer;
+    Col, Row, CellSide: Integer;
     BoardCanvas: TCanvas;
     CellRect: TRect;
     IsLightSquare: Boolean;
@@ -217,13 +217,15 @@ Begin
 
     CellSide := CellSize();
 
-    For CoordX := 0 To ROW_COUNT - 1 Do
+    // идем из левого верхнего вниз
+    For Col := 0 To COL_COUNT - 1 Do
     Begin
-        For CoordY := 0 To COL_COUNT - 1 Do
+        For Row := 0 To ROW_COUNT - 1 Do
         Begin
-            CellRect := Rect(CoordX * CellSide, CoordY * CellSide, (CoordX + 1) * CellSide,
-                (CoordY + 1) * CellSide);
-            DrawCell(CoordX, CoordY, CellRect, BoardCanvas, IsLightSquare);
+            CellRect := Rect(Col * CellSide, Row * CellSide, (Col + 1) * CellSide,
+                (Row + 1) * CellSide);
+            DrawCell(Col, Row, CellRect, BoardCanvas, IsLightSquare);
+
             IsLightSquare := Not IsLightSquare;
         End;
         IsLightSquare := Not IsLightSquare;
@@ -231,19 +233,40 @@ Begin
 
 End;
 
-Procedure TfrmGameForm.DrawCell(CoordX, CoordY: Integer; CellRect: TRect; BoardCanvas: TCanvas;
+Procedure TfrmGameForm.DrawCell(Col, Row: Integer; CellRect: TRect; BoardCanvas: TCanvas;
     IsLightSquare: Boolean);
 Var
     Cell: TBoardCell;
+    CellSide: Integer;
 Begin
-    Cell := ChessEngine.Board[CoordX, CoordY];
+    Cell := ChessEngine.Board[Col, Row];
+    CellSide := CellSize();
 
     If IsLightSquare Then
-        BoardCanvas.Brush.Color := $F0D9B5
+    begin
+        BoardCanvas.Brush.Color := $F0D9B5; // light
+        BoardCanvas.Font.Color := $B58863; // dark
+    end
     Else
-        BoardCanvas.Brush.Color := $B58863;
+    begin
+        BoardCanvas.Brush.Color := $B58863; // dark
+        BoardCanvas.Font.Color := $F0D9B5; // light
+    end;
 
     BoardCanvas.FillRect(CellRect);
+
+    BoardCanvas.Font.Style := [FsBold];
+    BoardCanvas.Font.Size := 8;
+
+    If (Row = 7) Then
+    Begin
+        BoardCanvas.TextOut(Col * CellSide + CellSide Div 10, Row * CellSide + CellSide - 17,
+            Chr(ORD('a') + Col));
+    End;
+    If (Col = 7) Then
+    Begin
+        BoardCanvas.TextOut(Col * CellSide + CellSide - 10, Row * CellSide, IntToStr(8 - Row));
+    End;
 End;
 
 Function TfrmGameForm.CellSize(): Integer;
