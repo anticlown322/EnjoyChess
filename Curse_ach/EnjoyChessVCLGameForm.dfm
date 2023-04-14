@@ -7,7 +7,7 @@ object frmGameForm: TfrmGameForm
   ClientWidth = 884
   Color = clBtnFace
   Constraints.MinHeight = 90
-  Constraints.MinWidth = 70
+  Constraints.MinWidth = 120
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
   Font.Height = -11
@@ -2198,8 +2198,6 @@ object frmGameForm: TfrmGameForm
       Padding.Bottom = 5
       ParentBackground = False
       TabOrder = 0
-      ExplicitLeft = 191
-      ExplicitTop = 58
       DesignSize = (
         415
         408)
@@ -2230,7 +2228,6 @@ object frmGameForm: TfrmGameForm
       ParentBackground = False
       ParentFont = False
       TabOrder = 1
-      ExplicitTop = 56
       object pGameInfo: TPanel
         AlignWithMargins = True
         Left = 14
@@ -2293,23 +2290,27 @@ object frmGameForm: TfrmGameForm
           Height = 19
           Caption = 'adfdf'
         end
+        object lbGameState: TLabel
+          Left = 13
+          Top = 128
+          Width = 5
+          Height = 19
+        end
       end
       object splvMenu: TSplitView
         Left = 0
         Top = 0
-        Width = 1
+        Width = 0
         Height = 408
         Color = 2828066
         Opened = False
         OpenedWidth = 200
         Placement = svpLeft
         TabOrder = 1
-        ExplicitTop = 213
-        ExplicitHeight = 195
         object pMenuButtonSettings: TPanel
           Left = 0
           Top = 82
-          Width = 1
+          Width = 0
           Height = 41
           Align = alTop
           BevelOuter = bvNone
@@ -2320,12 +2321,11 @@ object frmGameForm: TfrmGameForm
           OnClick = pMenuButtonSettingsClick
           OnMouseEnter = pMenuButtonSettingsMouseEnter
           OnMouseLeave = pMenuButtonSettingsMouseLeave
-          ExplicitWidth = 0
         end
         object pMenuButtonAnalysis: TPanel
           Left = 0
           Top = 41
-          Width = 1
+          Width = 0
           Height = 41
           Align = alTop
           BevelOuter = bvNone
@@ -2336,12 +2336,11 @@ object frmGameForm: TfrmGameForm
           OnClick = pMenuButtonAnalysisClick
           OnMouseEnter = pMenuButtonAnalysisMouseEnter
           OnMouseLeave = pMenuButtonAnalysisMouseLeave
-          ExplicitWidth = 0
         end
         object pMenuButtonSave: TPanel
           Left = 0
           Top = 0
-          Width = 1
+          Width = 0
           Height = 41
           Align = alTop
           BevelOuter = bvNone
@@ -2351,12 +2350,11 @@ object frmGameForm: TfrmGameForm
           TabOrder = 2
           OnMouseEnter = pMenuButtonSaveMouseEnter
           OnMouseLeave = pMenuButtonSaveMouseLeave
-          ExplicitWidth = 0
         end
         object pMenuButtonBackToWelcome: TPanel
           Left = 0
           Top = 123
-          Width = 1
+          Width = 0
           Height = 41
           Align = alTop
           BevelOuter = bvNone
@@ -2367,7 +2365,6 @@ object frmGameForm: TfrmGameForm
           OnClick = pMenuButtonBackToWelcomeClick
           OnMouseEnter = pMenuButtonBackToWelcomeMouseEnter
           OnMouseLeave = pMenuButtonBackToWelcomeMouseLeave
-          ExplicitWidth = 0
         end
       end
     end
@@ -2387,25 +2384,37 @@ object frmGameForm: TfrmGameForm
       ParentBackground = False
       ParentFont = False
       TabOrder = 2
+      ExplicitLeft = 7
       object viMenuBar: TVirtualImage
-        Left = 5
-        Top = 1
+        Left = 0
+        Top = 0
         Width = 48
-        Height = 48
+        Height = 51
+        Align = alLeft
         ImageCollection = dtmdData.imcForButtons
         ImageWidth = 0
         ImageHeight = 0
         ImageIndex = 11
         ImageName = 'Menus\menu-white'
         OnClick = viMenuBarClick
+        ExplicitLeft = 6
+        ExplicitTop = 3
+        ExplicitHeight = 48
       end
       object lbUsername: TLabel
-        Left = 795
-        Top = 11
+        AlignWithMargins = True
+        Left = 796
+        Top = 10
         Width = 76
-        Height = 29
+        Height = 38
+        Margins.Top = 10
+        Margins.Right = 10
+        Align = alRight
         Alignment = taRightJustify
         Caption = 'dafadf'
+        ExplicitLeft = 787
+        ExplicitTop = 11
+        ExplicitHeight = 30
       end
     end
     object pRight: TPanel
@@ -2428,8 +2437,6 @@ object frmGameForm: TfrmGameForm
       ParentBackground = False
       ParentFont = False
       TabOrder = 3
-      ExplicitLeft = 616
-      ExplicitTop = 58
       object lbTimeOpponent: TLabel
         Left = 16
         Top = 6
@@ -2605,7 +2612,8 @@ object frmGameForm: TfrmGameForm
     ImageCollection = dtmdData.imcForButtons
     Width = 48
     Height = 48
-    Left = 864
+    Left = 768
+    Top = 8
   end
   object vilImages_24: TVirtualImageList
     DisabledGrayscale = False
@@ -2626,10 +2634,11 @@ object frmGameForm: TfrmGameForm
     ImageCollection = dtmdData.imcOther
     Width = 24
     Height = 24
-    Left = 832
+    Left = 728
+    Top = 8
   end
   object actlAnimation: TActionList
-    Left = 793
-    Top = 1
+    Left = 689
+    Top = 9
   end
 end

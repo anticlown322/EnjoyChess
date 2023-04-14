@@ -23,8 +23,12 @@ Uses
     Vcl.ImgList,
     Vcl.VirtualImageList,
     System.Actions,
-    Vcl.ActnList, EnjoyChessBackEngine, EnjoyChessDataImages,
-  EnjoyChessVCLAnalysis, EnjoyChessVCLSettings, EnjoyChessVCLWelcomeWindow;
+    Vcl.ActnList,
+    EnjoyChessBackEngine,
+    EnjoyChessDataImages,
+    EnjoyChessVCLAnalysis,
+    EnjoyChessVCLSettings,
+    EnjoyChessVCLWelcomeWindow;
 
 Type
     TfrmGameForm = Class(TForm)
@@ -63,6 +67,7 @@ Type
         PMenuButtonBackToWelcome: TPanel;
         PbBoard: TPaintBox;
         ActlAnimation: TActionList;
+        LbGameState: TLabel;
         Procedure FormCloseQuery(Sender: TObject; Var CanClose: Boolean);
         Procedure ViMenuBarClick(Sender: TObject);
         Procedure PMenuButtonAnalysisMouseEnter(Sender: TObject);
@@ -81,23 +86,24 @@ Type
         Procedure FormDestroy(Sender: TObject);
     Private
         ChessEngine: TChessEngine;
-        procedure DrawCell(CoordX, Coordy: Integer; CellRect: TRect; BoardCanvas: TCanvas);
+        Procedure DrawCell(CoordX, CoordY: Integer; CellRect: TRect; BoardCanvas: TCanvas; IsLightSquare: Boolean);
         Procedure InitializeBoard();
-        function CellSize(): Integer;
-        procedure UpdateScreen();
-        function Cell(CoordX, CoordY: Integer): TBoardCell;
+        Function CellSize(): Integer;
+        Procedure UpdateScreen();
+        Function Cell(CoordX, CoordY: Integer): TBoardCell;
     End;
 
-    TChessBoard = Class(TImage)
-    Private
-        CellSide: Integer;
-    Protected
-        // Procedure DrawBoard();
-        // Procedure DrawCell();
-    Public
-        // Procedure MouseDown();
-        // Procedure MouseUp();
-    End;
+{
+        TChessBoard = Class(TImage)
+        Private
+        Protected
+            // Procedure DrawBoard();
+            // Procedure DrawCell();
+        Public
+            // Procedure MouseDown();
+            // Procedure MouseUp();
+        End;
+}
 
 Var
     FrmGameForm: TfrmGameForm;
@@ -106,15 +112,7 @@ Implementation
 
 {$R *.dfm}
 
-Procedure TChessBoard.DrawCell(X, Y: Integer; CellRect: TRect; BoardCanvas: TCanvas;
-    IsLightSquare: Boolean);
-Var
-    Cell: TBoardCell;
-    CellX, CellY: Integer;
-    Str: String;
-Begin
-    Cell :=
-End;
+{ сама форма }
 
 Procedure TfrmGameForm.FormCreate(Sender: TObject);
 Begin
@@ -137,13 +135,7 @@ Begin
     ChessEngine.Free;
 End;
 
-Procedure TfrmGameForm.InitializeBoard();
-Begin
-    ChessEngine.InitializeBoard();
-End;
-
 { Обработка панелей-кнопок на SplitView }
-
 { смена цвета }
 Procedure TfrmGameForm.PMenuButtonAnalysisMouseEnter(Sender: TObject);
 Begin
@@ -227,26 +219,84 @@ End;
 { Обработка доски }
 
 Procedure TfrmGameForm.PbBoardPaint(Sender: TObject);
+Const
+    ROW_COUNT = 8;
+    COL_COUNT = 8;
 Var
-    CoordX, CoordY: Integer;
-    IsLightCell: Boolean;
-    CellColor: TColor;
+    CoordX, CoordY, CellSide: Integer;
     BoardCanvas: TCanvas;
     CellRect: TRect;
+    IsLightSquare: Boolean;
 Begin
     BoardCanvas := FrmGameForm.PbBoard.Canvas;
-    IsLightCell := False;
+    IsLightSquare := True;
 
-    For CoordX := 0 To FrmGameForm.PBoard.Width Do
+    CellSide := CellSize();
+
+    For CoordX := 0 To ROW_COUNT - 1 Do
     Begin
-        For CoordY := 0 To FrmGameForm.PBoard.Height Do
+        For CoordY := 0 To COL_COUNT - 1 Do
         Begin
-            CellRect := Rect(CoordX * CellSide + 1, CoordY * CellSide + 1, (CoordX + 1) * CellSide,
+            CellRect := Rect(CoordX * CellSide, CoordY * CellSide, (CoordX + 1) * CellSide,
                 (CoordY + 1) * CellSide);
-            DrawCell(CoordX, CoordY, CellRect, BoardCanvas, IsLightCell);
-            IsLightCell := Not IsLightCell;
+            DrawCell(CoordX, CoordY, CellRect, BoardCanvas, IsLightSquare);
+            IsLightSquare := Not IsLightSquare;
         End;
+        IsLightSquare := Not IsLightSquare;
     End;
+
+
+End;
+
+Procedure TfrmGameForm.DrawCell(CoordX, CoordY: Integer; CellRect: TRect; BoardCanvas: TCanvas; IsLightSquare: Boolean);
+Var
+    Cell: TBoardCell;
+Begin
+    Cell := ChessEngine.Board[CoordX, CoordY];
+
+    If IsLightSquare Then
+        BoardCanvas.Brush.Color := $F0D9B5
+    Else
+        BoardCanvas.Brush.Color := $B58863;
+
+    BoardCanvas.FillRect(CellRect);
+End;
+
+Function TfrmGameForm.CellSize(): Integer;
+begin
+    CellSize := (PbBoard.Width - 1) Div 8
+end;
+
+Procedure TfrmGameForm.InitializeBoard();
+Begin
+    ChessEngine.InitializeBoard();
+    PbBoard.Invalidate;
+End;
+
+Function TfrmGameForm.Cell(CoordX, CoordY: Integer): TBoardCell;
+Begin
+    Cell := ChessEngine.Board[CoordX, CoordY];
+End;
+
+Procedure TfrmGameForm.UpdateScreen();
+    Procedure UpdateCaption(Caption: String);
+    Begin
+        LbGameState.Caption := Caption;
+    End;
+
+Begin
+    PbBoard.Invalidate;
+    Case ChessEngine.GameState Of
+        WhiteWin:
+            UpdateCaption('Белые выиграли!');
+        BlackWin:
+            UpdateCaption('Черные выиграли!');
+        Draw:
+            UpdateCaption('Ничья!');
+        Playing:
+            UpdateCaption('Идет игра...');
+    End;
+    If ChessEngine.GameState In [WhiteWin, BlackWin, Draw] Then; //
 End;
 
 End.

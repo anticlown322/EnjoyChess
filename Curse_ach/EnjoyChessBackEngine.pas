@@ -2,6 +2,10 @@ Unit EnjoyChessBackEngine;
 
 Interface
 
+Uses
+    System.Generics.Collections,
+    System.Diagnostics;
+
 Type
     { Общее }
 
@@ -16,6 +20,7 @@ Type
     Public
         IsLight: Boolean;
         CoordX, CoordY: Integer;
+        procedure Clear();
     End;
 
     TCellProc = Reference To Procedure(Var Cell: TBoardCell);
@@ -28,7 +33,7 @@ Type
     Private
         FigurePosition: TLocation;
         IsLightPiece: Boolean;
-        //FigureID: Byte;
+        // FigureID: Byte;
         Function IsCheck(Position: TLocation): Boolean; Virtual; Abstract;
         Function IsPossibleMove(Position: TLocation): Boolean; Virtual; Abstract;
         Procedure MoveFigure(Position: TLocation); Virtual;
@@ -85,9 +90,16 @@ Type
         Constructor Create(Position: TLocation; IsLightPiece: Boolean); Override;
     End;
 
+    TPListOfPieces = ^TListOfPieces;
+
+    TListOfPieces = Record
+        Piece: TPiece;
+        Next: TPListOfPieces;
+    End;
+
     { Для ходов и перемещений }
 
-    PChange = ^TChange;
+    TPChange = ^TChange;
 
     TChange = Record
         Piece: TPiece;
@@ -97,13 +109,14 @@ Type
 
     TMoveType = (TNormal, TEnPassant, TCastling, TPawnPromote);
 
-    PMove = ^TMove;
+    TPMove = ^TMove;
 
     TMove = Record
         Change: TChange;
         Capture: Boolean;
         Contents: TPiece;
-    Case Kind: TMoveType Of
+        Next: TPMove;
+        Case Kind: TMoveType Of
             TEnPassant:
                 (EPCapture: TLocation);
             TCastling:
@@ -116,20 +129,46 @@ Type
 
     TChessEngine = Class
     Private
+        TakenWhitePieces: TPListOfPieces;
+        TakenBlackPieces: TPListOfPieces;
         FirstMove: Boolean;
-        Procedure CheckWinState();
-        // proc CheckValid();
+        // Procedure CheckWinState();
     Protected
         Procedure FindPossibleMovesOfPiece();
         Procedure ForEveryCell(CellProc: TCellProc);
-
     Public
         Board: TBoard;
         GameState: TGameState;
         // Sound: TEnjoyChessSound;
         Procedure InitializeBoard();
+        Constructor Create;
     End;
 
 Implementation
+
+Procedure TChessEngine.InitializeBoard();
+Const
+    ROW_COUNT = 8;
+    COL_COUNT = 8;
+Var
+    I, J: Integer;
+Begin
+    SetLength(Board, COL_COUNT, ROW_COUNT);
+
+    For I := Low(Board) To High(Board) Do
+        For J := Low(Board[0]) To High(Board[0]) Do
+        Begin
+            Board[I, J].CoordX := I;
+            Board[I, J].CoordY := J;
+
+            If (I + J) Mod 2 = 0 Then
+                Board[I, J].IsLight := False
+            Else
+                Board[I, J].IsLight := True;
+        End;
+
+    GameState := Playing;
+    FirstMove := True;
+End;
 
 End.
