@@ -10,7 +10,7 @@ Type
     { ќбщее }
 
     TLocation = Record
-        CoordX: 0 .. 8;
+        CoordX: 0 .. 8;   // 0 - дл€ ходов за пределы доски и отсустви€ на доске
         CoordY: 0 .. 8;
     End;
 
@@ -20,7 +20,6 @@ Type
     Public
         IsLight: Boolean;
         CoordX, CoordY: Integer;
-        procedure Clear();
     End;
 
     TCellProc = Reference To Procedure(Var Cell: TBoardCell);
@@ -34,60 +33,60 @@ Type
         FigurePosition: TLocation;
         IsLightPiece: Boolean;
         // FigureID: Byte;
-        Function IsCheck(Position: TLocation): Boolean; Virtual; Abstract;
-        Function IsPossibleMove(Position: TLocation): Boolean; Virtual; Abstract;
-        Procedure MoveFigure(Position: TLocation); Virtual;
+        //Function IsCheck(Position: TLocation): Boolean; Virtual; Abstract;
+        //Function IsPossibleMove(Position: TLocation): Boolean; Virtual; Abstract;
+        //Procedure MoveFigure(Position: TLocation); Virtual;
     Public
         Property Position: TLocation Read FigurePosition;
         Property IsLight: Boolean Read IsLightPiece;
 
-        Constructor Create(Position: TLocation; IsLightPiece: Boolean); Virtual;
-        Destructor Destroy; Override;
+//        Constructor Create(Position: TLocation; IsLightPiece: Boolean); Virtual;
+//        Destructor Destroy; Override;
     End;
 
     TKing = Class(TPiece)
     Private
         IsPossibleCastle: Boolean;
         IsAlreadyCastled: Boolean;
-        Function IsPossibleMove(Position: TLocation): Boolean; Override;
+        //Function IsPossibleMove(Position: TLocation): Boolean; Override;
     Public
-        Constructor Create(Position: TLocation; IsLightPiece: Boolean); Override;
+        //Constructor Create(Position: TLocation; IsLightPiece: Boolean); Override;
     End;
 
     TQueen = Class(TPiece)
     Private
-        Function IsCheck(Position: TLocation): Boolean; Override;
-        Function IsPossibleMove(Position: TLocation): Boolean; Override;
-        Function IsNotFreeDiagonalOrLine(Position: TLocation): Boolean;
+//        Function IsCheck(Position: TLocation): Boolean; Override;
+//        Function IsPossibleMove(Position: TLocation): Boolean; Override;
+//        Function IsNotFreeDiagonalOrLine(Position: TLocation): Boolean;
     End;
 
     TBishop = Class(TPiece)
     Private
-        Function IsCheck(Position: TLocation): Boolean; Override;
-        Function IsPossibleMove(Position: TLocation): Boolean; Override;
-        Function IsNotFreeDiagonal(Position: TLocation): Boolean;
+//        Function IsCheck(Position: TLocation): Boolean; Override;
+//        Function IsPossibleMove(Position: TLocation): Boolean; Override;
+//        Function IsNotFreeDiagonal(Position: TLocation): Boolean;
     End;
 
     TRook = Class(TPiece)
     Private
-        Function IsCheck(Position: TLocation): Boolean; Override;
-        Function IsPossibleMove(Position: TLocation): Boolean; Override;
-        Function IsNotFreeLine(Position: TLocation): Boolean;
+//        Function IsCheck(Position: TLocation): Boolean; Override;
+//        Function IsPossibleMove(Position: TLocation): Boolean; Override;
+//        Function IsNotFreeLine(Position: TLocation): Boolean;
     End;
 
     TKnight = Class(TPiece)
     Private
-        Function IsCheck(Position: TLocation): Boolean; Override;
-        Function IsPossibleMove(Position: TLocation): Boolean; Override;
+//        Function IsCheck(Position: TLocation): Boolean; Override;
+//        Function IsPossibleMove(Position: TLocation): Boolean; Override;
     End;
 
     TPawn = Class(TPiece)
     Private
         FirstStep: Boolean;
-        Function IsCheck(Position: TLocation): Boolean; Override;
-        Function IsPossibleMove(Position: TLocation): Boolean; Override;
+//        Function IsCheck(Position: TLocation): Boolean; Override;
+//        Function IsPossibleMove(Position: TLocation): Boolean; Override;
     Public
-        Constructor Create(Position: TLocation; IsLightPiece: Boolean); Override;
+//        Constructor Create(Position: TLocation; IsLightPiece: Boolean); Override;
     End;
 
     TPListOfPieces = ^TListOfPieces;
@@ -134,14 +133,14 @@ Type
         FirstMove: Boolean;
         // Procedure CheckWinState();
     Protected
-        Procedure FindPossibleMovesOfPiece();
-        Procedure ForEveryCell(CellProc: TCellProc);
+//        Procedure FindPossibleMovesOfPiece();
+//        Procedure ForEveryCell(CellProc: TCellProc);
     Public
         Board: TBoard;
         GameState: TGameState;
         // Sound: TEnjoyChessSound;
         Procedure InitializeBoard();
-        Constructor Create;
+//        Constructor Create;
     End;
 
 Implementation

@@ -51,10 +51,6 @@ Type
     sdbtPrevMove: TSpeedButton;
     sdbtToBegining: TSpeedButton;
         Procedure FormClose(Sender: TObject; Var Action: TCloseAction);
-    Private
-        { Private declarations }
-    Public
-        { Public declarations }
     End;
 
 Var

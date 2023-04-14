@@ -7,7 +7,7 @@ object frmGameForm: TfrmGameForm
   ClientWidth = 884
   Color = clBtnFace
   Constraints.MinHeight = 90
-  Constraints.MinWidth = 120
+  Constraints.MinWidth = 200
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
   Font.Height = -11
@@ -2203,7 +2203,7 @@ object frmGameForm: TfrmGameForm
         408)
       object pbBoard: TPaintBox
         Left = 22
-        Top = 17
+        Top = 20
         Width = 366
         Height = 366
         Anchors = [akLeft, akTop, akRight, akBottom]
@@ -2218,6 +2218,7 @@ object frmGameForm: TfrmGameForm
       Width = 194
       Height = 408
       Align = alClient
+      Anchors = []
       BevelOuter = bvNone
       Color = 3223083
       Font.Charset = DEFAULT_CHARSET
@@ -2228,9 +2229,12 @@ object frmGameForm: TfrmGameForm
       ParentBackground = False
       ParentFont = False
       TabOrder = 1
+      DesignSize = (
+        194
+        408)
       object pGameInfo: TPanel
         AlignWithMargins = True
-        Left = 14
+        Left = 13
         Top = 13
         Width = 174
         Height = 193
@@ -2238,6 +2242,7 @@ object frmGameForm: TfrmGameForm
         Margins.Top = 10
         Margins.Right = 5
         Margins.Bottom = 10
+        Anchors = [akLeft, akTop, akRight, akBottom]
         Color = 3683890
         ParentBackground = False
         TabOrder = 0
@@ -2384,7 +2389,6 @@ object frmGameForm: TfrmGameForm
       ParentBackground = False
       ParentFont = False
       TabOrder = 2
-      ExplicitLeft = 7
       object viMenuBar: TVirtualImage
         Left = 0
         Top = 0
@@ -2412,9 +2416,7 @@ object frmGameForm: TfrmGameForm
         Align = alRight
         Alignment = taRightJustify
         Caption = 'dafadf'
-        ExplicitLeft = 787
-        ExplicitTop = 11
-        ExplicitHeight = 30
+        ExplicitHeight = 29
       end
     end
     object pRight: TPanel

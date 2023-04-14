@@ -86,24 +86,13 @@ Type
         Procedure FormDestroy(Sender: TObject);
     Private
         ChessEngine: TChessEngine;
-        Procedure DrawCell(CoordX, CoordY: Integer; CellRect: TRect; BoardCanvas: TCanvas; IsLightSquare: Boolean);
+        Procedure DrawCell(CoordX, CoordY: Integer; CellRect: TRect; BoardCanvas: TCanvas;
+            IsLightSquare: Boolean);
         Procedure InitializeBoard();
         Function CellSize(): Integer;
         Procedure UpdateScreen();
         Function Cell(CoordX, CoordY: Integer): TBoardCell;
     End;
-
-{
-        TChessBoard = Class(TImage)
-        Private
-        Protected
-            // Procedure DrawBoard();
-            // Procedure DrawCell();
-        Public
-            // Procedure MouseDown();
-            // Procedure MouseUp();
-        End;
-}
 
 Var
     FrmGameForm: TfrmGameForm;
@@ -111,7 +100,6 @@ Var
 Implementation
 
 {$R *.dfm}
-
 { сама форма }
 
 Procedure TfrmGameForm.FormCreate(Sender: TObject);
@@ -125,7 +113,10 @@ Begin
     If Application.MessageBox
         (PChar('Вы уверены, что хотите выйти? Несохраненные данные будут утеряны.'), PChar('Выход'),
         MB_ICONQUESTION + MB_YESNO + MB_DEFBUTTON1 + MB_TASKMODAL) = IDYES Then
-        Application.Terminate
+    Begin
+        FrmWelcomeWindow.Show;
+        CanClose := True
+    End
     Else
         CanClose := False;
 End;
@@ -187,25 +178,18 @@ End;
 
 Procedure TfrmGameForm.PMenuButtonAnalysisClick(Sender: TObject);
 Begin
-    {
-      FrmGameForm.Hide;
-      if not Assigned(FrmAnalysis) Then
-      FrmAnalysis := TfrmAnalysis.Create();
-      FrmAnalysis.Show;
-      FrmGameForm.Free;
-    }
+    If Not Assigned(FrmAnalysis) Then
+        FrmAnalysis := TfrmAnalysis.Create(Self);
+    FrmGameForm.Hide;
+    FrmAnalysis.Show;
 End;
 
 Procedure TfrmGameForm.PMenuButtonSettingsClick(Sender: TObject);
 Begin
-    {
-      frmGameForm.CanClose(Sender, IsClose);
-      If IsClose Then
-      Begin
-      FrmSettings := TfrmSettings.Create(Self);
-      FrmSettings.Show;
-      End;
-    }
+    If Not Assigned(FrmAnalysis) Then
+        FrmSettings := TfrmSettings.Create(Self);
+    FrmGameForm.Hide;
+    FrmSettings.Show;
 End;
 
 Procedure TfrmGameForm.ViMenuBarClick(Sender: TObject);
@@ -245,10 +229,10 @@ Begin
         IsLightSquare := Not IsLightSquare;
     End;
 
-
 End;
 
-Procedure TfrmGameForm.DrawCell(CoordX, CoordY: Integer; CellRect: TRect; BoardCanvas: TCanvas; IsLightSquare: Boolean);
+Procedure TfrmGameForm.DrawCell(CoordX, CoordY: Integer; CellRect: TRect; BoardCanvas: TCanvas;
+    IsLightSquare: Boolean);
 Var
     Cell: TBoardCell;
 Begin
@@ -263,9 +247,9 @@ Begin
 End;
 
 Function TfrmGameForm.CellSize(): Integer;
-begin
+Begin
     CellSize := (PbBoard.Width - 1) Div 8
-end;
+End;
 
 Procedure TfrmGameForm.InitializeBoard();
 Begin
