@@ -6,8 +6,8 @@ object frmGameForm: TfrmGameForm
   ClientHeight = 461
   ClientWidth = 884
   Color = clBtnFace
-  Constraints.MinHeight = 350
-  Constraints.MinWidth = 350
+  Constraints.MinHeight = 500
+  Constraints.MinWidth = 900
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
   Font.Height = -11
@@ -2209,6 +2209,7 @@ object frmGameForm: TfrmGameForm
         Anchors = [akLeft, akTop, akRight, akBottom]
         Color = 3223083
         ParentColor = False
+        OnMouseUp = pbBoardMouseUp
         OnPaint = pbBoardPaint
       end
     end

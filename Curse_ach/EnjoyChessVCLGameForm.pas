@@ -84,6 +84,8 @@ Type
         Procedure PbBoardPaint(Sender: TObject);
         Procedure FormCreate(Sender: TObject);
         Procedure FormDestroy(Sender: TObject);
+        Procedure PbBoardMouseUp(Sender: TObject; Button: TMouseButton; Shift: TShiftState;
+            X, Y: Integer);
     Private
         ChessEngine: TChessEngine;
         Procedure DrawCell(Col, Row: Integer; CellRect: TRect; BoardCanvas: TCanvas;
@@ -105,6 +107,9 @@ Implementation
 Procedure TfrmGameForm.FormCreate(Sender: TObject);
 Begin
     ChessEngine := TChessEngine.Create;
+    // ChessEngine.Sound := TEnjoyChessWindowsSound.Create;
+    // Setting := TSettings.Create;
+    // дальше все свойства дефолт настроек
     InitializeBoard();
 End;
 
@@ -126,7 +131,7 @@ Begin
     ChessEngine.Free;
 End;
 
-{обработка левой подпанели}
+{ обработка левой подпанели }
 
 Procedure TfrmGameForm.UpdateScreen();
     Procedure UpdateCaption(Caption: String);
@@ -192,6 +197,7 @@ Begin
 End;
 
 { нажатие на кнопки-панели }
+
 Procedure TfrmGameForm.PMenuButtonBackToWelcomeClick(Sender: TObject);
 Begin
     FrmGameForm.Hide;
@@ -265,16 +271,18 @@ Begin
     Cell := ChessEngine.Board[Col, Row];
     CellSide := CellSize();
 
+    { отрисовка пустых клеток}
+
     If IsLightSquare Then
-    begin
+    Begin
         BoardCanvas.Brush.Color := $F0D9B5; // light
         BoardCanvas.Font.Color := $B58863; // dark
-    end
+    End
     Else
-    begin
+    Begin
         BoardCanvas.Brush.Color := $B58863; // dark
         BoardCanvas.Font.Color := $F0D9B5; // light
-    end;
+    End;
 
     BoardCanvas.FillRect(CellRect);
 
@@ -290,22 +298,61 @@ Begin
     Begin
         BoardCanvas.TextOut(Col * CellSide + CellSide - 10, Row * CellSide, IntToStr(8 - Row));
     End;
+
+    {отрисовка фигур}
+
+    If Cell.Piece <> Null Then
+
 End;
 
 Function TfrmGameForm.CellSize(): Integer;
+Const
+    СOL_AND_ROW_COUNT = 8;
 Begin
-    CellSize := (PbBoard.Width - 1) Div 8
+    CellSize := (PbBoard.Width - 1) Div СOL_AND_ROW_COUNT;
 End;
 
 Procedure TfrmGameForm.InitializeBoard();
 Begin
-    ChessEngine.InitializeBoard();
+    ChessEngine.InitializeBoard(PbBoard, CellSize());
     PbBoard.Invalidate;
 End;
 
 Function TfrmGameForm.Cell(CoordX, CoordY: Integer): TBoardCell;
 Begin
     Cell := ChessEngine.Board[CoordX, CoordY];
+End;
+
+{ обработка нажатий мыши }
+
+Procedure TfrmGameForm.PbBoardMouseUp(Sender: TObject; Button: TMouseButton; Shift: TShiftState;
+    X, Y: Integer);
+Var
+    CellCoordX, CellCoordY, CellSide: Integer;
+    CellRect: TRect;
+Begin
+    CellSide := CellSize();
+    CellCoordX := X Div CellSide;
+    CellCoordY := Y Div CellSide;
+
+    CellRect := Rect(CellCoordX * CellSide, CellCoordY * CellSide, (CellCoordX + 1) * CellSide,
+        (CellCoordY + 1) * CellSide);
+
+    If ChessEngine.GameState <> Playing Then
+        Exit;
+
+    Case Button Of
+        MbLeft:
+            Begin
+                ShowMessage('ЛЕВАЧЬЕ');
+            End;
+        MbRight:
+            Begin
+                ShowMessage('ПРАВАЯ ВАТА');
+            End;
+    End;
+
+    UpdateScreen;
 End;
 
 End.
