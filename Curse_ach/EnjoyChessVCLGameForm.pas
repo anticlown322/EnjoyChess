@@ -1,4 +1,4 @@
-п»їUnit EnjoyChessVCLGameForm;
+Unit EnjoyChessVCLGameForm;
 
 Interface
 
@@ -90,6 +90,7 @@ Type
         ChessEngine: TChessEngine;
         Procedure DrawCell(Col, Row: Integer; CellRect: TRect; BoardCanvas: TCanvas;
             IsLightSquare: Boolean);
+        Procedure DrawPiece(Piece: TPiece);
         Procedure InitializeBoard();
         Function CellSize(): Integer;
         Function Cell(CoordX, CoordY: Integer): TBoardCell;
@@ -102,21 +103,21 @@ Var
 Implementation
 
 {$R *.dfm}
-{ СЃР°РјР° С„РѕСЂРјР° }
+{ сама форма }
 
 Procedure TfrmGameForm.FormCreate(Sender: TObject);
 Begin
     ChessEngine := TChessEngine.Create;
     // ChessEngine.Sound := TEnjoyChessWindowsSound.Create;
     // Setting := TSettings.Create;
-    // РґР°Р»СЊС€Рµ РІСЃРµ СЃРІРѕР№СЃС‚РІР° РґРµС„РѕР»С‚ РЅР°СЃС‚СЂРѕРµРє
+    // дальше все свойства дефолт настроек
     InitializeBoard();
 End;
 
 Procedure TfrmGameForm.FormCloseQuery(Sender: TObject; Var CanClose: Boolean);
 Begin
     If Application.MessageBox
-        (PChar('Р’С‹ СѓРІРµСЂРµРЅС‹, С‡С‚Рѕ С…РѕС‚РёС‚Рµ РІС‹Р№С‚Рё? РќРµСЃРѕС…СЂР°РЅРµРЅРЅС‹Рµ РґР°РЅРЅС‹Рµ Р±СѓРґСѓС‚ СѓС‚РµСЂСЏРЅС‹.'), PChar('Р’С‹С…РѕРґ'),
+        (PChar('Вы уверены, что хотите выйти? Несохраненные данные будут утеряны.'), PChar('Выход'),
         MB_ICONQUESTION + MB_YESNO + MB_DEFBUTTON1 + MB_TASKMODAL) = IDYES Then
     Begin
         FrmWelcomeWindow.Show;
@@ -131,7 +132,7 @@ Begin
     ChessEngine.Free;
 End;
 
-{ РѕР±СЂР°Р±РѕС‚РєР° Р»РµРІРѕР№ РїРѕРґРїР°РЅРµР»Рё }
+{ обработка левой подпанели }
 
 Procedure TfrmGameForm.UpdateScreen();
     Procedure UpdateCaption(Caption: String);
@@ -143,19 +144,19 @@ Begin
     PbBoard.Invalidate;
     Case ChessEngine.GameState Of
         WhiteWin:
-            UpdateCaption('Р‘РµР»С‹Рµ РІС‹РёРіСЂР°Р»Рё!');
+            UpdateCaption('Белые выиграли!');
         BlackWin:
-            UpdateCaption('Р§РµСЂРЅС‹Рµ РІС‹РёРіСЂР°Р»Рё!');
+            UpdateCaption('Черные выиграли!');
         Draw:
-            UpdateCaption('РќРёС‡СЊСЏ!');
+            UpdateCaption('Ничья!');
         Playing:
-            UpdateCaption('РРґРµС‚ РёРіСЂР°...');
+            UpdateCaption('Идет игра...');
     End;
     If ChessEngine.GameState In [WhiteWin, BlackWin, Draw] Then;
 End;
 
-{ РћР±СЂР°Р±РѕС‚РєР° РїР°РЅРµР»РµР№-РєРЅРѕРїРѕРє РЅР° SplitView }
-{ СЃРјРµРЅР° С†РІРµС‚Р° }
+{ Обработка панелей-кнопок на SplitView }
+{ смена цвета }
 Procedure TfrmGameForm.PMenuButtonAnalysisMouseEnter(Sender: TObject);
 Begin
     PMenuButtonAnalysis.Color := $00383632;
@@ -196,7 +197,7 @@ Begin
     PMenuButtonSettings.Color := $002B2722;
 End;
 
-{ РЅР°Р¶Р°С‚РёРµ РЅР° РєРЅРѕРїРєРё-РїР°РЅРµР»Рё }
+{ нажатие на кнопки-панели }
 
 Procedure TfrmGameForm.PMenuButtonBackToWelcomeClick(Sender: TObject);
 Begin
@@ -229,7 +230,7 @@ Begin
         SplvMenu.Opened := False;
 End;
 
-{ РћР±СЂР°Р±РѕС‚РєР° РґРѕСЃРєРё }
+{ Обработка доски }
 
 Procedure TfrmGameForm.PbBoardPaint(Sender: TObject);
 Const
@@ -246,7 +247,7 @@ Begin
 
     CellSide := CellSize();
 
-    // РёРґРµРј РёР· Р»РµРІРѕРіРѕ РІРµСЂС…РЅРµРіРѕ РІРЅРёР·
+    // идем из левого верхнего вниз
     For Col := 0 To COL_COUNT - 1 Do
     Begin
         For Row := 0 To ROW_COUNT - 1 Do
@@ -271,7 +272,7 @@ Begin
     Cell := ChessEngine.Board[Col, Row];
     CellSide := CellSize();
 
-    { РѕС‚СЂРёСЃРѕРІРєР° РїСѓСЃС‚С‹С… РєР»РµС‚РѕРє}
+    { отрисовка пустых клеток }
 
     If IsLightSquare Then
     Begin
@@ -299,19 +300,29 @@ Begin
         BoardCanvas.TextOut(Col * CellSide + CellSide - 10, Row * CellSide, IntToStr(8 - Row));
     End;
 
-    {РѕС‚СЂРёСЃРѕРІРєР° С„РёРіСѓСЂ}
+    { отрисовка фигур }
 
-    if Cell.Piece <> nil Then
-    begin
-        Cell.Piece.Piece.DrawPiece(Self);
-    end;
+    If Cell.Piece <> Nil Then
+    Begin
+        DrawPiece(Cell.Piece.Piece);
+    End;
+End;
+
+Procedure TfrmGameForm.DrawPiece(Piece: TPiece);
+Var
+    CellSide: Integer;
+Begin
+    CellSide := CellSize();
+    Piece.PPaintBox.Left := Piece.Position.CoordX * CellSide + CellSide Div 3 + 5;
+    Piece.PPaintBox.Top := Piece.Position.CoordY * CellSide + CellSide Div 3 + 5;
+    Piece.PaintPiece(Self);
 End;
 
 Function TfrmGameForm.CellSize(): Integer;
 Const
-    РЎOL_AND_ROW_COUNT = 8;
+    СOL_AND_ROW_COUNT = 8;
 Begin
-    CellSize := (PbBoard.Width - 1) Div РЎOL_AND_ROW_COUNT;
+    CellSize := (PbBoard.Width - 1) Div СOL_AND_ROW_COUNT;
 End;
 
 Procedure TfrmGameForm.InitializeBoard();
@@ -325,7 +336,7 @@ Begin
     Cell := ChessEngine.Board[CoordX, CoordY];
 End;
 
-{ РѕР±СЂР°Р±РѕС‚РєР° РЅР°Р¶Р°С‚РёР№ РјС‹С€Рё }
+{ обработка нажатий мыши }
 
 Procedure TfrmGameForm.PbBoardMouseUp(Sender: TObject; Button: TMouseButton; Shift: TShiftState;
     X, Y: Integer);
@@ -346,11 +357,11 @@ Begin
     Case Button Of
         MbLeft:
             Begin
-                ShowMessage('Р›Р•Р’РђР§Р¬Р•');
+                ShowMessage('ЛЕВАЧЬЕ');
             End;
         MbRight:
             Begin
-                ShowMessage('РџР РђР’РђРЇ Р’РђРўРђ');
+                ShowMessage('ПРАВАЯ ВАТА');
             End;
     End;
 

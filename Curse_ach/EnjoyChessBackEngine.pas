@@ -1,4 +1,4 @@
-п»їUnit EnjoyChessBackEngine;
+Unit EnjoyChessBackEngine;
 
 Interface
 
@@ -12,14 +12,14 @@ Uses
     Pngimage;
 
 Type
-    { РћР±С‰РµРµ }
+    { Общее }
 
     TLocation = Record
-        CoordX: 0 .. 8; // 0 - РґР»СЏ С…РѕРґРѕРІ Р·Р° РїСЂРµРґРµР»С‹ РґРѕСЃРєРё Рё РѕС‚СЃСѓСЃС‚РІРёСЏ РЅР° РґРѕСЃРєРµ
+        CoordX: 0 .. 8; // 0 - для ходов за пределы доски и отсуствия на доске
         CoordY: 0 .. 8;
     End;
 
-    { Р”Р»СЏ С„РёРіСѓСЂ }
+    { Для фигур }
 
     TPiece = Class
     Private
@@ -33,9 +33,10 @@ Type
     Public
         Property Position: TLocation Read PiecePosition;
         Property IsLight: Boolean Read IsLightPiece;
+        Property PPaintBox: TPaintBox Read PiecePaintBox Write PiecePaintBox;
         Constructor Create(Position: TLocation; IsLightPiece: Boolean; PBBoard: TPaintBox;
             CellSide: Integer); Virtual;
-        Procedure DrawPiece(Sender: TObject); Virtual;
+        Procedure PaintPiece(Sender: TObject); Virtual;
         Destructor Destroy; Override;
     End;
 
@@ -71,7 +72,7 @@ Type
     End;
 
     TNKnight = Class(TPiece)
-        // N РїРѕСЃС‚Р°РІР»РµРЅР° РЅР°РјРµСЂРµРЅРЅРѕ, С‚.Рє. РїСЂРё СЂР°Р±РѕС‚Рµ СЃРѕ СЃРєРёРЅР°РјРё С‡РёС‚Р°РµС‚СЃСЏ РІС‚РѕСЂР°СЏ Р±СѓРєРІР° РєР»Р°СЃСЃР°
+        // N поставлена намеренно, т.к. при работе со скинами читается вторая буква класса
     Private
         // Function IsCheck(Position: TLocation): Boolean; Override;
         // Function IsPossibleMove(Position: TLocation): Boolean; Override;
@@ -94,7 +95,7 @@ Type
         Next: TPListOfPieces;
     End;
 
-    { Р”Р»СЏ С…РѕРґРѕРІ Рё РїРµСЂРµРјРµС‰РµРЅРёР№ }
+    { Для ходов и перемещений }
 
     TPChange = ^TChange;
 
@@ -120,7 +121,7 @@ Type
                 (RookSource, RookDest: TLocation);
     End;
 
-    { Р”Р»СЏ РєР»РµС‚РѕРє РґРѕСЃРєРё }
+    { Для клеток доски }
 
     TBoardCell = Record
     Public
@@ -133,7 +134,7 @@ Type
 
     TBoard = Array Of Array OF TBoardCell;
 
-    { РљР»Р°СЃСЃ Р±СЌРєРѕРІРіРѕ РґРІРёР¶РєР°, РѕР±РµСЃРїРµС‡РёРІР°СЋС‰РµРіРѕ СЃРІСЏР·СЊ. РўРёРїР° РёРЅС‚РµСЂС„РµР№СЃ РјРµР¶РґСѓ Р±СЌРєРѕРј Рё С„РѕСЂРјРѕР№ РёРіСЂС‹ }
+    { Класс бэковго движка, обеспечивающего связь. Типа интерфейс между бэком и формой игры }
 
     TGameState = (Playing, WhiteWin, BlackWin, Draw);
 
@@ -156,7 +157,7 @@ Type
 
 Implementation
 
-{ Р”Р»СЏ С„РёРіСѓСЂ }
+{ Для фигур }
 
 Constructor TPiece.Create(Position: TLocation; IsLightPiece: Boolean; PBBoard: TPaintBox;
     CellSide: Integer);
@@ -179,14 +180,14 @@ Begin
 
     PiecePaintBox := TPaintBox.Create(PBBoard);
     PiecePaintBox.Parent := PBBoard.Parent;
-    PiecePaintBox.OnPaint := DrawPiece;
+    PiecePaintBox.OnPaint := PaintPiece;
 
     PiecePaintBox.Left := Position.CoordX * CellSide + CellSide Div 2;
     PiecePaintBox.Top := Position.CoordY * CellSide + CellSide Div 2;
     PiecePaintBox.Height := PieceImage.Height;
     PiecePaintBox.Width := PieceImage.Width;
-    PiecePaintBox.Visible := True;
-    PiecePaintBox.Canvas.Draw(0, 0, PieceImage);
+
+    PiecePaintBox.Invalidate;
 End;
 
 Destructor TPiece.Destroy;
@@ -210,12 +211,12 @@ Begin
     IsAlreadyCastled := False;
 End;
 
-Procedure TPiece.DrawPiece(Sender: TObject);
+Procedure TPiece.PaintPiece(Sender: TObject);
 Begin
     PiecePaintbox.Canvas.Draw(0, 0, PieceImage);
 End;
 
-{ РґР»СЏ РґРѕСЃРєРё }
+{ для доски }
 
 Procedure TChessEngine.InitializeBoard(BoardPaintBox: TPaintBox; CellSide: Integer);
 Const
@@ -228,7 +229,7 @@ Var
 Begin
     SetLength(Board, COL_COUNT, ROW_COUNT);
 
-    { Р·Р°РґР°РЅРёРµ РґРѕСЃРєРё }
+    { задание доски }
 
     For I := Low(Board) To High(Board) Do
         For J := Low(Board[0]) To High(Board[0]) Do
@@ -242,15 +243,16 @@ Begin
                 Board[I, J].IsLight := True;
         End;
 
-    { Р·Р°РґР°РЅРёРµ С„РёРіСѓСЂ }
+    { задание фигур }
 
     New(PiecePointer);
     ExistingPieces := PiecePointer;
 
-    // РЎ Р»РµРІРѕРіРѕ РІРµСЂС…РЅРµРіРѕ СѓРіР»Р° + РІ РјР°СЃСЃРёРІРµ board РёРЅРґРµРєСЃР°С†РёСЏ СЃ РЅСѓР»СЏ
+    // С левого верхнего угла + в массиве board индексация с нуля
 
     For I := 1 To 8 Do
     Begin
+        // черная фигура
         TempPos.CoordX := Board[I - 1, 0].CoordX;
         TempPos.CoordY := Board[I - 1, 0].CoordY;
 
@@ -273,6 +275,15 @@ Begin
                 PiecePointer.Piece := TRook.Create(TempPos, False, BoardPaintBox, CellSide);
         End;
 
+        PiecePointer.Piece.PiecePosition.CoordX := TempPos.CoordX;
+        PiecePointer.Piece.PiecePosition.CoordY := TempPos.CoordY;
+
+        Board[I - 1, 0].Piece := PiecePointer;
+
+        New(PiecePointer^.Next);
+        PiecePointer := PiecePointer^.Next;
+
+        // белая фигура
         TempPos.CoordX := Board[I - 1, 7].CoordX;
         TempPos.CoordY := Board[I - 1, 7].CoordY;
 
@@ -294,20 +305,47 @@ Begin
             8:
                 PiecePointer.Piece := TRook.Create(TempPos, True, BoardPaintBox, CellSide);
         End;
+
+        PiecePointer.Piece.PiecePosition.CoordX := TempPos.CoordX;
+        PiecePointer.Piece.PiecePosition.CoordY := TempPos.CoordY;
+        Board[I - 1, 7].Piece := PiecePointer;
+
+        New(PiecePointer^.Next);
+        PiecePointer := PiecePointer^.Next;
     End;
 
     For I := 1 To 8 Do
     Begin
+        // черная пешка
         TempPos.CoordX := Board[I - 1, 1].CoordX;
         TempPos.CoordY := Board[I - 1, 1].CoordY;
 
-        PiecePointer.Piece := TPawn.Create(TempPos, False, BoardPaintBox, CellSide); // С‡РµСЂРЅС‹Рµ
+        PiecePointer.Piece := TPawn.Create(TempPos, False, BoardPaintBox, CellSide);
 
+        PiecePointer.Piece.PiecePosition.CoordX := TempPos.CoordX;
+        PiecePointer.Piece.PiecePosition.CoordY := TempPos.CoordY;
+
+        Board[I - 1, 1].Piece := PiecePointer;
+
+        New(PiecePointer^.Next);
+        PiecePointer := PiecePointer^.Next;
+
+        // белая пешка
         TempPos.CoordX := Board[I - 1, 6].CoordX;
         TempPos.CoordY := Board[I - 1, 6].CoordY;
 
-        PiecePointer.Piece := TPawn.Create(TempPos, True, BoardPaintBox, CellSide); // Р±РµР»С‹Рµ
+        PiecePointer.Piece := TPawn.Create(TempPos, True, BoardPaintBox, CellSide);
+
+        PiecePointer.Piece.PiecePosition.CoordX := TempPos.CoordX;
+        PiecePointer.Piece.PiecePosition.CoordY := TempPos.CoordY;
+
+        Board[I - 1, 6].Piece := PiecePointer;
+
+        New(PiecePointer^.Next);
+        PiecePointer := PiecePointer^.Next;
     End;
+
+    PiecePointer^.Next := Nil;
 
     GameState := Playing;
     FirstMove := True;
