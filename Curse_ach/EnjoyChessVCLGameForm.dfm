@@ -2,7 +2,6 @@ object frmGameForm: TfrmGameForm
   Left = 0
   Top = 0
   Anchors = []
-  BorderIcons = [biSystemMenu, biMinimize]
   ClientHeight = 461
   ClientWidth = 884
   Color = clBtnFace
@@ -2189,7 +2188,7 @@ object frmGameForm: TfrmGameForm
       Width = 415
       Height = 408
       Align = alClient
-      Anchors = []
+      Anchors = [akTop, akRight, akBottom]
       BevelOuter = bvNone
       Color = 3223083
       Padding.Left = 5
@@ -2204,13 +2203,14 @@ object frmGameForm: TfrmGameForm
       object pbBoard: TPaintBox
         Left = 22
         Top = 20
-        Width = 366
+        Width = 360
         Height = 366
         Anchors = [akLeft, akTop, akRight, akBottom]
         Color = 3223083
         ParentColor = False
         OnMouseUp = pbBoardMouseUp
         OnPaint = pbBoardPaint
+        ExplicitWidth = 366
       end
     end
     object pLeft: TPanel
@@ -2219,7 +2219,7 @@ object frmGameForm: TfrmGameForm
       Width = 194
       Height = 408
       Align = alClient
-      Anchors = []
+      Anchors = [akLeft, akTop, akBottom]
       BevelOuter = bvNone
       Color = 3223083
       Font.Charset = DEFAULT_CHARSET
@@ -2235,7 +2235,7 @@ object frmGameForm: TfrmGameForm
         408)
       object pGameInfo: TPanel
         AlignWithMargins = True
-        Left = 13
+        Left = 12
         Top = 13
         Width = 174
         Height = 193
@@ -2264,10 +2264,10 @@ object frmGameForm: TfrmGameForm
         end
         object lbWhitePlayerName: TLabel
           Left = 56
-          Top = 41
-          Width = 68
+          Top = 46
+          Width = 65
           Height = 19
-          Caption = 'asdffads'
+          Caption = #1048#1075#1088#1086#1082' 1'
         end
         object viWhiteCircle: TVirtualImage
           Left = 8
@@ -2293,10 +2293,10 @@ object frmGameForm: TfrmGameForm
         end
         object lbBlackPlayerName: TLabel
           Left = 56
-          Top = 79
-          Width = 42
+          Top = 83
+          Width = 65
           Height = 19
-          Caption = 'adfdf'
+          Caption = #1048#1075#1088#1086#1082' 2'
         end
         object lbGameState: TLabel
           Left = 13
@@ -2410,15 +2410,14 @@ object frmGameForm: TfrmGameForm
       end
       object lbUsername: TLabel
         AlignWithMargins = True
-        Left = 796
+        Left = 865
         Top = 10
-        Width = 76
+        Width = 7
         Height = 38
         Margins.Top = 10
         Margins.Right = 10
         Align = alRight
         Alignment = taRightJustify
-        Caption = 'dafadf'
         ExplicitHeight = 29
       end
     end
@@ -2442,63 +2441,99 @@ object frmGameForm: TfrmGameForm
       ParentBackground = False
       ParentFont = False
       TabOrder = 3
+      ExplicitTop = 55
+      DesignSize = (
+        273
+        408)
       object lbTimeOpponent: TLabel
-        Left = 16
-        Top = 6
-        Width = 101
-        Height = 42
+        AlignWithMargins = True
+        Left = 15
+        Top = 15
+        Width = 110
+        Height = 40
+        Margins.Left = 10
+        Margins.Top = 10
+        Align = alTop
         Caption = '00:00'
+        Constraints.MaxWidth = 110
         Font.Charset = DEFAULT_CHARSET
         Font.Color = clWhite
         Font.Height = -35
         Font.Name = 'Tahoma'
         Font.Style = [fsBold]
         ParentFont = False
+        ExplicitLeft = 13
       end
       object lbTimePlayer: TLabel
-        Left = 16
-        Top = 337
-        Width = 101
-        Height = 42
+        AlignWithMargins = True
+        Left = 15
+        Top = 357
+        Width = 110
+        Height = 36
+        Margins.Left = 10
+        Margins.Top = 0
+        Margins.Right = 0
+        Margins.Bottom = 10
+        Align = alBottom
         Caption = '00:00'
+        Constraints.MaxWidth = 110
         Font.Charset = DEFAULT_CHARSET
         Font.Color = clWhite
         Font.Height = -35
         Font.Name = 'Tahoma'
         Font.Style = [fsBold]
         ParentFont = False
+        Layout = tlBottom
+        ExplicitLeft = 13
       end
       object lbnNamePlayer: TLabel
-        Left = 16
-        Top = 302
-        Width = 90
-        Height = 29
-        Caption = 'Adfadsf'
+        AlignWithMargins = True
+        Left = 15
+        Top = 314
+        Width = 200
+        Height = 33
+        Margins.Left = 10
+        Margins.Bottom = 10
+        Align = alBottom
+        Caption = #1048#1075#1088#1086#1082' 1'
+        Constraints.MaxWidth = 200
         Font.Charset = DEFAULT_CHARSET
         Font.Color = clWhite
         Font.Height = -24
         Font.Name = 'Tahoma'
         Font.Style = [fsBold]
         ParentFont = False
+        Layout = tlBottom
+        ExplicitLeft = 13
       end
       object lbNameOpponent: TLabel
-        Left = 16
-        Top = 55
-        Width = 61
-        Height = 29
-        Caption = 'Afdsf'
+        AlignWithMargins = True
+        Left = 15
+        Top = 58
+        Width = 200
+        Height = 34
+        Margins.Left = 10
+        Margins.Top = 0
+        Margins.Bottom = 0
+        Align = alTop
+        Caption = #1048#1075#1088#1086#1082' 2'
+        Constraints.MaxWidth = 200
         Font.Charset = DEFAULT_CHARSET
         Font.Color = clWhite
         Font.Height = -24
         Font.Name = 'Tahoma'
         Font.Style = [fsBold]
         ParentFont = False
+        ExplicitLeft = 13
+        ExplicitTop = 59
+        ExplicitWidth = 121
       end
       object pGameOptions: TPanel
         Left = 14
         Top = 256
         Width = 240
         Height = 32
+        Anchors = [akLeft, akRight, akBottom]
         BevelOuter = bvNone
         Color = 3683890
         ParentBackground = False
@@ -2526,10 +2561,11 @@ object frmGameForm: TfrmGameForm
         end
       end
       object memNotation: TMemo
-        Left = 14
+        Left = 15
         Top = 130
         Width = 240
         Height = 127
+        Anchors = [akLeft, akTop, akRight, akBottom]
         BevelInner = bvNone
         BevelOuter = bvNone
         BorderStyle = bsNone
@@ -2548,9 +2584,10 @@ object frmGameForm: TfrmGameForm
       end
       object pMoveOptions: TPanel
         Left = 14
-        Top = 100
+        Top = 96
         Width = 240
         Height = 32
+        Anchors = [akLeft, akTop, akRight]
         BevelOuter = bvNone
         Color = 3683890
         ParentBackground = False

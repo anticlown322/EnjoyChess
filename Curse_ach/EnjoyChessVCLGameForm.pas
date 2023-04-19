@@ -1,4 +1,4 @@
-Unit EnjoyChessVCLGameForm;
+п»їUnit EnjoyChessVCLGameForm;
 
 Interface
 
@@ -102,21 +102,21 @@ Var
 Implementation
 
 {$R *.dfm}
-{ сама форма }
+{ СЃР°РјР° С„РѕСЂРјР° }
 
 Procedure TfrmGameForm.FormCreate(Sender: TObject);
 Begin
     ChessEngine := TChessEngine.Create;
     // ChessEngine.Sound := TEnjoyChessWindowsSound.Create;
     // Setting := TSettings.Create;
-    // дальше все свойства дефолт настроек
+    // РґР°Р»СЊС€Рµ РІСЃРµ СЃРІРѕР№СЃС‚РІР° РґРµС„РѕР»С‚ РЅР°СЃС‚СЂРѕРµРє
     InitializeBoard();
 End;
 
 Procedure TfrmGameForm.FormCloseQuery(Sender: TObject; Var CanClose: Boolean);
 Begin
     If Application.MessageBox
-        (PChar('Вы уверены, что хотите выйти? Несохраненные данные будут утеряны.'), PChar('Выход'),
+        (PChar('Р’С‹ СѓРІРµСЂРµРЅС‹, С‡С‚Рѕ С…РѕС‚РёС‚Рµ РІС‹Р№С‚Рё? РќРµСЃРѕС…СЂР°РЅРµРЅРЅС‹Рµ РґР°РЅРЅС‹Рµ Р±СѓРґСѓС‚ СѓС‚РµСЂСЏРЅС‹.'), PChar('Р’С‹С…РѕРґ'),
         MB_ICONQUESTION + MB_YESNO + MB_DEFBUTTON1 + MB_TASKMODAL) = IDYES Then
     Begin
         FrmWelcomeWindow.Show;
@@ -131,7 +131,7 @@ Begin
     ChessEngine.Free;
 End;
 
-{ обработка левой подпанели }
+{ РѕР±СЂР°Р±РѕС‚РєР° Р»РµРІРѕР№ РїРѕРґРїР°РЅРµР»Рё }
 
 Procedure TfrmGameForm.UpdateScreen();
     Procedure UpdateCaption(Caption: String);
@@ -143,19 +143,19 @@ Begin
     PbBoard.Invalidate;
     Case ChessEngine.GameState Of
         WhiteWin:
-            UpdateCaption('Белые выиграли!');
+            UpdateCaption('Р‘РµР»С‹Рµ РІС‹РёРіСЂР°Р»Рё!');
         BlackWin:
-            UpdateCaption('Черные выиграли!');
+            UpdateCaption('Р§РµСЂРЅС‹Рµ РІС‹РёРіСЂР°Р»Рё!');
         Draw:
-            UpdateCaption('Ничья!');
+            UpdateCaption('РќРёС‡СЊСЏ!');
         Playing:
-            UpdateCaption('Идет игра...');
+            UpdateCaption('РРґРµС‚ РёРіСЂР°...');
     End;
     If ChessEngine.GameState In [WhiteWin, BlackWin, Draw] Then;
 End;
 
-{ Обработка панелей-кнопок на SplitView }
-{ смена цвета }
+{ РћР±СЂР°Р±РѕС‚РєР° РїР°РЅРµР»РµР№-РєРЅРѕРїРѕРє РЅР° SplitView }
+{ СЃРјРµРЅР° С†РІРµС‚Р° }
 Procedure TfrmGameForm.PMenuButtonAnalysisMouseEnter(Sender: TObject);
 Begin
     PMenuButtonAnalysis.Color := $00383632;
@@ -196,7 +196,7 @@ Begin
     PMenuButtonSettings.Color := $002B2722;
 End;
 
-{ нажатие на кнопки-панели }
+{ РЅР°Р¶Р°С‚РёРµ РЅР° РєРЅРѕРїРєРё-РїР°РЅРµР»Рё }
 
 Procedure TfrmGameForm.PMenuButtonBackToWelcomeClick(Sender: TObject);
 Begin
@@ -229,7 +229,7 @@ Begin
         SplvMenu.Opened := False;
 End;
 
-{ Обработка доски }
+{ РћР±СЂР°Р±РѕС‚РєР° РґРѕСЃРєРё }
 
 Procedure TfrmGameForm.PbBoardPaint(Sender: TObject);
 Const
@@ -246,7 +246,7 @@ Begin
 
     CellSide := CellSize();
 
-    // идем из левого верхнего вниз
+    // РёРґРµРј РёР· Р»РµРІРѕРіРѕ РІРµСЂС…РЅРµРіРѕ РІРЅРёР·
     For Col := 0 To COL_COUNT - 1 Do
     Begin
         For Row := 0 To ROW_COUNT - 1 Do
@@ -271,7 +271,7 @@ Begin
     Cell := ChessEngine.Board[Col, Row];
     CellSide := CellSize();
 
-    { отрисовка пустых клеток}
+    { РѕС‚СЂРёСЃРѕРІРєР° РїСѓСЃС‚С‹С… РєР»РµС‚РѕРє}
 
     If IsLightSquare Then
     Begin
@@ -299,17 +299,19 @@ Begin
         BoardCanvas.TextOut(Col * CellSide + CellSide - 10, Row * CellSide, IntToStr(8 - Row));
     End;
 
-    {отрисовка фигур}
+    {РѕС‚СЂРёСЃРѕРІРєР° С„РёРіСѓСЂ}
 
-    If Cell.Piece <> Null Then
-
+    if Cell.Piece <> nil Then
+    begin
+        Cell.Piece.Piece.DrawPiece(Self);
+    end;
 End;
 
 Function TfrmGameForm.CellSize(): Integer;
 Const
-    СOL_AND_ROW_COUNT = 8;
+    РЎOL_AND_ROW_COUNT = 8;
 Begin
-    CellSize := (PbBoard.Width - 1) Div СOL_AND_ROW_COUNT;
+    CellSize := (PbBoard.Width - 1) Div РЎOL_AND_ROW_COUNT;
 End;
 
 Procedure TfrmGameForm.InitializeBoard();
@@ -323,7 +325,7 @@ Begin
     Cell := ChessEngine.Board[CoordX, CoordY];
 End;
 
-{ обработка нажатий мыши }
+{ РѕР±СЂР°Р±РѕС‚РєР° РЅР°Р¶Р°С‚РёР№ РјС‹С€Рё }
 
 Procedure TfrmGameForm.PbBoardMouseUp(Sender: TObject; Button: TMouseButton; Shift: TShiftState;
     X, Y: Integer);
@@ -344,11 +346,11 @@ Begin
     Case Button Of
         MbLeft:
             Begin
-                ShowMessage('ЛЕВАЧЬЕ');
+                ShowMessage('Р›Р•Р’РђР§Р¬Р•');
             End;
         MbRight:
             Begin
-                ShowMessage('ПРАВАЯ ВАТА');
+                ShowMessage('РџР РђР’РђРЇ Р’РђРўРђ');
             End;
     End;
 
