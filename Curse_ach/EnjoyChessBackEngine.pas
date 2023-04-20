@@ -176,6 +176,7 @@ Begin
     TempPNG := TPngImage.Create;
     TempPNG.LoadFromFile('skins\tatiana\' + PieceName + '.png');
     PieceBitmap.Assign(TempPNG);
+    PieceBitmap.Transparent := True;
     TempPNG.Free;
 End;
 

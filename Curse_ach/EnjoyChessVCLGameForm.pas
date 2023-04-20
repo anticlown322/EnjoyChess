@@ -240,7 +240,7 @@ Const
     COL_COUNT = 8;
 Var
     BoardCanvas: TCanvas;
-    CellRect, BoardRect: TRect;
+    CellRect: TRect;
     Col, Row, CellSide: Integer;
     IsLightSquare: Boolean;
     BufferBitmap: TBitmap;
@@ -269,8 +269,8 @@ Begin
 
     Try
         // BoardCanvas.Draw(0, 0, BufferBitmap); - разницы в работе не заметил
-            BitBlt(BoardCanvas.Handle, 0, 0, COL_COUNT * CellSide, ROW_COUNT * CellSide,
-                BufferBitmap.Canvas.Handle, 0, 0, SRCCOPY);
+        BitBlt(BoardCanvas.Handle, 0, 0, COL_COUNT * CellSide, ROW_COUNT * CellSide,
+            BufferBitmap.Canvas.Handle, 0, 0, SRCCOPY);
     Finally
         BufferBitmap.Free;
     End;
@@ -321,11 +321,32 @@ End;
 
 Procedure TfrmGameForm.DrawPiece(BufferBitmap: TBitmap; Piece: TPiece);
 Var
-    CellSide: Integer;
+    CellSide, Coeff: Integer;
+    TempBitmap: TBitmap;
 Begin
     CellSide := CellSize();
-    BufferBitmap.Canvas.Draw(Piece.Position.CoordX * CellSide + 12, Piece.Position.CoordY * CellSide
-        + 10, Piece.PBitmap);
+
+    If WindowState <> WsMaximized Then
+    Begin
+        TempBitmap := TBitmap.Create;
+        TempBitmap.Height := CellSide;
+        TempBitmap.Width := CellSide;
+        TempBitmap.Transparent := True;
+        Coeff := 2;
+
+        Try
+            SetStretchBltMode(TempBitmap.Canvas.Handle, STRETCH_HALFTONE);
+            StretchBlt(TempBitmap.Canvas.Handle, 0, 0, CellSide, CellSide,
+                Piece.PBitmap.Canvas.Handle, 0, 0, CellSide * Coeff, CellSide * Coeff, SRCCopy);
+            BufferBitmap.Canvas.Draw(Piece.Position.CoordX * CellSide + CellSide Div 8 + 2,
+                Piece.Position.CoordY * CellSide + CellSide Div 10 + 2, TempBitmap);
+        Finally
+            TempBitmap.Free;
+        End;
+    End
+    Else
+        BufferBitmap.Canvas.Draw(Piece.Position.CoordX * CellSide + 12,
+            Piece.Position.CoordY * CellSide + 10, Piece.PBitmap);
 End;
 
 Function TfrmGameForm.CellSize(): Integer;
