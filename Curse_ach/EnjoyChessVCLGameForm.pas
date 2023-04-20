@@ -112,6 +112,8 @@ Begin
     // Setting := TSettings.Create;
     // дальше все свойства дефолт настроек
     InitializeBoard();
+    BorderStyle := BsNone;
+    WindowState := WsMaximized;
 End;
 
 Procedure TfrmGameForm.FormCloseQuery(Sender: TObject; Var CanClose: Boolean);
@@ -301,11 +303,8 @@ Begin
     End;
 
     { отрисовка фигур }
-
-    If Cell.Piece <> Nil Then
-    Begin
+    if Cell.Piece <> nil Then
         DrawPiece(Cell.Piece.Piece);
-    End;
 End;
 
 Procedure TfrmGameForm.DrawPiece(Piece: TPiece);
@@ -313,9 +312,7 @@ Var
     CellSide: Integer;
 Begin
     CellSide := CellSize();
-    Piece.PPaintBox.Left := Piece.Position.CoordX * CellSide + CellSide Div 3 + 5;
-    Piece.PPaintBox.Top := Piece.Position.CoordY * CellSide + CellSide Div 3 + 5;
-    Piece.PaintPiece(Self);
+    PbBoard.Canvas.Draw(Piece.Position.CoordX * CellSide, Piece.Position.CoordY * CellSide, Piece.PBitmap);
 End;
 
 Function TfrmGameForm.CellSize(): Integer;
