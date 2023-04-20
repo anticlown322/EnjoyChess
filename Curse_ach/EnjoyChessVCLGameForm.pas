@@ -68,6 +68,7 @@ Type
         PbBoard: TPaintBox;
         ActlAnimation: TActionList;
         LbGameState: TLabel;
+    vilIcons: TVirtualImageList;
         Procedure FormCloseQuery(Sender: TObject; Var CanClose: Boolean);
         Procedure ViMenuBarClick(Sender: TObject);
         Procedure PMenuButtonAnalysisMouseEnter(Sender: TObject);
@@ -112,7 +113,7 @@ Begin
     // Setting := TSettings.Create;
     // дальше все свойства дефолт настроек
     InitializeBoard();
-    //BorderStyle := BsNone;
+    BorderStyle := BsNone;
     WindowState := WsMaximized;
 End;
 

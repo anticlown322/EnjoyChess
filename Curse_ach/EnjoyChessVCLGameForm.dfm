@@ -6,8 +6,10 @@ object frmGameForm: TfrmGameForm
   Margins.Right = 0
   Margins.Bottom = 0
   Anchors = []
-  ClientHeight = 461
-  ClientWidth = 884
+  BorderStyle = bsSingle
+  Caption = 'EnjoyChess'
+  ClientHeight = 471
+  ClientWidth = 894
   Color = clBtnFace
   Constraints.MinHeight = 500
   Constraints.MinWidth = 900
@@ -2142,8 +2144,8 @@ object frmGameForm: TfrmGameForm
   object grpBack: TGridPanel
     Left = 0
     Top = 0
-    Width = 884
-    Height = 461
+    Width = 894
+    Height = 471
     Align = alClient
     BevelOuter = bvNone
     ColumnCollection = <
@@ -2189,13 +2191,13 @@ object frmGameForm: TfrmGameForm
         Value = 100.000000000000000000
       end>
     TabOrder = 0
-    ExplicitWidth = 894
-    ExplicitHeight = 471
+    ExplicitWidth = 884
+    ExplicitHeight = 461
     object pBoard: TPanel
-      Left = 194
+      Left = 197
       Top = 51
-      Width = 416
-      Height = 410
+      Width = 420
+      Height = 420
       Align = alClient
       Anchors = [akTop, akRight, akBottom]
       BevelOuter = bvNone
@@ -2208,31 +2210,29 @@ object frmGameForm: TfrmGameForm
       ParentBackground = False
       ParentDoubleBuffered = False
       TabOrder = 0
-      ExplicitLeft = 197
-      ExplicitWidth = 420
-      ExplicitHeight = 420
+      ExplicitLeft = 194
+      ExplicitWidth = 416
+      ExplicitHeight = 410
       DesignSize = (
-        416
-        410)
+        420
+        420)
       object pbBoard: TPaintBox
         Left = 22
         Top = 20
-        Width = 360
-        Height = 354
+        Width = 364
+        Height = 364
         Anchors = [akLeft, akTop, akRight, akBottom]
         Color = 3223083
         ParentColor = False
         OnMouseUp = pbBoardMouseUp
         OnPaint = pbBoardPaint
-        ExplicitWidth = 364
-        ExplicitHeight = 364
       end
     end
     object pLeft: TPanel
       Left = 0
       Top = 51
-      Width = 194
-      Height = 410
+      Width = 197
+      Height = 420
       Align = alClient
       Anchors = [akLeft, akTop, akBottom]
       BevelOuter = bvNone
@@ -2245,17 +2245,17 @@ object frmGameForm: TfrmGameForm
       ParentBackground = False
       ParentFont = False
       TabOrder = 1
-      ExplicitWidth = 197
-      ExplicitHeight = 420
+      ExplicitWidth = 194
+      ExplicitHeight = 410
       DesignSize = (
-        194
-        410)
+        197
+        420)
       object pGameInfo: TPanel
         AlignWithMargins = True
         Left = 12
         Top = 13
-        Width = 171
-        Height = 183
+        Width = 174
+        Height = 193
         Margins.Left = 10
         Margins.Top = 10
         Margins.Right = 5
@@ -2266,8 +2266,8 @@ object frmGameForm: TfrmGameForm
         Constraints.MaxWidth = 174
         ParentBackground = False
         TabOrder = 0
-        ExplicitWidth = 174
-        ExplicitHeight = 193
+        ExplicitWidth = 171
+        ExplicitHeight = 183
         object lbGameMode: TLabel
           Left = 8
           Top = 7
@@ -2328,14 +2328,14 @@ object frmGameForm: TfrmGameForm
         Left = 0
         Top = 0
         Width = 0
-        Height = 410
+        Height = 420
         Color = 2828066
         Opened = False
         OpenedWidth = 200
         Placement = svpLeft
         TabOrder = 1
         UseAnimation = False
-        ExplicitHeight = 420
+        ExplicitHeight = 410
         object pMenuButtonSettings: TPanel
           Left = 0
           Top = 82
@@ -2400,7 +2400,7 @@ object frmGameForm: TfrmGameForm
     object pTop: TPanel
       Left = 0
       Top = 0
-      Width = 884
+      Width = 894
       Height = 51
       Align = alClient
       BevelOuter = bvNone
@@ -2413,7 +2413,7 @@ object frmGameForm: TfrmGameForm
       ParentBackground = False
       ParentFont = False
       TabOrder = 2
-      ExplicitWidth = 894
+      ExplicitWidth = 884
       object viMenuBar: TVirtualImage
         Left = 0
         Top = 0
@@ -2432,23 +2432,23 @@ object frmGameForm: TfrmGameForm
       end
       object lbUsername: TLabel
         AlignWithMargins = True
-        Left = 867
+        Left = 711
         Top = 10
-        Width = 7
+        Width = 173
         Height = 38
         Margins.Top = 10
         Margins.Right = 10
         Align = alRight
         Alignment = taRightJustify
-        ExplicitLeft = 877
+        Caption = #1048#1084#1103' '#1087#1088#1086#1092#1080#1083#1103
         ExplicitHeight = 29
       end
     end
     object pRight: TPanel
-      Left = 610
+      Left = 617
       Top = 51
-      Width = 274
-      Height = 410
+      Width = 277
+      Height = 420
       Align = alClient
       BevelOuter = bvNone
       Color = 3223083
@@ -2457,22 +2457,20 @@ object frmGameForm: TfrmGameForm
       Font.Height = -29
       Font.Name = 'Tahoma'
       Font.Style = [fsBold]
-      Padding.Left = 5
+      Padding.Left = 10
       Padding.Top = 5
       Padding.Right = 5
       Padding.Bottom = 5
       ParentBackground = False
       ParentFont = False
       TabOrder = 3
-      ExplicitLeft = 617
-      ExplicitWidth = 277
-      ExplicitHeight = 420
-      DesignSize = (
-        274
-        410)
+      ExplicitLeft = 616
+      ExplicitTop = 54
+      ExplicitWidth = 274
+      ExplicitHeight = 410
       object lbTimeOpponent: TLabel
         AlignWithMargins = True
-        Left = 15
+        Left = 20
         Top = 15
         Width = 110
         Height = 42
@@ -2487,19 +2485,20 @@ object frmGameForm: TfrmGameForm
         Font.Name = 'Tahoma'
         Font.Style = [fsBold]
         ParentFont = False
+        ExplicitLeft = 15
         ExplicitWidth = 101
       end
       object lbTimePlayer: TLabel
         AlignWithMargins = True
-        Left = 21
-        Top = 329
-        Width = 98
-        Height = 32
+        Left = 20
+        Top = 366
+        Width = 110
+        Height = 42
         Margins.Left = 10
         Margins.Top = 0
         Margins.Right = 0
         Margins.Bottom = 10
-        Anchors = [akLeft, akTop, akRight, akBottom]
+        Align = alTop
         Caption = '00:00'
         Constraints.MaxHeight = 350
         Constraints.MaxWidth = 110
@@ -2510,20 +2509,19 @@ object frmGameForm: TfrmGameForm
         Font.Style = [fsBold]
         ParentFont = False
         Layout = tlBottom
-        ExplicitWidth = 101
-        ExplicitHeight = 42
+        ExplicitLeft = 13
+        ExplicitTop = 353
       end
       object lbnNamePlayer: TLabel
         AlignWithMargins = True
-        Left = 23
-        Top = 293
-        Width = 94
+        Left = 20
+        Top = 327
+        Width = 249
         Height = 29
         Margins.Left = 10
         Margins.Bottom = 10
-        Anchors = [akLeft, akRight]
+        Align = alTop
         Caption = #1048#1075#1088#1086#1082' 1'
-        Constraints.MaxWidth = 200
         Font.Charset = DEFAULT_CHARSET
         Font.Color = clWhite
         Font.Height = -24
@@ -2531,21 +2529,23 @@ object frmGameForm: TfrmGameForm
         Font.Style = [fsBold]
         ParentFont = False
         Layout = tlBottom
-        ExplicitTop = 301
-        ExplicitWidth = 97
+        ExplicitLeft = 13
+        ExplicitTop = 314
+        ExplicitWidth = 246
       end
       object lbNameOpponent: TLabel
         AlignWithMargins = True
-        Left = 15
+        Left = 20
         Top = 60
         Width = 200
-        Height = 19
+        Height = 29
         Margins.Left = 10
         Margins.Top = 0
         Margins.Bottom = 0
         Align = alTop
         Anchors = [akLeft, akTop, akRight, akBottom]
         Caption = #1048#1075#1088#1086#1082' 2'
+        Constraints.MaxHeight = 29
         Constraints.MaxWidth = 200
         Font.Charset = DEFAULT_CHARSET
         Font.Color = clWhite
@@ -2553,63 +2553,88 @@ object frmGameForm: TfrmGameForm
         Font.Name = 'Tahoma'
         Font.Style = [fsBold]
         ParentFont = False
+        ExplicitLeft = 15
         ExplicitWidth = 97
-        ExplicitHeight = 29
       end
       object pGameOptions: TPanel
-        Left = 14
-        Top = 263
-        Width = 241
-        Height = 24
+        AlignWithMargins = True
+        Left = 15
+        Top = 285
+        Width = 252
+        Height = 34
+        Margins.Left = 5
+        Margins.Top = 0
+        Margins.Right = 5
+        Margins.Bottom = 5
+        Align = alTop
         Anchors = [akLeft, akTop, akRight, akBottom]
         BevelOuter = bvNone
         Color = 3683890
-        Constraints.MaxHeight = 316
+        Constraints.MaxHeight = 48
         ParentBackground = False
         TabOrder = 0
-        ExplicitWidth = 244
-        ExplicitHeight = 34
+        ExplicitTop = 265
+        ExplicitWidth = 249
+        ExplicitHeight = 24
         object sdbtResign: TSpeedButton
-          Left = 0
+          AlignWithMargins = True
+          Left = 5
           Top = 0
-          Width = 29
-          Height = 24
+          Width = 27
+          Height = 34
+          Margins.Left = 5
+          Margins.Top = 0
+          Margins.Right = 0
+          Margins.Bottom = 0
           Align = alLeft
           Anchors = [akLeft, akTop, akRight, akBottom]
           Constraints.MaxWidth = 48
-          Images = vilImages_48
+          ImageIndex = 1
+          ImageName = 'resign'
+          Images = vilIcons
           Flat = True
-          ExplicitTop = 6
-          ExplicitWidth = 32
-          ExplicitHeight = 32
+          ExplicitWidth = 24
+          ExplicitHeight = 24
         end
         object sdbtDraw: TSpeedButton
-          Left = 29
+          AlignWithMargins = True
+          Left = 37
           Top = 0
-          Width = 30
-          Height = 24
+          Width = 27
+          Height = 34
+          Margins.Left = 5
+          Margins.Top = 0
+          Margins.Right = 0
+          Margins.Bottom = 0
           Align = alLeft
           Anchors = [akLeft, akTop, akRight, akBottom]
           Constraints.MaxWidth = 48
-          Images = vilImages_48
+          ImageIndex = 0
+          ImageName = 'one-half'
+          Images = vilIcons
           Flat = True
-          ExplicitLeft = 24
-          ExplicitTop = 7
-          ExplicitWidth = 33
-          ExplicitHeight = 32
+          ExplicitLeft = 29
+          ExplicitWidth = 24
+          ExplicitHeight = 24
         end
       end
       object memNotation: TMemo
-        Left = 14
+        AlignWithMargins = True
+        Left = 15
         Top = 128
-        Width = 241
-        Height = 129
+        Width = 252
+        Height = 157
+        Margins.Left = 5
+        Margins.Top = 0
+        Margins.Right = 5
+        Margins.Bottom = 0
+        Align = alTop
         Anchors = [akLeft, akTop, akRight, akBottom]
         BevelInner = bvNone
         BevelOuter = bvNone
         BorderStyle = bsNone
         Color = 2499617
-        Constraints.MaxHeight = 400
+        Constraints.MaxHeight = 420
         Enabled = False
         Font.Charset = DEFAULT_CHARSET
         Font.Color = clWhite
@@ -2621,79 +2646,85 @@ object frmGameForm: TfrmGameForm
         ParentFont = False
         ReadOnly = True
         TabOrder = 1
-        ExplicitWidth = 244
-        ExplicitHeight = 139
+        ExplicitLeft = 14
+        ExplicitTop = 112
+        ExplicitWidth = 241
+        ExplicitHeight = 153
       end
       object pMoveOptions: TPanel
-        Left = 14
-        Top = 96
-        Width = 241
-        Height = 24
+        AlignWithMargins = True
+        Left = 15
+        Top = 94
+        Width = 252
+        Height = 34
+        Margins.Left = 5
+        Margins.Top = 5
+        Margins.Right = 5
+        Margins.Bottom = 0
+        Align = alTop
         Anchors = [akLeft, akTop, akRight, akBottom]
         BevelOuter = bvNone
         Color = 3683890
         Constraints.MaxHeight = 48
         ParentBackground = False
         TabOrder = 2
-        ExplicitWidth = 244
-        ExplicitHeight = 34
+        ExplicitLeft = 8
+        ExplicitWidth = 249
+        ExplicitHeight = 24
         object sdbtToEnding: TSpeedButton
-          Left = 87
+          Left = 81
           Top = 0
-          Width = 29
-          Height = 24
+          Width = 27
+          Height = 34
           Align = alLeft
           Anchors = [akLeft, akTop, akRight, akBottom]
           Constraints.MaxWidth = 48
           Images = vilImages_48
           Flat = True
-          ExplicitLeft = 96
-          ExplicitTop = -4
-          ExplicitWidth = 32
-          ExplicitHeight = 32
+          ExplicitLeft = 72
+          ExplicitWidth = 24
+          ExplicitHeight = 24
         end
         object sdbtNextMove: TSpeedButton
-          Left = 58
+          Left = 54
           Top = 0
-          Width = 29
-          Height = 24
+          Width = 27
+          Height = 34
           Align = alLeft
           Anchors = [akLeft, akTop, akRight, akBottom]
           Constraints.MaxWidth = 48
           Images = vilImages_48
           Flat = True
-          ExplicitLeft = 8
-          ExplicitWidth = 32
-          ExplicitHeight = 32
+          ExplicitLeft = 74
+          ExplicitWidth = 24
+          ExplicitHeight = 24
         end
         object sdbtPrevMove: TSpeedButton
-          Left = 29
+          Left = 27
           Top = 0
-          Width = 29
-          Height = 24
+          Width = 27
+          Height = 34
           Align = alLeft
           Anchors = [akLeft, akTop, akRight, akBottom]
           Constraints.MaxWidth = 48
           Images = vilImages_48
           Flat = True
-          ExplicitLeft = 26
-          ExplicitTop = -4
-          ExplicitWidth = 32
-          ExplicitHeight = 32
+          ExplicitLeft = 37
+          ExplicitWidth = 24
+          ExplicitHeight = 24
         end
         object sdbtToBegining: TSpeedButton
           Left = 0
           Top = 0
-          Width = 29
-          Height = 24
+          Width = 27
+          Height = 34
           Align = alLeft
           Anchors = [akLeft, akTop, akRight, akBottom]
           Constraints.MaxWidth = 48
           Images = vilImages_48
           Flat = True
-          ExplicitTop = -5
-          ExplicitWidth = 32
-          ExplicitHeight = 32
+          ExplicitWidth = 24
+          ExplicitHeight = 24
         end
       end
     end
@@ -2745,5 +2776,28 @@ object frmGameForm: TfrmGameForm
   object actlAnimation: TActionList
     Left = 689
     Top = 9
+  end
+  object vilIcons: TVirtualImageList
+    DisabledGrayscale = False
+    DisabledSuffix = '_Disabled'
+    Images = <
+      item
+        CollectionIndex = 0
+        CollectionName = 'one-half'
+        Disabled = False
+        Name = 'one-half'
+      end
+      item
+        CollectionIndex = 1
+        CollectionName = 'resign'
+        Disabled = False
+        Name = 'resign'
+      end>
+    ImageCollection = dtmdData.imcIcons
+    PreserveItems = True
+    Width = 24
+    Height = 24
+    Left = 808
+    Top = 8
   end
 end
