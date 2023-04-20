@@ -14,40 +14,23 @@ object frmLoadingScreen: TfrmLoadingScreen
   FormStyle = fsStayOnTop
   OldCreateOrder = False
   Position = poScreenCenter
+  OnCreate = FormCreate
   PixelsPerInch = 96
   TextHeight = 13
-  object Label1: TLabel
-    Left = 192
-    Top = 256
-    Width = 184
-    Height = 25
-    Caption = #1044#1086#1073#1088#1086' '#1055#1086#1078#1072#1083#1086#1074#1072#1090#1100
-    Font.Charset = DEFAULT_CHARSET
-    Font.Color = clWindowText
-    Font.Height = -21
-    Font.Name = 'Tahoma'
-    Font.Style = []
-    ParentFont = False
-  end
-  object prgbLoadingBar: TProgressBar
-    Left = 192
-    Top = 320
-    Width = 184
-    Height = 25
-    Smooth = True
-    SmoothReverse = True
-    TabOrder = 0
+  object VirtualImage1: TVirtualImage
+    Left = 96
+    Top = 24
+    Width = 400
+    Height = 400
+    ImageCollection = dtmdData.imcOther
+    ImageWidth = 0
+    ImageHeight = 0
+    ImageIndex = 2
+    ImageName = 'logo'
   end
   object tmrEndLoadingScreen: TTimer
-    Interval = 100
     OnTimer = tmrEndLoadingScreenTimer
     Left = 504
     Top = 24
-  end
-  object tmrLoadingBar: TTimer
-    Interval = 500
-    OnTimer = tmrLoadingBarTimer
-    Left = 504
-    Top = 72
   end
 end

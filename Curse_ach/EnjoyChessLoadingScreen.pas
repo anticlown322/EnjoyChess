@@ -3,7 +3,7 @@ Unit EnjoyChessLoadingScreen;
 Interface
 
 Uses
-    Winapi.Windows,
+    Windows,
     Winapi.Messages,
     System.SysUtils,
     System.Variants,
@@ -14,20 +14,14 @@ Uses
     Vcl.Dialogs,
     Vcl.StdCtrls,
     Vcl.ExtCtrls,
-    Vcl.ComCtrls;
+    Vcl.ComCtrls, EnjoyChessDataImages, Vcl.VirtualImage;
 
 Type
     TfrmLoadingScreen = Class(TForm)
-        Label1: TLabel;
         TmrEndLoadingScreen: TTimer;
-        PrgbLoadingBar: TProgressBar;
-        TmrLoadingBar: TTimer;
+    VirtualImage1: TVirtualImage;
         Procedure TmrEndLoadingScreenTimer(Sender: TObject);
-        Procedure TmrLoadingBarTimer(Sender: TObject);
-    Private
-        { Private declarations }
-    Public
-        { Public declarations }
+        Procedure FormCreate(Sender: TObject);
     End;
 
 Var
@@ -37,15 +31,14 @@ Implementation
 
 {$R *.dfm}
 
-Procedure TfrmLoadingScreen.TmrLoadingBarTimer(Sender: TObject);
+Procedure TfrmLoadingScreen.FormCreate(Sender: TObject);
+Var
+    HRgn: Cardinal;
 Begin
-    If PrgbLoadingBar.Position < PrgbLoadingBar.Max - PrgbLoadingBar.Step Then
-        PrgbLoadingBar.StepIt
-    Else
-    Begin
-        PrgbLoadingBar.StepIt;
-        TmrLoadingBar.Enabled := False;
-    End;
+    HRgn := CreateEllipticRgn(0, 0, 500, 500);
+    SetWindowRgn(Handle, HRgn, False);
+
+    TmrEndLoadingScreen.Enabled := True;
 End;
 
 Procedure TfrmLoadingScreen.TmrEndLoadingScreenTimer(Sender: TObject);
