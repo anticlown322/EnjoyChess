@@ -26,22 +26,18 @@ Type
         PiecePosition: TLocation;
         IsLightPiece: Boolean;
         PieceBitmap: TBitmap;
-        PieceImage: TImage;
-        // PiecePaintBox: TPaintBox;
-        // FigureID: Byte;
         // Function IsCheck(Position: TLocation): Boolean; Virtual; Abstract;
         // Function IsPossibleMove(Position: TLocation): Boolean; Virtual; Abstract;
     Protected
-
+        //Procedure SetBitmap();
+        //Function GetPosition(): TLocation;
+        //Function GetIsLight(): Boolean;
     Public
         Property Position: TLocation Read PiecePosition;
         Property IsLight: Boolean Read IsLightPiece;
         Property PBitmap: TBitmap Read PieceBitmap Write PieceBitmap;
-        Property PImage: TImage Read PieceImage Write PieceImage;
-        // Property PPaintBox: TPaintBox Read PiecePaintBox Write PiecePaintBox;
         Constructor Create(Position: TLocation; IsLightPiece: Boolean; PBBoard: TPaintBox;
             CellSide: Integer); Virtual;
-        // Procedure PaintPiece(Sender: TObject); Virtual;
         Destructor Destroy; Override;
     End;
 
@@ -177,29 +173,10 @@ Begin
 
     PieceName := PieceName + UpperCase(Copy(ClassName, 2, 1));
     PieceBitmap := TBitmap.Create;
-    PieceImage := TImage.Create(PBBoard);
-
     TempPNG := TPngImage.Create;
     TempPNG.LoadFromFile('skins\tatiana\' + PieceName + '.png');
     PieceBitmap.Assign(TempPNG);
     TempPNG.Free;
-
-    PieceImage.Proportional := True;
-    PieceImage.Stretch := True;
-    PieceImage.Picture.Bitmap := PieceBitmap;
-    // PiecePaintBox := TPaintBox.Create(PBBoard);
-    // PiecePaintBox.Parent := PBBoard.Parent;
-    // PiecePaintBox.OnPaint := PaintPiece;
-
-    PieceImage.Left := Position.CoordX * CellSide + CellSide Div 2;
-    PieceImage.Top := Position.CoordY * CellSide + CellSide Div 2;
-    PieceImage.Height := PieceImage.Height;
-    PieceImage.Width := PieceImage.Width;
-    PieceImage.Visible := True;
-    // PiecePaintBox.Height := PieceImage.Height;
-    // PiecePaintBox.Width := PieceImage.Width;
-
-    // PiecePaintBox.Invalidate;
 End;
 
 Destructor TPiece.Destroy;
@@ -221,11 +198,6 @@ Begin
     Inherited Create(Position, IsLightPiece, PBBoard, CellSide);
     IsPossibleCastle := True;
     IsAlreadyCastled := False;
-End;
-
-Procedure TPiece.PaintPiece(Sender: TObject);
-Begin
-    PiecePaintbox.Canvas.Draw(0, 0, PieceBitmap);
 End;
 
 { для доски }

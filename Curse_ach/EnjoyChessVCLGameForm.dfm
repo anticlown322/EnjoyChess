@@ -2179,6 +2179,8 @@ object frmGameForm: TfrmGameForm
         Control = pRight
         Row = 1
       end>
+    DoubleBuffered = False
+    ParentDoubleBuffered = False
     RowCollection = <
       item
         SizeStyle = ssAbsolute
@@ -2197,30 +2199,29 @@ object frmGameForm: TfrmGameForm
       Anchors = [akTop, akRight, akBottom]
       BevelOuter = bvNone
       Color = 3223083
+      DoubleBuffered = False
       Padding.Left = 5
       Padding.Top = 5
       Padding.Right = 5
       Padding.Bottom = 5
       ParentBackground = False
+      ParentDoubleBuffered = False
       TabOrder = 0
-      ExplicitTop = 52
-      ExplicitWidth = 419
-      ExplicitHeight = 418
+      ExplicitLeft = 199
+      ExplicitTop = 57
       DesignSize = (
         420
         420)
       object pbBoard: TPaintBox
         Left = 22
         Top = 20
-        Width = 365
-        Height = 378
+        Width = 364
+        Height = 364
         Anchors = [akLeft, akTop, akRight, akBottom]
         Color = 3223083
         ParentColor = False
         OnMouseUp = pbBoardMouseUp
         OnPaint = pbBoardPaint
-        ExplicitWidth = 366
-        ExplicitHeight = 366
       end
     end
     object pLeft: TPanel
@@ -2408,9 +2409,7 @@ object frmGameForm: TfrmGameForm
       ParentBackground = False
       ParentFont = False
       TabOrder = 2
-      ExplicitLeft = 1
-      ExplicitTop = 1
-      ExplicitWidth = 892
+      ExplicitLeft = 6
       object viMenuBar: TVirtualImage
         Left = 0
         Top = 0

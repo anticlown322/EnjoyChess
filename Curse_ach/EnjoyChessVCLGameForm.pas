@@ -88,9 +88,9 @@ Type
             X, Y: Integer);
     Private
         ChessEngine: TChessEngine;
-        Procedure DrawCell(Col, Row: Integer; CellRect: TRect; BoardCanvas: TCanvas;
+        Procedure DrawCell(Col, Row: Integer; CellRect: TRect; BufferBitmap: TBitmap;
             IsLightSquare: Boolean);
-        Procedure DrawPiece(Piece: TPiece);
+        Procedure DrawPiece(BufferBitmap: TBitmap; Piece: TPiece);
         Procedure InitializeBoard();
         Function CellSize(): Integer;
         Function Cell(CoordX, CoordY: Integer): TBoardCell;
@@ -112,8 +112,8 @@ Begin
     // Setting := TSettings.Create;
     // дальше все свойства дефолт настроек
     InitializeBoard();
-    BorderStyle := BsNone;
-    WindowState := WsMaximized;
+    // BorderStyle := BsNone;
+    // WindowState := WsMaximized;
 End;
 
 Procedure TfrmGameForm.FormCloseQuery(Sender: TObject; Var CanClose: Boolean);
@@ -239,15 +239,19 @@ Const
     ROW_COUNT = 8;
     COL_COUNT = 8;
 Var
-    Col, Row, CellSide: Integer;
     BoardCanvas: TCanvas;
-    CellRect: TRect;
+    CellRect, BoardRect: TRect;
+    Col, Row, CellSide: Integer;
     IsLightSquare: Boolean;
+    BufferBitmap: TBitmap;
 Begin
-    BoardCanvas := FrmGameForm.PbBoard.Canvas;
     IsLightSquare := True;
-
     CellSide := CellSize();
+
+    BoardCanvas := FrmGameForm.PbBoard.Canvas;
+    BufferBitmap := TBitmap.Create;
+    BufferBitmap.Height := COL_COUNT * CellSide;
+    BufferBitmap.Width := ROW_COUNT * CellSide;
 
     // идем из левого верхнего вниз
     For Col := 0 To COL_COUNT - 1 Do
@@ -256,16 +260,23 @@ Begin
         Begin
             CellRect := Rect(Col * CellSide, Row * CellSide, (Col + 1) * CellSide,
                 (Row + 1) * CellSide);
-            DrawCell(Col, Row, CellRect, BoardCanvas, IsLightSquare);
+            DrawCell(Col, Row, CellRect, BufferBitmap, IsLightSquare);
 
             IsLightSquare := Not IsLightSquare;
         End;
         IsLightSquare := Not IsLightSquare;
     End;
 
+    Try
+        // BoardCanvas.Draw(0, 0, BufferBitmap); - разницы в работе не заметил
+            BitBlt(BoardCanvas.Handle, 0, 0, COL_COUNT * CellSide, ROW_COUNT * CellSide,
+                BufferBitmap.Canvas.Handle, 0, 0, SRCCOPY);
+    Finally
+        BufferBitmap.Free;
+    End;
 End;
 
-Procedure TfrmGameForm.DrawCell(Col, Row: Integer; CellRect: TRect; BoardCanvas: TCanvas;
+Procedure TfrmGameForm.DrawCell(Col, Row: Integer; CellRect: TRect; BufferBitmap: TBitmap;
     IsLightSquare: Boolean);
 Var
     Cell: TBoardCell;
@@ -278,41 +289,43 @@ Begin
 
     If IsLightSquare Then
     Begin
-        BoardCanvas.Brush.Color := $F0D9B5; // light
-        BoardCanvas.Font.Color := $B58863; // dark
+        BufferBitmap.Canvas.Brush.Color := $F0D9B5; // light
+        BufferBitmap.Canvas.Font.Color := $B58863; // dark
     End
     Else
     Begin
-        BoardCanvas.Brush.Color := $B58863; // dark
-        BoardCanvas.Font.Color := $F0D9B5; // light
+        BufferBitmap.Canvas.Brush.Color := $B58863; // dark
+        BufferBitmap.Canvas.Font.Color := $F0D9B5; // light
     End;
 
-    BoardCanvas.FillRect(CellRect);
+    BufferBitmap.Canvas.FillRect(CellRect);
 
-    BoardCanvas.Font.Style := [FsBold];
-    BoardCanvas.Font.Size := 8;
+    BufferBitmap.Canvas.Font.Style := [FsBold];
+    BufferBitmap.Canvas.Font.Size := 8;
 
     If (Row = 7) Then
     Begin
-        BoardCanvas.TextOut(Col * CellSide + CellSide Div 10, Row * CellSide + CellSide - 17,
-            Chr(ORD('a') + Col));
+        BufferBitmap.Canvas.TextOut(Col * CellSide + CellSide Div 10,
+            Row * CellSide + CellSide - 17, Chr(ORD('a') + Col));
     End;
     If (Col = 7) Then
     Begin
-        BoardCanvas.TextOut(Col * CellSide + CellSide - 10, Row * CellSide, IntToStr(8 - Row));
+        BufferBitmap.Canvas.TextOut(Col * CellSide + CellSide - 10, Row * CellSide,
+            IntToStr(8 - Row));
     End;
 
     { отрисовка фигур }
-    if Cell.Piece <> nil Then
-        DrawPiece(Cell.Piece.Piece);
+    If Cell.Piece <> Nil Then
+        DrawPiece(BufferBitmap, Cell.Piece.Piece);
 End;
 
-Procedure TfrmGameForm.DrawPiece(Piece: TPiece);
+Procedure TfrmGameForm.DrawPiece(BufferBitmap: TBitmap; Piece: TPiece);
 Var
     CellSide: Integer;
 Begin
     CellSide := CellSize();
-    PbBoard.Canvas.Draw(Piece.Position.CoordX * CellSide, Piece.Position.CoordY * CellSide, Piece.PBitmap);
+    BufferBitmap.Canvas.Draw(Piece.Position.CoordX * CellSide + 12, Piece.Position.CoordY * CellSide
+        + 10, Piece.PBitmap);
 End;
 
 Function TfrmGameForm.CellSize(): Integer;
