@@ -14,12 +14,12 @@ Uses
     Vcl.Dialogs,
     Vcl.StdCtrls,
     Vcl.ExtCtrls,
-    Vcl.ComCtrls, EnjoyChessDataImages, Vcl.VirtualImage;
+    Vcl.ComCtrls, EnjoyChessDataImages, Vcl.VirtualImage, Vcl.Imaging.pngimage;
 
 Type
     TfrmLoadingScreen = Class(TForm)
         TmrEndLoadingScreen: TTimer;
-    VirtualImage1: TVirtualImage;
+    imLogo: TImage;
         Procedure TmrEndLoadingScreenTimer(Sender: TObject);
         Procedure FormCreate(Sender: TObject);
     End;
