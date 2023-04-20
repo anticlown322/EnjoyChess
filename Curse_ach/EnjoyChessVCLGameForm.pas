@@ -112,8 +112,8 @@ Begin
     // Setting := TSettings.Create;
     // дальше все свойства дефолт настроек
     InitializeBoard();
-    // BorderStyle := BsNone;
-    // WindowState := WsMaximized;
+    //BorderStyle := BsNone;
+    WindowState := WsMaximized;
 End;
 
 Procedure TfrmGameForm.FormCloseQuery(Sender: TObject; Var CanClose: Boolean);
@@ -396,7 +396,7 @@ Begin
             End;
     End;
 
-    UpdateScreen;
+    UpdateScreen();
 End;
 
 End.

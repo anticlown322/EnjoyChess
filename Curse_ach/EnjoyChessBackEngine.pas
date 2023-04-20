@@ -29,13 +29,15 @@ Type
         // Function IsCheck(Position: TLocation): Boolean; Virtual; Abstract;
         // Function IsPossibleMove(Position: TLocation): Boolean; Virtual; Abstract;
     Protected
-        //Procedure SetBitmap();
-        //Function GetPosition(): TLocation;
-        //Function GetIsLight(): Boolean;
+        Procedure SetBitmap(Value: TBitmap);
+        Function GetBitmap(): TBitmap;
+        Procedure SetPosition(Value: TLocation);
+        Function GetPosition(): TLocation;
+        Function GetIsLight(): Boolean;
     Public
-        Property Position: TLocation Read PiecePosition;
-        Property IsLight: Boolean Read IsLightPiece;
-        Property PBitmap: TBitmap Read PieceBitmap Write PieceBitmap;
+        Property Position: TLocation Read GetPosition Write SetPosition;
+        Property IsLight: Boolean Read GetIsLight;
+        Property PBitmap: TBitmap Read GetBitmap Write SetBitmap;
         Constructor Create(Position: TLocation; IsLightPiece: Boolean; PBBoard: TPaintBox;
             CellSide: Integer); Virtual;
         Destructor Destroy; Override;
@@ -148,7 +150,6 @@ Type
         // Procedure CheckWinState();
     Protected
         // Procedure FindPossibleMovesOfPiece();
-        // Procedure ForEveryCell(CellProc: TCellProc);
     Public
         Board: TBoard;
         GameState: TGameState;
@@ -178,6 +179,31 @@ Begin
     PieceBitmap.Assign(TempPNG);
     PieceBitmap.Transparent := True;
     TempPNG.Free;
+End;
+
+Procedure TPiece.SetBitmap(Value: TBitmap);
+Begin
+    PieceBitmap := Value;
+End;
+
+Function TPiece.GetBitmap(): TBitmap;
+Begin
+    GetBitmap := PieceBitmap;
+End;
+
+Procedure TPiece.SetPosition(Value: TLocation);
+Begin
+    PiecePosition := Value;
+End;
+
+Function TPiece.GetPosition(): TLocation;
+Begin
+    GetPosition := PiecePosition;
+End;
+
+Function TPiece.GetIsLight(): Boolean;
+Begin
+    GetIsLight := IsLightPiece;
 End;
 
 Destructor TPiece.Destroy;
@@ -234,7 +260,6 @@ Begin
     ExistingPieces := PiecePointer;
 
     // С левого верхнего угла + в массиве board индексация с нуля
-
     For I := 1 To 8 Do
     Begin
         // черная фигура
