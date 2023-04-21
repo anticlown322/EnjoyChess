@@ -1,10 +1,11 @@
 object frmLoadingScreen: TfrmLoadingScreen
   Left = 0
   Top = 0
+  AutoSize = True
   BorderIcons = []
   BorderStyle = bsNone
-  ClientHeight = 466
-  ClientWidth = 571
+  ClientHeight = 400
+  ClientWidth = 400
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText

@@ -46,9 +46,16 @@ Type
     TKing = Class(TPiece)
     Private
         IsPossibleCastle: Boolean;
-        IsAlreadyCastled: Boolean;
+        IsCastled: Boolean;
         // Function IsPossibleMove(Position: TLocation): Boolean; Override;
+    Protected
+        Function GetIsPossibleCastle(): Boolean;
+        Procedure SetIsPossibleCastle(Value: Boolean);
+        Function GetIsCastled(): Boolean;
+        Procedure SetIsCastled(Value: Boolean);
     Public
+        Property IsPossibleToCastle: Boolean Read GetIsPossibleCastle Write SetIsPossibleCastle;
+        Property IsAlreadyCastled: Boolean Read GetIsCastled Write SetIsCastled;
         Constructor Create(Position: TLocation; IsLightPiece: Boolean; PBBoard: TPaintBox;
             CellSide: Integer); Override;
     End;
@@ -75,7 +82,7 @@ Type
     End;
 
     TNKnight = Class(TPiece)
-        // N поставлена намеренно, т.к. при работе со скинами читается вторая буква класса
+        // N поставлена намеренно, т.к. при работе со скинами читается вторая буква конкретно этого класса
     Private
         // Function IsCheck(Position: TLocation): Boolean; Override;
         // Function IsPossibleMove(Position: TLocation): Boolean; Override;
@@ -86,7 +93,11 @@ Type
         FirstMove: Boolean;
         // Function IsCheck(Position: TLocation): Boolean; Override;
         // Function IsPossibleMove(Position: TLocation): Boolean; Override;
+    Protected
+        Function GetIsFirstMove(): Boolean;
+        Procedure SetIsFirstMove(Value: Boolean);
     Public
+        Property IsFirstMove: Boolean Read GetIsFirstMove Write SetIsFirstMove;
         Constructor Create(Position: TLocation; IsLightPiece: Boolean; PBBoard: TPaintBox;
             CellSide: Integer); Override;
     End;
@@ -212,6 +223,34 @@ Begin
     Inherited;
 End;
 
+Constructor TKing.Create(Position: TLocation; IsLightPiece: Boolean; PBBoard: TPaintBox;
+    CellSide: Integer);
+Begin
+    Inherited Create(Position, IsLightPiece, PBBoard, CellSide);
+    IsPossibleCastle := True;
+    IsAlreadyCastled := False;
+End;
+
+Procedure TKing.SetIsPossibleCastle(Value: Boolean);
+Begin
+    IsPossibleCastle := Value;
+End;
+
+Function TKing.GetIsPossibleCastle(): Boolean;
+Begin
+    GetIsPossibleCastle := IsPossibleCastle;
+End;
+
+Procedure TKing.SetIsCastled(Value: Boolean);
+Begin
+    IsCastled := Value;
+End;
+
+Function TKing.GetIsCastled(): Boolean;
+Begin
+    GetIsCastled := IsPossibleCastle;
+End;
+
 Constructor TPawn.Create(Position: TLocation; IsLightPiece: Boolean; PBBoard: TPaintBox;
     CellSide: Integer);
 Begin
@@ -219,12 +258,14 @@ Begin
     FirstMove := True;
 End;
 
-Constructor TKing.Create(Position: TLocation; IsLightPiece: Boolean; PBBoard: TPaintBox;
-    CellSide: Integer);
+Procedure TPawn.SetIsFirstMove(Value: Boolean);
 Begin
-    Inherited Create(Position, IsLightPiece, PBBoard, CellSide);
-    IsPossibleCastle := True;
-    IsAlreadyCastled := False;
+    IsFirstMove := Value;
+End;
+
+Function TPawn.GetIsFirstMove(): Boolean;
+Begin
+    GetIsFirstMove := IsFirstMove;
 End;
 
 { для доски }
