@@ -68,7 +68,8 @@ Type
         PbBoard: TPaintBox;
         ActlAnimation: TActionList;
         LbGameState: TLabel;
-    vilIcons: TVirtualImageList;
+        VilIcons: TVirtualImageList;
+        SdbtReverse: TSpeedButton;
         Procedure FormCloseQuery(Sender: TObject; Var CanClose: Boolean);
         Procedure ViMenuBarClick(Sender: TObject);
         Procedure PMenuButtonAnalysisMouseEnter(Sender: TObject);
@@ -85,12 +86,10 @@ Type
         Procedure PbBoardPaint(Sender: TObject);
         Procedure FormCreate(Sender: TObject);
         Procedure FormDestroy(Sender: TObject);
-        Procedure PbBoardMouseUp(Sender: TObject; Button: TMouseButton; Shift: TShiftState;
-            X, Y: Integer);
+        Procedure PbBoardMouseUp(Sender: TObject; Button: TMouseButton; Shift: TShiftState; X, Y: Integer);
     Private
         ChessEngine: TChessEngine;
-        Procedure DrawCell(Col, Row: Integer; CellRect: TRect; BufferBitmap: TBitmap;
-            IsLightSquare: Boolean);
+        Procedure DrawCell(Col, Row: Integer; CellRect: TRect; BufferBitmap: TBitmap; IsLightSquare: Boolean);
         Procedure DrawPiece(BufferBitmap: TBitmap; Piece: TPiece);
         Procedure InitializeBoard();
         Function CellSize(): Integer;
@@ -113,15 +112,14 @@ Begin
     // Setting := TSettings.Create;
     // дальше все свойства дефолт настроек
     InitializeBoard();
-    //BorderStyle := BsNone;
+    // BorderStyle := BsNone;
     WindowState := WsMaximized;
 End;
 
 Procedure TfrmGameForm.FormCloseQuery(Sender: TObject; Var CanClose: Boolean);
 Begin
-    If Application.MessageBox
-        (PChar('Вы уверены, что хотите выйти? Несохраненные данные будут утеряны.'), PChar('Выход'),
-        MB_ICONQUESTION + MB_YESNO + MB_DEFBUTTON1 + MB_TASKMODAL) = IDYES Then
+    If Application.MessageBox(PChar('Вы уверены, что хотите выйти? Несохраненные данные будут утеряны.'),
+        PChar('Выход'), MB_ICONQUESTION + MB_YESNO + MB_DEFBUTTON1 + MB_TASKMODAL) = IDYES Then
     Begin
         FrmWelcomeWindow.Show;
         CanClose := True
@@ -211,16 +209,16 @@ End;
 
 Procedure TfrmGameForm.PMenuButtonAnalysisClick(Sender: TObject);
 Begin
-    If Not Assigned(FrmAnalysis) Then
-        FrmAnalysis := TfrmAnalysis.Create(Self);
+    // If Not Assigned(FrmAnalysis) Then
+    FrmAnalysis := TfrmAnalysis.Create(Self);
     FrmGameForm.Hide;
     FrmAnalysis.Show;
 End;
 
 Procedure TfrmGameForm.PMenuButtonSettingsClick(Sender: TObject);
 Begin
-    If Not Assigned(FrmAnalysis) Then
-        FrmSettings := TfrmSettings.Create(Self);
+    // If Not Assigned(frmSettings) Then
+    FrmSettings := TfrmSettings.Create(Self);
     FrmGameForm.Hide;
     FrmSettings.Show;
 End;
@@ -259,8 +257,7 @@ Begin
     Begin
         For Row := 0 To ROW_COUNT - 1 Do
         Begin
-            CellRect := Rect(Col * CellSide, Row * CellSide, (Col + 1) * CellSide,
-                (Row + 1) * CellSide);
+            CellRect := Rect(Col * CellSide, Row * CellSide, (Col + 1) * CellSide, (Row + 1) * CellSide);
             DrawCell(Col, Row, CellRect, BufferBitmap, IsLightSquare);
 
             IsLightSquare := Not IsLightSquare;
@@ -306,13 +303,12 @@ Begin
 
     If (Row = 7) Then
     Begin
-        BufferBitmap.Canvas.TextOut(Col * CellSide + CellSide Div 10,
-            Row * CellSide + CellSide - 17, Chr(ORD('a') + Col));
+        BufferBitmap.Canvas.TextOut(Col * CellSide + CellSide Div 10, Row * CellSide + CellSide - 17,
+            Chr(ORD('a') + Col));
     End;
     If (Col = 7) Then
     Begin
-        BufferBitmap.Canvas.TextOut(Col * CellSide + CellSide - 10, Row * CellSide,
-            IntToStr(8 - Row));
+        BufferBitmap.Canvas.TextOut(Col * CellSide + CellSide - 10, Row * CellSide, IntToStr(8 - Row));
     End;
 
     { отрисовка фигур }
@@ -337,8 +333,8 @@ Begin
 
         Try
             SetStretchBltMode(TempBitmap.Canvas.Handle, STRETCH_HALFTONE);
-            StretchBlt(TempBitmap.Canvas.Handle, 0, 0, CellSide, CellSide,
-                Piece.PBitmap.Canvas.Handle, 0, 0, CellSide * Coeff, CellSide * Coeff, SRCCopy);
+            StretchBlt(TempBitmap.Canvas.Handle, 0, 0, CellSide, CellSide, Piece.PBitmap.Canvas.Handle, 0, 0,
+                CellSide * Coeff, CellSide * Coeff, SRCCopy);
             BufferBitmap.Canvas.Draw(Piece.Position.CoordX * CellSide + CellSide Div 8 + 2,
                 Piece.Position.CoordY * CellSide + CellSide Div 10 + 2, TempBitmap);
         Finally
@@ -346,8 +342,8 @@ Begin
         End;
     End
     Else
-        BufferBitmap.Canvas.Draw(Piece.Position.CoordX * CellSide + 12,
-            Piece.Position.CoordY * CellSide + 10, Piece.PBitmap);
+        BufferBitmap.Canvas.Draw(Piece.Position.CoordX * CellSide + 12, Piece.Position.CoordY * CellSide + 10,
+            Piece.PBitmap);
 End;
 
 Function TfrmGameForm.CellSize(): Integer;

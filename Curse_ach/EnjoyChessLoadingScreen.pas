@@ -24,6 +24,8 @@ Type
         TmrEndLoadingScreen: TTimer;
         TmrAlphaBlendChanging: TTimer;
         ImLogo: TImage;
+    lbLogo1: TLabel;
+    lbLogo2: TLabel;
         Procedure TmrEndLoadingScreenTimer(Sender: TObject);
         Procedure FormCreate(Sender: TObject);
         Procedure TmrAlphaBlendChangingTimer(Sender: TObject);

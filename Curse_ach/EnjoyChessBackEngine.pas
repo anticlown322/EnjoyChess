@@ -12,7 +12,7 @@ Uses
     Pngimage;
 
 Type
-    { Общее }
+    { Общее для других типов }
 
     TLocation = Record
         CoordX: 0 .. 8; // 0 - для ходов за пределы доски и отсуствия на доске
@@ -138,17 +138,16 @@ Type
     { Для клеток доски }
 
     TBoardCell = Record
-    Public
         Piece: TPListOfPieces;
-        IsLight: Boolean;
+        IsLight, IsActive, IsPossibleToMove, IsHighlighted: Boolean;
         CoordX, CoordY: Integer;
     End;
 
-    TCellProc = Reference To Procedure(Var Cell: TBoardCell);
+    // TCellProc = Reference To Procedure(Var Cell: TBoardCell);
 
     TBoard = Array Of Array OF TBoardCell;
 
-    { Класс бэковго движка, обеспечивающего связь. Типа интерфейс между бэком и формой игры }
+    { общий интерфейс между бэком и формой игры }
 
     TGameState = (Playing, WhiteWin, BlackWin, Draw);
 
@@ -158,13 +157,18 @@ Type
         TakenWhitePieces: TPListOfPieces;
         TakenBlackPieces: TPListOfPieces;
         FirstMove: Boolean;
-        // Procedure CheckWinState();
-    Protected
-        // Procedure FindPossibleMovesOfPiece();
-    Public
-        Board: TBoard;
-        GameState: TGameState;
+        PlayingBoard: TBoard;
+        CurrentGameState: TGameState;
         // Sound: TEnjoyChessSound;
+    Protected
+        Function GetBoard(): TBoard;
+        Procedure SetBoard(Value: TBoard);
+        Function GetGameState(): TGameState;
+        Procedure SetGameState(Value: TGameState);
+    Public
+        Property Board: TBoard Read GetBoard Write SetBoard;
+        Property GameState: TGameState Read GetGameState Write SetGameState;
+        // Procedure CheckWinState();
         Procedure InitializeBoard(BoardPaintBox: TPaintBox; CellSide: Integer);
     End;
 
@@ -172,8 +176,7 @@ Implementation
 
 { Для фигур }
 
-Constructor TPiece.Create(Position: TLocation; IsLightPiece: Boolean; PBBoard: TPaintBox;
-    CellSide: Integer);
+Constructor TPiece.Create(Position: TLocation; IsLightPiece: Boolean; PBBoard: TPaintBox; CellSide: Integer);
 Var
     PieceName: String;
     TempPNG: TPngImage;
@@ -186,7 +189,7 @@ Begin
     PieceName := PieceName + UpperCase(Copy(ClassName, 2, 1));
     PieceBitmap := TBitmap.Create;
     TempPNG := TPngImage.Create;
-    TempPNG.LoadFromFile('skins\alpha\' + PieceName + '.png');
+    TempPNG.LoadFromFile('skins\chesscom\' + PieceName + '.png');
     PieceBitmap.Assign(TempPNG);
     PieceBitmap.Transparent := True;
     TempPNG.Free;
@@ -223,8 +226,7 @@ Begin
     Inherited;
 End;
 
-Constructor TKing.Create(Position: TLocation; IsLightPiece: Boolean; PBBoard: TPaintBox;
-    CellSide: Integer);
+Constructor TKing.Create(Position: TLocation; IsLightPiece: Boolean; PBBoard: TPaintBox; CellSide: Integer);
 Begin
     Inherited Create(Position, IsLightPiece, PBBoard, CellSide);
     IsPossibleCastle := True;
@@ -251,8 +253,7 @@ Begin
     GetIsCastled := IsPossibleCastle;
 End;
 
-Constructor TPawn.Create(Position: TLocation; IsLightPiece: Boolean; PBBoard: TPaintBox;
-    CellSide: Integer);
+Constructor TPawn.Create(Position: TLocation; IsLightPiece: Boolean; PBBoard: TPaintBox; CellSide: Integer);
 Begin
     Inherited Create(Position, IsLightPiece, PBBoard, CellSide);
     FirstMove := True;
@@ -260,7 +261,7 @@ End;
 
 Procedure TPawn.SetIsFirstMove(Value: Boolean);
 Begin
-    IsFirstMove := Value;
+    FirstMove := Value;
 End;
 
 Function TPawn.GetIsFirstMove(): Boolean;
@@ -270,6 +271,26 @@ End;
 
 { для доски }
 
+Procedure TChessEngine.SetBoard(Value: TBoard);
+Begin
+    PlayingBoard := Value;
+End;
+
+Function TChessEngine.GetBoard(): TBoard;
+Begin
+    GetBoard := PlayingBoard;
+End;
+
+Procedure TChessEngine.SetGameState(Value: TGameState);
+Begin
+    CurrentGameState := Value;
+End;
+
+Function TChessEngine.GetGameState(): TGameState;
+Begin
+    GetGameState := CurrentGameState;
+End;
+
 Procedure TChessEngine.InitializeBoard(BoardPaintBox: TPaintBox; CellSide: Integer);
 Const
     ROW_COUNT = 8;
@@ -278,21 +299,26 @@ Var
     I, J: Integer;
     TempPos: TLocation;
     PiecePointer: TPListOfPieces;
+    TempBoard: TBoard;
 Begin
-    SetLength(Board, COL_COUNT, ROW_COUNT);
+    SetLength(TempBoard, COL_COUNT, ROW_COUNT);
 
     { задание доски }
 
-    For I := Low(Board) To High(Board) Do
-        For J := Low(Board[0]) To High(Board[0]) Do
+    For I := Low(TempBoard) To High(TempBoard) Do
+        For J := Low(TempBoard[0]) To High(TempBoard[0]) Do
         Begin
-            Board[I, J].CoordX := I;
-            Board[I, J].CoordY := J;
+            TempBoard[I, J].CoordX := I;
+            TempBoard[I, J].CoordY := J;
 
             If (I + J) Mod 2 = 0 Then
-                Board[I, J].IsLight := False
+                TempBoard[I, J].IsLight := False
             Else
-                Board[I, J].IsLight := True;
+                TempBoard[I, J].IsLight := True;
+
+            TempBoard[I, J].IsActive := False;
+            TempBoard[I, J].IsPossibleToMove := False;
+            TempBoard[I, J].IsHighlighted := False;
         End;
 
     { задание фигур }
@@ -304,8 +330,8 @@ Begin
     For I := 1 To 8 Do
     Begin
         // черная фигура
-        TempPos.CoordX := Board[I - 1, 0].CoordX;
-        TempPos.CoordY := Board[I - 1, 0].CoordY;
+        TempPos.CoordX := TempBoard[I - 1, 0].CoordX;
+        TempPos.CoordY := TempBoard[I - 1, 0].CoordY;
 
         Case I Of
             1:
@@ -329,14 +355,14 @@ Begin
         PiecePointer.Piece.PiecePosition.CoordX := TempPos.CoordX;
         PiecePointer.Piece.PiecePosition.CoordY := TempPos.CoordY;
 
-        Board[I - 1, 0].Piece := PiecePointer;
+        TempBoard[I - 1, 0].Piece := PiecePointer;
 
         New(PiecePointer^.Next);
         PiecePointer := PiecePointer^.Next;
 
         // белая фигура
-        TempPos.CoordX := Board[I - 1, 7].CoordX;
-        TempPos.CoordY := Board[I - 1, 7].CoordY;
+        TempPos.CoordX := TempBoard[I - 1, 7].CoordX;
+        TempPos.CoordY := TempBoard[I - 1, 7].CoordY;
 
         Case I Of
             1:
@@ -359,7 +385,7 @@ Begin
 
         PiecePointer.Piece.PiecePosition.CoordX := TempPos.CoordX;
         PiecePointer.Piece.PiecePosition.CoordY := TempPos.CoordY;
-        Board[I - 1, 7].Piece := PiecePointer;
+        TempBoard[I - 1, 7].Piece := PiecePointer;
 
         New(PiecePointer^.Next);
         PiecePointer := PiecePointer^.Next;
@@ -368,37 +394,38 @@ Begin
     For I := 1 To 8 Do
     Begin
         // черная пешка
-        TempPos.CoordX := Board[I - 1, 1].CoordX;
-        TempPos.CoordY := Board[I - 1, 1].CoordY;
+        TempPos.CoordX := TempBoard[I - 1, 1].CoordX;
+        TempPos.CoordY := TempBoard[I - 1, 1].CoordY;
 
         PiecePointer.Piece := TPawn.Create(TempPos, False, BoardPaintBox, CellSide);
 
         PiecePointer.Piece.PiecePosition.CoordX := TempPos.CoordX;
         PiecePointer.Piece.PiecePosition.CoordY := TempPos.CoordY;
 
-        Board[I - 1, 1].Piece := PiecePointer;
+        TempBoard[I - 1, 1].Piece := PiecePointer;
 
         New(PiecePointer^.Next);
         PiecePointer := PiecePointer^.Next;
 
         // белая пешка
-        TempPos.CoordX := Board[I - 1, 6].CoordX;
-        TempPos.CoordY := Board[I - 1, 6].CoordY;
+        TempPos.CoordX := TempBoard[I - 1, 6].CoordX;
+        TempPos.CoordY := TempBoard[I - 1, 6].CoordY;
 
         PiecePointer.Piece := TPawn.Create(TempPos, True, BoardPaintBox, CellSide);
 
         PiecePointer.Piece.PiecePosition.CoordX := TempPos.CoordX;
         PiecePointer.Piece.PiecePosition.CoordY := TempPos.CoordY;
 
-        Board[I - 1, 6].Piece := PiecePointer;
+        TempBoard[I - 1, 6].Piece := PiecePointer;
 
         New(PiecePointer^.Next);
         PiecePointer := PiecePointer^.Next;
     End;
 
+    SetBoard(TempBoard);
     PiecePointer^.Next := Nil;
 
-    GameState := Playing;
+    CurrentGameState := Playing;
     FirstMove := True;
 End;
 

@@ -2254,6 +2254,7 @@ object frmGameForm: TfrmGameForm
         Margins.Right = 5
         Margins.Bottom = 10
         Anchors = [akLeft, akTop, akRight, akBottom]
+        BevelOuter = bvNone
         Color = 3683890
         Constraints.MaxHeight = 193
         Constraints.MaxWidth = 174
@@ -2555,11 +2556,11 @@ object frmGameForm: TfrmGameForm
         TabOrder = 0
         object sdbtResign: TSpeedButton
           AlignWithMargins = True
-          Left = 5
+          Left = 0
           Top = 0
-          Width = 27
+          Width = 24
           Height = 34
-          Margins.Left = 5
+          Margins.Left = 0
           Margins.Top = 0
           Margins.Right = 0
           Margins.Bottom = 0
@@ -2570,12 +2571,10 @@ object frmGameForm: TfrmGameForm
           ImageName = 'resign'
           Images = vilIcons
           Flat = True
-          ExplicitWidth = 24
-          ExplicitHeight = 24
         end
         object sdbtDraw: TSpeedButton
           AlignWithMargins = True
-          Left = 37
+          Left = 29
           Top = 0
           Width = 27
           Height = 34
@@ -2590,9 +2589,27 @@ object frmGameForm: TfrmGameForm
           ImageName = 'one-half'
           Images = vilIcons
           Flat = True
-          ExplicitLeft = 29
-          ExplicitWidth = 24
-          ExplicitHeight = 24
+          ExplicitLeft = 61
+          ExplicitTop = 5
+        end
+        object sdbtReverse: TSpeedButton
+          AlignWithMargins = True
+          Left = 61
+          Top = 0
+          Width = 27
+          Height = 34
+          Margins.Left = 5
+          Margins.Top = 0
+          Margins.Right = 0
+          Margins.Bottom = 0
+          Align = alLeft
+          Anchors = [akLeft, akTop, akRight, akBottom]
+          Constraints.MaxWidth = 48
+          ImageIndex = 6
+          ImageName = 'rotate_rectangle'
+          Images = vilIcons
+          Flat = True
+          ExplicitTop = 5
         end
       end
       object memNotation: TMemo
@@ -2649,11 +2666,12 @@ object frmGameForm: TfrmGameForm
           Align = alLeft
           Anchors = [akLeft, akTop, akRight, akBottom]
           Constraints.MaxWidth = 48
-          Images = vilImages_48
+          ImageIndex = 4
+          ImageName = 'fast-forward'
+          Images = vilIcons
           Flat = True
-          ExplicitLeft = 72
-          ExplicitWidth = 24
-          ExplicitHeight = 24
+          ExplicitLeft = 87
+          ExplicitTop = -2
         end
         object sdbtNextMove: TSpeedButton
           Left = 54
@@ -2663,7 +2681,9 @@ object frmGameForm: TfrmGameForm
           Align = alLeft
           Anchors = [akLeft, akTop, akRight, akBottom]
           Constraints.MaxWidth = 48
-          Images = vilImages_48
+          ImageIndex = 5
+          ImageName = 'forward'
+          Images = vilIcons
           Flat = True
           ExplicitLeft = 74
           ExplicitWidth = 24
@@ -2677,11 +2697,12 @@ object frmGameForm: TfrmGameForm
           Align = alLeft
           Anchors = [akLeft, akTop, akRight, akBottom]
           Constraints.MaxWidth = 48
-          Images = vilImages_48
+          ImageIndex = 2
+          ImageName = 'back'
+          Images = vilIcons
           Flat = True
-          ExplicitLeft = 37
-          ExplicitWidth = 24
-          ExplicitHeight = 24
+          ExplicitLeft = 21
+          ExplicitTop = -2
         end
         object sdbtToBegining: TSpeedButton
           Left = 0
@@ -2691,10 +2712,11 @@ object frmGameForm: TfrmGameForm
           Align = alLeft
           Anchors = [akLeft, akTop, akRight, akBottom]
           Constraints.MaxWidth = 48
-          Images = vilImages_48
+          ImageIndex = 3
+          ImageName = 'fast-back'
+          Images = vilIcons
           Flat = True
-          ExplicitWidth = 24
-          ExplicitHeight = 24
+          ExplicitTop = -2
         end
       end
     end
@@ -2762,6 +2784,36 @@ object frmGameForm: TfrmGameForm
         CollectionName = 'resign'
         Disabled = False
         Name = 'resign'
+      end
+      item
+        CollectionIndex = 2
+        CollectionName = 'back'
+        Disabled = False
+        Name = 'back'
+      end
+      item
+        CollectionIndex = 3
+        CollectionName = 'fast-back'
+        Disabled = False
+        Name = 'fast-back'
+      end
+      item
+        CollectionIndex = 4
+        CollectionName = 'fast-forward'
+        Disabled = False
+        Name = 'fast-forward'
+      end
+      item
+        CollectionIndex = 5
+        CollectionName = 'forward'
+        Disabled = False
+        Name = 'forward'
+      end
+      item
+        CollectionIndex = 6
+        CollectionName = 'rotate_rectangle'
+        Disabled = False
+        Name = 'rotate_rectangle'
       end>
     ImageCollection = dtmdData.imcIcons
     PreserveItems = True
