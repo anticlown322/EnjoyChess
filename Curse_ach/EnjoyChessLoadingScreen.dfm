@@ -1,6 +1,8 @@
 object frmLoadingScreen: TfrmLoadingScreen
   Left = 0
   Top = 0
+  AlphaBlend = True
+  AlphaBlendValue = 0
   AutoSize = True
   BorderIcons = []
   BorderStyle = bsNone
@@ -1552,9 +1554,15 @@ object frmLoadingScreen: TfrmLoadingScreen
     Stretch = True
   end
   object tmrEndLoadingScreen: TTimer
-    Interval = 2000
+    Interval = 2500
     OnTimer = tmrEndLoadingScreenTimer
-    Left = 504
-    Top = 24
+    Left = 312
+    Top = 16
+  end
+  object tmrAlphaBlendChanging: TTimer
+    Interval = 1
+    OnTimer = tmrAlphaBlendChangingTimer
+    Left = 344
+    Top = 16
   end
 end

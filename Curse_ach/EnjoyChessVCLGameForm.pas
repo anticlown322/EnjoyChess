@@ -113,7 +113,7 @@ Begin
     // Setting := TSettings.Create;
     // дальше все свойства дефолт настроек
     InitializeBoard();
-    BorderStyle := BsNone;
+    //BorderStyle := BsNone;
     WindowState := WsMaximized;
 End;
 

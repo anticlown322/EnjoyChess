@@ -2191,8 +2191,6 @@ object frmGameForm: TfrmGameForm
         Value = 100.000000000000000000
       end>
     TabOrder = 0
-    ExplicitWidth = 884
-    ExplicitHeight = 461
     object pBoard: TPanel
       Left = 197
       Top = 51
@@ -2210,9 +2208,6 @@ object frmGameForm: TfrmGameForm
       ParentBackground = False
       ParentDoubleBuffered = False
       TabOrder = 0
-      ExplicitLeft = 194
-      ExplicitWidth = 416
-      ExplicitHeight = 410
       DesignSize = (
         420
         420)
@@ -2245,8 +2240,6 @@ object frmGameForm: TfrmGameForm
       ParentBackground = False
       ParentFont = False
       TabOrder = 1
-      ExplicitWidth = 194
-      ExplicitHeight = 410
       DesignSize = (
         197
         420)
@@ -2266,8 +2259,6 @@ object frmGameForm: TfrmGameForm
         Constraints.MaxWidth = 174
         ParentBackground = False
         TabOrder = 0
-        ExplicitWidth = 171
-        ExplicitHeight = 183
         object lbGameMode: TLabel
           Left = 8
           Top = 7
@@ -2335,7 +2326,6 @@ object frmGameForm: TfrmGameForm
         Placement = svpLeft
         TabOrder = 1
         UseAnimation = False
-        ExplicitHeight = 410
         object pMenuButtonSettings: TPanel
           Left = 0
           Top = 82
@@ -2413,7 +2403,6 @@ object frmGameForm: TfrmGameForm
       ParentBackground = False
       ParentFont = False
       TabOrder = 2
-      ExplicitWidth = 884
       object viMenuBar: TVirtualImage
         Left = 0
         Top = 0
@@ -2464,10 +2453,6 @@ object frmGameForm: TfrmGameForm
       ParentBackground = False
       ParentFont = False
       TabOrder = 3
-      ExplicitLeft = 616
-      ExplicitTop = 54
-      ExplicitWidth = 274
-      ExplicitHeight = 410
       object lbTimeOpponent: TLabel
         AlignWithMargins = True
         Left = 20
@@ -2485,7 +2470,6 @@ object frmGameForm: TfrmGameForm
         Font.Name = 'Tahoma'
         Font.Style = [fsBold]
         ParentFont = False
-        ExplicitLeft = 15
         ExplicitWidth = 101
       end
       object lbTimePlayer: TLabel
@@ -2509,8 +2493,7 @@ object frmGameForm: TfrmGameForm
         Font.Style = [fsBold]
         ParentFont = False
         Layout = tlBottom
-        ExplicitLeft = 13
-        ExplicitTop = 353
+        ExplicitWidth = 101
       end
       object lbnNamePlayer: TLabel
         AlignWithMargins = True
@@ -2529,9 +2512,7 @@ object frmGameForm: TfrmGameForm
         Font.Style = [fsBold]
         ParentFont = False
         Layout = tlBottom
-        ExplicitLeft = 13
-        ExplicitTop = 314
-        ExplicitWidth = 246
+        ExplicitWidth = 97
       end
       object lbNameOpponent: TLabel
         AlignWithMargins = True
@@ -2553,7 +2534,6 @@ object frmGameForm: TfrmGameForm
         Font.Name = 'Tahoma'
         Font.Style = [fsBold]
         ParentFont = False
-        ExplicitLeft = 15
         ExplicitWidth = 97
       end
       object pGameOptions: TPanel
@@ -2573,9 +2553,6 @@ object frmGameForm: TfrmGameForm
         Constraints.MaxHeight = 48
         ParentBackground = False
         TabOrder = 0
-        ExplicitTop = 265
-        ExplicitWidth = 249
-        ExplicitHeight = 24
         object sdbtResign: TSpeedButton
           AlignWithMargins = True
           Left = 5
@@ -2646,10 +2623,6 @@ object frmGameForm: TfrmGameForm
         ParentFont = False
         ReadOnly = True
         TabOrder = 1
-        ExplicitLeft = 14
-        ExplicitTop = 112
-        ExplicitWidth = 241
-        ExplicitHeight = 153
       end
       object pMoveOptions: TPanel
         AlignWithMargins = True
@@ -2668,9 +2641,6 @@ object frmGameForm: TfrmGameForm
         Constraints.MaxHeight = 48
         ParentBackground = False
         TabOrder = 2
-        ExplicitLeft = 8
-        ExplicitWidth = 249
-        ExplicitHeight = 24
         object sdbtToEnding: TSpeedButton
           Left = 81
           Top = 0

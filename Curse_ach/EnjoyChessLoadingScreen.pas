@@ -14,14 +14,19 @@ Uses
     Vcl.Dialogs,
     Vcl.StdCtrls,
     Vcl.ExtCtrls,
-    Vcl.ComCtrls, EnjoyChessDataImages, Vcl.VirtualImage, Vcl.Imaging.pngimage;
+    Vcl.ComCtrls,
+    EnjoyChessDataImages,
+    Vcl.VirtualImage,
+    Vcl.Imaging.Pngimage;
 
 Type
     TfrmLoadingScreen = Class(TForm)
         TmrEndLoadingScreen: TTimer;
-    imLogo: TImage;
+        TmrAlphaBlendChanging: TTimer;
+        ImLogo: TImage;
         Procedure TmrEndLoadingScreenTimer(Sender: TObject);
         Procedure FormCreate(Sender: TObject);
+        Procedure TmrAlphaBlendChangingTimer(Sender: TObject);
     End;
 
 Var
@@ -39,6 +44,15 @@ Begin
     SetWindowRgn(Handle, HRgn, False);
 
     TmrEndLoadingScreen.Enabled := True;
+    TmrAlphaBlendChanging.Enabled := True;
+End;
+
+Procedure TfrmLoadingScreen.TmrAlphaBlendChangingTimer(Sender: TObject);
+Begin
+    If FrmLoadingScreen.AlphaBlendValue > 253 Then
+        TmrAlphaBlendChanging.Enabled := False
+    Else
+        FrmLoadingScreen.AlphaBlendValue := FrmLoadingScreen.AlphaBlendValue + 2;
 End;
 
 Procedure TfrmLoadingScreen.TmrEndLoadingScreenTimer(Sender: TObject);

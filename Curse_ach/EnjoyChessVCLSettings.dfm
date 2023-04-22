@@ -23,4 +23,10 @@ object frmSettings: TfrmSettings
     Indent = 19
     TabOrder = 0
   end
+  object ButtonColor1: TButtonColor
+    Left = 248
+    Top = 280
+    Caption = 'ButtonColor1'
+    TabOrder = 1
+  end
 end

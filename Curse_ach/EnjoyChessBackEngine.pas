@@ -186,7 +186,7 @@ Begin
     PieceName := PieceName + UpperCase(Copy(ClassName, 2, 1));
     PieceBitmap := TBitmap.Create;
     TempPNG := TPngImage.Create;
-    TempPNG.LoadFromFile('skins\tatiana\' + PieceName + '.png');
+    TempPNG.LoadFromFile('skins\alpha\' + PieceName + '.png');
     PieceBitmap.Assign(TempPNG);
     PieceBitmap.Transparent := True;
     TempPNG.Free;
