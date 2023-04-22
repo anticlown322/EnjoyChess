@@ -209,7 +209,6 @@ End;
 
 Procedure TfrmGameForm.PMenuButtonAnalysisClick(Sender: TObject);
 Begin
-    // If Not Assigned(FrmAnalysis) Then
     FrmAnalysis := TfrmAnalysis.Create(Self);
     FrmGameForm.Hide;
     FrmAnalysis.Show;
@@ -217,7 +216,6 @@ End;
 
 Procedure TfrmGameForm.PMenuButtonSettingsClick(Sender: TObject);
 Begin
-    // If Not Assigned(frmSettings) Then
     FrmSettings := TfrmSettings.Create(Self);
     FrmGameForm.Hide;
     FrmSettings.Show;
@@ -266,7 +264,6 @@ Begin
     End;
 
     Try
-        // BoardCanvas.Draw(0, 0, BufferBitmap); - разницы в работе не заметил
         BitBlt(BoardCanvas.Handle, 0, 0, COL_COUNT * CellSide, ROW_COUNT * CellSide,
             BufferBitmap.Canvas.Handle, 0, 0, SRCCOPY);
     Finally
@@ -282,18 +279,19 @@ Var
 Begin
     Cell := ChessEngine.Board[Col, Row];
     CellSide := CellSize();
+    BufferBitmap.Canvas.Pen.Width := 1;
 
     { отрисовка пустых клеток }
 
     If IsLightSquare Then
     Begin
-        BufferBitmap.Canvas.Brush.Color := $F0D9B5; // light
+        BufferBitmap.Canvas.Brush.Color := $E5D3B3; // light
         BufferBitmap.Canvas.Font.Color := $B58863; // dark
     End
     Else
     Begin
         BufferBitmap.Canvas.Brush.Color := $B58863; // dark
-        BufferBitmap.Canvas.Font.Color := $F0D9B5; // light
+        BufferBitmap.Canvas.Font.Color := $E5D3B3; // light
     End;
 
     BufferBitmap.Canvas.FillRect(CellRect);
@@ -311,7 +309,22 @@ Begin
         BufferBitmap.Canvas.TextOut(Col * CellSide + CellSide - 10, Row * CellSide, IntToStr(8 - Row));
     End;
 
+    If Cell.IsActive Then
+    Begin
+        BufferBitmap.Canvas.Brush.Color := $829769; // light green
+        BufferBitmap.Canvas.FillRect(CellRect);
+    End;
+
+    If Cell.IsHighlighted Then
+    Begin
+        BufferBitmap.Canvas.Pen.Color := $008000; // dark green
+        BufferBitmap.Canvas.Pen.Width := 5;
+        BufferBitmap.Canvas.Arc(Col * CellSide + 2, Row * CellSide + 2, (Col + 1) * CellSide - 2,
+            (Row + 1) * CellSide - 2, Col * CellSide, Row * CellSide, Col * CellSide, Row * CellSide);
+    End;
+
     { отрисовка фигур }
+
     If Cell.Piece <> Nil Then
         DrawPiece(BufferBitmap, Cell.Piece.Piece);
 End;
@@ -385,11 +398,17 @@ Begin
     Case Button Of
         MbLeft:
             Begin
-                ShowMessage('ЛЕВАЧЬЕ');
+                If ChessEngine.Board[CellCoordX, CellCoordY].IsActive = False Then
+                    ChessEngine.Board[CellCoordX, CellCoordY].IsActive := True
+                Else
+                    ChessEngine.Board[CellCoordX, CellCoordY].IsActive := False;
             End;
         MbRight:
             Begin
-                ShowMessage('ПРАВАЯ ВАТА');
+                If ChessEngine.Board[CellCoordX, CellCoordY].IsHighlighted = False Then
+                    ChessEngine.Board[CellCoordX, CellCoordY].IsHighlighted := True
+                Else
+                    ChessEngine.Board[CellCoordX, CellCoordY].IsHighlighted := False;
             End;
     End;
 
