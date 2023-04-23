@@ -329,8 +329,8 @@ Begin
     Begin
         BufferBitmap.Canvas.Brush.Color := $008000; // dark green
         BufferBitmap.Canvas.Pen.Color := $829769; // light green
-        TempRect := Rect(Col * CellSide + CellSide Div 4, Row * CellSide + CellSide Div 4,
-            (Col + 1) * CellSide - CellSide Div 4, (Row + 1) * CellSide - CellSide Div 4);
+        TempRect := Rect(Col * CellSide + CellSide Div 3, Row * CellSide + CellSide Div 3,
+            (Col + 1) * CellSide - CellSide Div 3, (Row + 1) * CellSide - CellSide Div 3);
         BufferBitmap.Canvas.Ellipse(TempRect);
     End;
 End;
@@ -390,6 +390,7 @@ Procedure TfrmGameForm.PbBoardMouseUp(Sender: TObject; Button: TMouseButton; Shi
 Var
     Row, Col, CellSide: Integer;
     PPossibleMoves: TPPossibleMoves;
+    I, J: Integer;
 Begin
     CellSide := CellSize();
     Col := X Div CellSide;
@@ -401,8 +402,16 @@ Begin
     Case Button Of
         MbLeft:
             Begin
+                For I := 0 To 7 Do
+                    For J := 0 To 7 Do
+                    Begin
+                        ChessEngine.Board[I, J].IsActive := False;
+                        ChessEngine.Board[I, J].IsPossibleToMove := False;
+                    End;
+
                 If ChessEngine.Board[Row, Col].IsActive = False Then
                 Begin
+
                     ChessEngine.Board[Row, Col].IsActive := True;
 
                     If ChessEngine.Board[Row, Col].PPiece <> Nil Then
@@ -417,10 +426,6 @@ Begin
                         End;
                     End;
                 End
-                Else
-                Begin
-                    ChessEngine.Board[Row, Col].IsActive := False;
-                End;
             End;
         MbRight:
             Begin
