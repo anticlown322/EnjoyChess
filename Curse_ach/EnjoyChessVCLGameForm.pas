@@ -254,7 +254,7 @@ Begin
     Begin
         For Col := 0 To COL_COUNT - 1 Do
         Begin
-            CellRect := Rect(Row * CellSide, Col * CellSide, (Row + 1) * CellSide, (Col + 1) * CellSide);
+            CellRect := Rect(Col * CellSide, Row * CellSide, (Col + 1) * CellSide, (Row + 1) * CellSide);
             DrawCell(Row, Col, CellRect, BufferBitmap);
         End;
     End;
@@ -278,6 +278,7 @@ End;
 Procedure TfrmGameForm.DrawCell(Row, Col: Integer; CellRect: TRect; BufferBitmap: TBitmap);
 Var
     CellSide: Integer;
+    TempRect: TRect;
 Begin
     CellSide := CellSize();
     BufferBitmap.Canvas.Pen.Width := 1;
@@ -320,14 +321,17 @@ Begin
     Begin
         BufferBitmap.Canvas.Pen.Color := $008000; // dark green
         BufferBitmap.Canvas.Pen.Width := 5;
-        BufferBitmap.Canvas.Arc(Row * CellSide + 2, Col * CellSide + 2, (Row + 1) * CellSide - 2,
-            (Col + 1) * CellSide - 2, Row * CellSide, Col * CellSide, Row * CellSide, Col * CellSide);
+        BufferBitmap.Canvas.Arc(Col * CellSide + 2, Row * CellSide + 2, (Col + 1) * CellSide - 2,
+            (Row + 1) * CellSide - 2, Col * CellSide, Row * CellSide, Col * CellSide, Row * CellSide);
     End;
 
     If ChessEngine.Board[Row, Col].IsPossibleToMove Then
     Begin
-        BufferBitmap.Canvas.Brush.Color := $829769; // light green
-        BufferBitmap.Canvas.Ellipse(CellRect);
+        BufferBitmap.Canvas.Brush.Color := $008000; // dark green
+        BufferBitmap.Canvas.Pen.Color := $829769; // light green
+        TempRect := Rect(Col * CellSide + CellSide Div 4, Row * CellSide + CellSide Div 4,
+            (Col + 1) * CellSide - CellSide Div 4, (Row + 1) * CellSide - CellSide Div 4);
+        BufferBitmap.Canvas.Ellipse(TempRect);
     End;
 End;
 
@@ -385,14 +389,11 @@ Procedure TfrmGameForm.PbBoardMouseUp(Sender: TObject; Button: TMouseButton; Shi
     X, Y: Integer);
 Var
     Row, Col, CellSide: Integer;
-    CellRect: TRect;
     PPossibleMoves: TPPossibleMoves;
 Begin
     CellSide := CellSize();
-    Row := X Div CellSide;
-    Col := Y Div CellSide;
-
-    CellRect := Rect(Row * CellSide, Col * CellSide, (Row + 1) * CellSide, (Col + 1) * CellSide);
+    Col := X Div CellSide;
+    Row := Y Div CellSide;
 
     If ChessEngine.GameState <> Playing Then
         Exit;
@@ -408,13 +409,12 @@ Begin
                     Begin
                         PPossibleMoves := ChessEngine.Board[Row, Col].PPiece^.Piece.FindPossibleMoves
                             (ChessEngine.Board[Row, Col].PPiece^.Piece.Position, ChessEngine.Board);
-                        If PPossibleMoves <> Nil Then
-                            While PPossibleMoves^.Next <> Nil Do
-                            Begin
-                                ChessEngine.Board[PPossibleMoves^.PossibleMove.CoordRow,
-                                    PPossibleMoves^.PossibleMove.CoordRow].IsPossibleToMove := True;
-                                PPossibleMoves := PPossibleMoves^.Next;
-                            End;
+                        While PPossibleMoves <> Nil Do
+                        Begin
+                            ChessEngine.Board[PPossibleMoves^.PossibleMove.CoordRow,
+                                PPossibleMoves^.PossibleMove.CoordCol].IsPossibleToMove := True;
+                            PPossibleMoves := PPossibleMoves^.Next;
+                        End;
                     End;
                 End
                 Else

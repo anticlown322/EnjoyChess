@@ -15,7 +15,7 @@ Type
     { Общее для других типов }
 
     TLocation = Record
-        CoordRow: 0 .. 8; // 0 - для ходов за пределы доски и отсуствия на доске
+        CoordRow: 0 .. 8; // 8 - для ходов за пределы доски и отсуствия на доске
         CoordCol: 0 .. 8;
     End;
 
@@ -276,11 +276,196 @@ Begin
     GetIsFirstMove := IsFirstMove;
 End;
 
+{ для доски }
+
+Procedure TChessEngine.SetBoard(Value: TBoard);
+Begin
+    PlayingBoard := Value;
+End;
+
+Function TChessEngine.GetBoard(): TBoard;
+Begin
+    GetBoard := PlayingBoard;
+End;
+
+Procedure TChessEngine.SetGameState(Value: TGameState);
+Begin
+    CurrentGameState := Value;
+End;
+
+Function TChessEngine.GetGameState(): TGameState;
+Begin
+    GetGameState := CurrentGameState;
+End;
+
+Procedure TChessEngine.SetListOfPieces(Value: TPListOfPieces);
+Begin
+    ExistingPieces := Value;
+End;
+
+Function TChessEngine.GetListOfPieces(): TPListOfPieces;
+Begin
+    GetListOfPieces := ExistingPieces;
+End;
+
+Procedure TChessEngine.SetListOfTakenBPieces(Value: TPListOfPieces);
+Begin
+    TakenBlack := Value;
+End;
+
+Function TChessEngine.GetListOfTakenBPieces(): TPListOfPieces;
+Begin
+    GetListOfTakenBPieces := TakenBlack;
+End;
+
+Procedure TChessEngine.SetListOfTakenWPieces(Value: TPListOfPieces);
+Begin
+    TakenWhite := Value;
+End;
+
+Function TChessEngine.GetListOfTakenWPieces(): TPListOfPieces;
+Begin
+    GetListOfTakenWPieces := TakenWhite;
+End;
+
+Procedure TChessEngine.InitializeBoard();
+Const
+    ROW_COUNT = 8;
+    COL_COUNT = 8;
+Var
+    I, J: Integer;
+    TempPos: TLocation;
+    PointerPiece: TPListOfPieces;
+    TempBoard: TBoard;
+Begin
+    SetLength(TempBoard, ROW_COUNT, COL_COUNT);
+
+    { задание доски }
+
+    For I := Low(TempBoard) To High(TempBoard) Do
+        For J := Low(TempBoard[0]) To High(TempBoard[0]) Do
+        Begin
+            TempBoard[I, J].CoordRow := I;
+            TempBoard[I, J].CoordCol := J;
+
+            If (I + J) Mod 2 = 0 Then
+                TempBoard[I, J].IsLight := False
+            Else
+                TempBoard[I, J].IsLight := True;
+
+            TempBoard[I, J].IsActive := False;
+            TempBoard[I, J].IsPossibleToMove := False;
+            TempBoard[I, J].IsHighlighted := False;
+        End;
+
+    { задание фигур }
+
+    New(PointerPiece);
+    ExistingPieces := PointerPiece;
+
+    // С левого верхнего угла + в массиве board индексация с нуля
+    For I := 1 To 8 Do
+    Begin
+        // черная фигура
+        TempPos.CoordRow := 0;
+        TempPos.CoordCol := I - 1;
+
+        Case I Of
+            1:
+                PointerPiece.Piece := TRook.Create(TempPos, False);
+            2:
+                PointerPiece.Piece := TNKnight.Create(TempPos, False);
+            3:
+                PointerPiece.Piece := TBishop.Create(TempPos, False);
+            4:
+                PointerPiece.Piece := TQueen.Create(TempPos, False);
+            5:
+                PointerPiece.Piece := TKing.Create(TempPos, False);
+            6:
+                PointerPiece.Piece := TBishop.Create(TempPos, False);
+            7:
+                PointerPiece.Piece := TNKnight.Create(TempPos, False);
+            8:
+                PointerPiece.Piece := TRook.Create(TempPos, False);
+        End;
+
+        TempBoard[0, I - 1].PPiece := PointerPiece;
+
+        New(PointerPiece^.Next);
+        PointerPiece := PointerPiece^.Next;
+    End;
+
+    For I := 1 To 8 Do
+    Begin
+        // черная пешка
+        TempPos.CoordRow := 1;
+        TempPos.CoordCol := I - 1;
+
+        PointerPiece.Piece := TPawn.Create(TempPos, False);
+
+        TempBoard[1, I - 1].PPiece := PointerPiece;
+
+        New(PointerPiece^.Next);
+        PointerPiece := PointerPiece^.Next;
+    End;
+
+    For I := 1 To 8 Do
+    Begin
+        // белая пешка
+        TempPos.CoordRow := 6;
+        TempPos.CoordCol := I - 1;
+
+        PointerPiece.Piece := TPawn.Create(TempPos, True);
+
+        TempBoard[6, I - 1].PPiece := PointerPiece;
+
+        New(PointerPiece^.Next);
+        PointerPiece := PointerPiece^.Next;
+    End;
+
+    For I := 1 To 8 Do
+    Begin
+        // белая фигура
+        TempPos.CoordRow := 7;
+        TempPos.CoordCol := I - 1;
+
+        Case I Of
+            1:
+                PointerPiece.Piece := TRook.Create(TempPos, True);
+            2:
+                PointerPiece.Piece := TNKnight.Create(TempPos, True);
+            3:
+                PointerPiece.Piece := TBishop.Create(TempPos, True);
+            4:
+                PointerPiece.Piece := TQueen.Create(TempPos, True);
+            5:
+                PointerPiece.Piece := TKing.Create(TempPos, True);
+            6:
+                PointerPiece.Piece := TBishop.Create(TempPos, True);
+            7:
+                PointerPiece.Piece := TNKnight.Create(TempPos, True);
+            8:
+                PointerPiece.Piece := TRook.Create(TempPos, True);
+        End;
+
+        TempBoard[7, I - 1].PPiece := PointerPiece;
+
+        New(PointerPiece^.Next);
+        PointerPiece := PointerPiece^.Next;
+    End;
+
+    PointerPiece^.Next := Nil;
+
+    SetBoard(TempBoard);
+    CurrentGameState := Playing;
+End;
+
+{ для ходов }
+
 Function TKing.FindPossibleMoves(Position: TLocation; Board: TBoard): TPPossibleMoves;
 Var
     I, J: Integer;
     ListOfPossibleMoves, PointerMove: TPPossibleMoves;
-    TempBoard: TBoard;
 Begin
     New(PointerMove);
     ListOfPossibleMoves := PointerMove;
@@ -421,27 +606,26 @@ End;
 
 Function TPawn.FindPossibleMoves(Position: TLocation; Board: TBoard): TPPossibleMoves;
 Var
-    I, J: Integer;
+    I: Integer;
     ListOfPossibleMoves, PointerMove: TPPossibleMoves;
     Color: Boolean;
 Begin
-    New(PointerMove);
-    ListOfPossibleMoves := PointerMove;
     Color := GetIsLight;
 
     If Color Then
     Begin
-        For I := Position.CoordRow - 1 To Position.CoordRow - 2 Do
+        For I := Position.CoordRow - 1 DownTo Position.CoordRow - 2 Do
         Begin
-            If ((I > 0) And (I < 7) And (Position.CoordCol > 0) And (Position.CoordCol < 7)) Then
+            If ((I > -1) And (I < 8) And (Position.CoordCol > -1) And (Position.CoordCol < 8)) Then
             Begin
                 If Board[I, Position.CoordCol].PPiece = Nil Then
                 Begin
-                    PointerMove.PossibleMove.CoordRow := I;
-                    PointerMove.PossibleMove.CoordCol := Position.CoordCol;
+                    New(PointerMove);
+                    PointerMove^.PossibleMove.CoordRow := I;
+                    PointerMove^.PossibleMove.CoordCol := Position.CoordCol;
 
-                    New(PointerMove^.Next);
-                    PointerMove := PointerMove^.Next;
+                    PointerMove^.Next := ListOfPossibleMoves;
+                    ListOfPossibleMoves := PointerMove;
                 End;
             End;
         End;
@@ -450,219 +634,23 @@ Begin
     Begin
         For I := Position.CoordRow + 1 To Position.CoordRow + 2 Do
         Begin
-            If ((I > 0) And (I < 7) And (Position.CoordCol > 0) And (Position.CoordCol < 7)) Then
+            If ((I > -1) And (I < 8) And (Position.CoordCol > -1) And (Position.CoordCol < 8)) Then
             Begin
                 If Board[I, Position.CoordCol].PPiece = Nil Then
                 Begin
-                    PointerMove.PossibleMove.CoordRow := I;
-                    PointerMove.PossibleMove.CoordCol := Position.CoordCol;
+                    New(PointerMove);
+                    PointerMove^.PossibleMove.CoordRow := I;
+                    PointerMove^.PossibleMove.CoordCol := Position.CoordCol;
 
-                    New(PointerMove^.Next);
-                    PointerMove := PointerMove^.Next;
+                    PointerMove^.Next := ListOfPossibleMoves;
+                    ListOfPossibleMoves := PointerMove;
                 End;
             End;
         End;
     End;
 
-    PointerMove^.Next := Nil;
+    ListOfPossibleMoves^.Next^.Next := nil;
     FindPossibleMoves := ListOfPossibleMoves;
 End;
-
-{ для доски }
-
-Procedure TChessEngine.SetBoard(Value: TBoard);
-Begin
-    PlayingBoard := Value;
-End;
-
-Function TChessEngine.GetBoard(): TBoard;
-Begin
-    GetBoard := PlayingBoard;
-End;
-
-Procedure TChessEngine.SetGameState(Value: TGameState);
-Begin
-    CurrentGameState := Value;
-End;
-
-Function TChessEngine.GetGameState(): TGameState;
-Begin
-    GetGameState := CurrentGameState;
-End;
-
-Procedure TChessEngine.SetListOfPieces(Value: TPListOfPieces);
-Begin
-    ExistingPieces := Value;
-End;
-
-Function TChessEngine.GetListOfPieces(): TPListOfPieces;
-Begin
-    GetListOfPieces := ExistingPieces;
-End;
-
-Procedure TChessEngine.SetListOfTakenBPieces(Value: TPListOfPieces);
-Begin
-    TakenBlack := Value;
-End;
-
-Function TChessEngine.GetListOfTakenBPieces(): TPListOfPieces;
-Begin
-    GetListOfTakenBPieces := TakenBlack;
-End;
-
-Procedure TChessEngine.SetListOfTakenWPieces(Value: TPListOfPieces);
-Begin
-    TakenWhite := Value;
-End;
-
-Function TChessEngine.GetListOfTakenWPieces(): TPListOfPieces;
-Begin
-    GetListOfTakenWPieces := TakenWhite;
-End;
-
-Procedure TChessEngine.InitializeBoard();
-Const
-    ROW_COUNT = 8;
-    COL_COUNT = 8;
-Var
-    I, J: Integer;
-    TempPos: TLocation;
-    PointerPiece: TPListOfPieces;
-    TempBoard: TBoard;
-Begin
-    SetLength(TempBoard, ROW_COUNT, COL_COUNT);
-
-    { задание доски }
-
-    For I := Low(TempBoard) To High(TempBoard) Do
-        For J := Low(TempBoard[0]) To High(TempBoard[0]) Do
-        Begin
-            TempBoard[I, J].CoordRow := I;
-            TempBoard[I, J].CoordCol := J;
-
-            If (I + J) Mod 2 = 0 Then
-                TempBoard[I, J].IsLight := False
-            Else
-                TempBoard[I, J].IsLight := True;
-
-            TempBoard[I, J].IsActive := False;
-            TempBoard[I, J].IsPossibleToMove := False;
-            TempBoard[I, J].IsHighlighted := False;
-        End;
-
-    { задание фигур }
-
-    New(PointerPiece);
-    ExistingPieces := PointerPiece;
-
-    // С левого верхнего угла + в массиве board индексация с нуля
-    For I := 1 To 8 Do
-    Begin
-        // черная фигура
-        TempPos.CoordRow := 0;
-        TempPos.CoordCol := I - 1;
-
-        Case I Of
-            1:
-                PointerPiece.Piece := TRook.Create(TempPos, False);
-            2:
-                PointerPiece.Piece := TNKnight.Create(TempPos, False);
-            3:
-                PointerPiece.Piece := TBishop.Create(TempPos, False);
-            4:
-                PointerPiece.Piece := TQueen.Create(TempPos, False);
-            5:
-                PointerPiece.Piece := TKing.Create(TempPos, False);
-            6:
-                PointerPiece.Piece := TBishop.Create(TempPos, False);
-            7:
-                PointerPiece.Piece := TNKnight.Create(TempPos, False);
-            8:
-                PointerPiece.Piece := TRook.Create(TempPos, False);
-        End;
-
-        PointerPiece.Piece.PiecePosition.CoordRow := 0;
-        PointerPiece.Piece.PiecePosition.CoordCol := I - 1;
-
-        TempBoard[0, I - 1].PPiece := PointerPiece;
-
-        New(PointerPiece^.Next);
-        PointerPiece := PointerPiece^.Next;
-    End;
-
-    For I := 1 To 8 Do
-    Begin
-        // черная пешка
-        TempPos.CoordRow := 1;
-        TempPos.CoordCol := I - 1;
-
-        PointerPiece.Piece := TPawn.Create(TempPos, False);
-
-        PointerPiece.Piece.PiecePosition.CoordRow := 1;
-        PointerPiece.Piece.PiecePosition.CoordCol := I - 1;
-
-        TempBoard[I - 1, 1].PPiece := PointerPiece;
-
-        New(PointerPiece^.Next);
-        PointerPiece := PointerPiece^.Next;
-    End;
-
-    For I := 1 To 8 Do
-    Begin
-        // белая пешка
-        TempPos.CoordRow := 6;
-        TempPos.CoordCol := I - 1;
-
-        PointerPiece.Piece := TPawn.Create(TempPos, True);
-
-        PointerPiece.Piece.PiecePosition.CoordRow := 6;
-        PointerPiece.Piece.PiecePosition.CoordCol := I - 1;
-
-        TempBoard[6, I - 1].PPiece := PointerPiece;
-
-        New(PointerPiece^.Next);
-        PointerPiece := PointerPiece^.Next;
-    End;
-
-    For I := 1 To 8 Do
-    Begin
-        // белая фигура
-        TempPos.CoordRow := 7;
-        TempPos.CoordCol := I - 1;
-
-        Case I Of
-            1:
-                PointerPiece.Piece := TRook.Create(TempPos, True);
-            2:
-                PointerPiece.Piece := TNKnight.Create(TempPos, True);
-            3:
-                PointerPiece.Piece := TBishop.Create(TempPos, True);
-            4:
-                PointerPiece.Piece := TQueen.Create(TempPos, True);
-            5:
-                PointerPiece.Piece := TKing.Create(TempPos, True);
-            6:
-                PointerPiece.Piece := TBishop.Create(TempPos, True);
-            7:
-                PointerPiece.Piece := TNKnight.Create(TempPos, True);
-            8:
-                PointerPiece.Piece := TRook.Create(TempPos, True);
-        End;
-
-        PointerPiece.Piece.PiecePosition.CoordRow := 7;
-        PointerPiece.Piece.PiecePosition.CoordCol := I - 1;
-        TempBoard[7, I - 1].PPiece := PointerPiece;
-
-        New(PointerPiece^.Next);
-        PointerPiece := PointerPiece^.Next;
-    End;
-
-    SetBoard(TempBoard);
-    PointerPiece^.Next := Nil;
-
-    CurrentGameState := Playing;
-End;
-
-{ для ходов }
 
 End.
