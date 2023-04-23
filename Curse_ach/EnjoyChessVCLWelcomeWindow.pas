@@ -142,24 +142,21 @@ End;
 
 Procedure TfrmWelcomeWindow.BbtGoToSettingsClick(Sender: TObject);
 Begin
-    //If Not(Assigned(FrmSettings)) Then
-        FrmSettings := TfrmSettings.Create(Self);
+    FrmSettings := TfrmSettings.Create(Self);
     FrmWelcomeWindow.Hide;
     FrmSettings.Show;
 End;
 
 Procedure TfrmWelcomeWindow.BbtStartAnalysisClick(Sender: TObject);
 Begin
-    //If Not Assigned(FrmAnalysis) Then
-        FrmAnalysis := TFrmAnalysis.Create(Self);
+    FrmAnalysis := TFrmAnalysis.Create(Self);
     FrmWelcomeWindow.Hide;
     FrmAnalysis.Show;
 End;
 
 Procedure TfrmWelcomeWindow.BbtStartGameClick(Sender: TObject);
 Begin
-    //If Not Assigned(FrmGameForm) Then
-        FrmGameForm := TfrmGameForm.Create(Self);
+    FrmGameForm := TfrmGameForm.Create(Self);
     FrmWelcomeWindow.Hide;
     FrmGameForm.Show;
 End;
