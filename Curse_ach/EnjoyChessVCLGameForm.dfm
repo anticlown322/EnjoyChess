@@ -2608,6 +2608,7 @@ object frmGameForm: TfrmGameForm
           ImageIndex = 6
           ImageName = 'rotate_rectangle'
           Images = vilIcons
+          Enabled = False
           Flat = True
           OnClick = sdbtReverseClick
           ExplicitTop = 5

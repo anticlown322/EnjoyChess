@@ -346,6 +346,11 @@ Begin
             (Row + 1) * CellSide - 2, Col * CellSide, Row * CellSide, Col * CellSide, Row * CellSide);
     End;
 
+    If ChessEngine.Board[Row, Col].PPiece <> Nil Then
+    Begin
+        DrawPiece(BufferBitmap, ChessEngine.Board[Row, Col].PPiece.Piece, Row, Col);
+    End;
+
     If ChessEngine.Board[Row, Col].IsPossibleToMove Then
     Begin
         BufferBitmap.Canvas.Brush.Color := $008000; // dark green
@@ -355,11 +360,6 @@ Begin
         TempRect := Rect(Col * CellSide + CellSide Div 3, Row * CellSide + CellSide Div 3,
             (Col + 1) * CellSide - CellSide Div 3, (Row + 1) * CellSide - CellSide Div 3);
         BufferBitmap.Canvas.Ellipse(TempRect);
-    End;
-
-    If ChessEngine.Board[Row, Col].PPiece <> Nil Then
-    Begin
-        DrawPiece(BufferBitmap, ChessEngine.Board[Row, Col].PPiece.Piece, Row, Col);
     End;
 End;
 
@@ -457,6 +457,7 @@ Begin
                     Begin
                         ChessEngine.Board[I, J].IsActive := False;
                         ChessEngine.Board[I, J].IsPossibleToMove := False;
+                        ChessEngine.Board[I, J].IsTake := False;
                     End;
 
                 If WasActive = False Then
