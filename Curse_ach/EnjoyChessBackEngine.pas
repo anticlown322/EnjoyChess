@@ -744,7 +744,7 @@ Begin
     MovesExist := False;
 
     If Color Then
-    Begin // пешка белая
+    Begin
         I := Position.CoordRow - 1;
         Start := (Position.CoordCol - 1);
 
@@ -753,7 +753,6 @@ Begin
             Begin
                 If (Board[I, J].PPiece = Nil) Then
                 Begin
-
                     If (J = Position.CoordCol) Then
                     Begin
                         TempPointer := PointerMove;
@@ -794,20 +793,24 @@ Begin
         End;
     End
     Else
-    Begin // пешка черная
+    Begin
         I := Position.CoordRow + 1;
+        Start := (Position.CoordCol - 1);
 
-        For J := Position.CoordCol - 1 To Position.CoordCol + 1 Do
+        For J := Start To (Position.CoordCol + 1) Do
             If ((I > -1) And (I < 8) And (J > -1) And (J < 8)) Then
             Begin
                 If (Board[I, J].PPiece = Nil) Then
                 Begin
-                    TempPointer := PointerMove;
-                    PointerMove^.PossibleMove.CoordRow := I;
-                    PointerMove^.PossibleMove.CoordCol := Position.CoordCol;
-                    New(PointerMove);
-                    TempPointer^.Next := PointerMove;
-                    MovesExist := True;
+                    If (J = Position.CoordCol) Then
+                    Begin
+                        TempPointer := PointerMove;
+                        PointerMove^.PossibleMove.CoordRow := I;
+                        PointerMove^.PossibleMove.CoordCol := Position.CoordCol;
+                        New(PointerMove);
+                        TempPointer^.Next := PointerMove;
+                        MovesExist := True;
+                    End
                 End
                 Else
                     If ((Board[I, J].PPiece.Piece.IsLightPiece) <> Color) And (J <> Position.CoordCol) Then
