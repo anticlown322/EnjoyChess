@@ -89,6 +89,7 @@ Type
         Procedure PbBoardMouseUp(Sender: TObject; Button: TMouseButton; Shift: TShiftState; X, Y: Integer);
         Procedure SdbtReverseClick(Sender: TObject);
     Private
+        ChessEngine: TChessEngine;
         RotatedBoard: Boolean;
         Procedure DrawCell(Row, Col: Integer; CellRect: TRect; BufferBitmap: TBitmap);
         Procedure DrawPiece(BufferBitmap: TBitmap; Piece: TPiece; Row, Col: Integer);
@@ -96,8 +97,6 @@ Type
         Function CellSize(): Integer;
         Function Cell(CoordX, CoordY: Integer): TBoardCell;
         Procedure UpdateScreen();
-    Public
-        ChessEngine: TChessEngine;
     End;
 
 Var
@@ -106,6 +105,7 @@ Var
 Implementation
 
 {$R *.dfm}
+
 { сама форма }
 
 Procedure TfrmGameForm.FormCreate(Sender: TObject);
@@ -350,6 +350,7 @@ Begin
     Begin
         BufferBitmap.Canvas.Brush.Color := $008000; // dark green
         BufferBitmap.Canvas.Pen.Color := $829769; // light green
+        BufferBitmap.Canvas.Pen.Width := 1;
 
         TempRect := Rect(Col * CellSide + CellSide Div 3, Row * CellSide + CellSide Div 3,
             (Col + 1) * CellSide - CellSide Div 3, (Row + 1) * CellSide - CellSide Div 3);
@@ -437,15 +438,15 @@ Begin
                     Begin
                         For I := 0 To 7 Do
                             For J := 0 To 7 Do
-                                If  ChessEngine.Board[I, J].IsActive = True Then
-                                begin
+                                If ChessEngine.Board[I, J].IsActive = True Then
+                                Begin
                                     TempSrc.CoordRow := I;
                                     TempSrc.CoordCol := J;
-                                end;
+                                End;
                         TempDest.CoordRow := Row;
                         TempDest.CoordCol := Col;
-                        ChessEngine.ListOfMoves := ChessEngine.Board[TempSrc.CoordRow, TempSrc.CoordCol].PPiece^.Piece.MakeMove
-                            (ChessEngine.Board, TempDest);
+                        ChessEngine.ListOfMoves := ChessEngine.Board[TempSrc.CoordRow, TempSrc.CoordCol]
+                            .PPiece^.Piece.MakeMove(ChessEngine.Board, TempDest);
                     End;
 
                     WasActive := False;

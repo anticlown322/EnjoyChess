@@ -495,7 +495,7 @@ Begin
     TempPos.CoordRow := Dest.CoordRow;
     TempPos.CoordCol := Dest.CoordCol;
     Board[Dest.CoordRow, Dest.CoordCol].PPiece := Board[Position.CoordRow, Position.CoordCol].PPiece;
-    Board[Position.CoordRow, Position.CoordCol].PPiece := nil;
+    Board[Position.CoordRow, Position.CoordCol].PPiece := Nil;
     Position := TempPos;
 
     PMove^.Next := Head;
@@ -653,52 +653,43 @@ End;
 
 Function TNKnight.FindPossibleMoves(Position: TLocation; Board: TBoard): TPPossibleMoves;
 Var
-    I, J, Counter: Integer;
-    ListOfPossibleMoves, PointerMove: TPPossibleMoves;
+    I, J: Integer;
+    ListOfPossibleMoves, PointerMove, TempPointer: TPPossibleMoves;
 Begin
-    Counter := 0;
-
+    New(PointerMove);
+    ListOfPossibleMoves := PointerMove;
     For I := Position.CoordRow - 2 To Position.CoordRow + 2 Do
         For J := Position.CoordCol - 2 To Position.CoordCol + 2 Do
         Begin
-            If (I > -1) And (I < 8) And (J > -1) And (J < 8) And (I <> Position.CoordRow) And
-                (J <> Position.CoordCol) Then
+            If (I > -1) And (I < 8) And (J > -1) And (J < 8) And
+                ((I <> Position.CoordRow) And (J <> Position.CoordCol)) Then
             Begin
                 If (((Abs(I - Position.CoordRow) = 2) And (Abs(J - Position.CoordCol) = 1)) Or
                     ((Abs(I - Position.CoordRow) = 1) And (Abs(J - Position.CoordCol) = 2))) And
                     ((Board[I, J].PPiece = Nil) Or (Board[I, J].PPiece.Piece.IsLightPiece <> GetIsLight)) Then
                 Begin
-                    Inc(Counter);
-                    New(PointerMove);
+                    TempPointer := PointerMove;
                     PointerMove^.PossibleMove.CoordRow := I;
                     PointerMove^.PossibleMove.CoordCol := J;
-
-                    PointerMove^.Next := ListOfPossibleMoves;
-                    ListOfPossibleMoves := PointerMove;
+                    New(PointerMove);
+                    TempPointer^.Next := PointerMove;
                 End;
             End;
         End;
 
-    Case Counter Of
-        0:
-            PointerMove := Nil;
-        1:
-            PointerMove^.Next := Nil;
-        Else
-            PointerMove^.Next^.Next := Nil;
-    End;
-
+    TempPointer^.Next := Nil;
     FindPossibleMoves := ListOfPossibleMoves;
 End;
 
 Function TPawn.FindPossibleMoves(Position: TLocation; Board: TBoard): TPPossibleMoves;
 Var
-    I, Counter: Integer;
-    ListOfPossibleMoves, PointerMove: TPPossibleMoves;
+    I: Integer;
+    ListOfPossibleMoves, PointerMove, TempPointer: TPPossibleMoves;
     Color: Boolean;
 Begin
+    New(PointerMove);
+    ListOfPossibleMoves := PointerMove;
     Color := GetIsLight;
-    Counter := 0;
 
     If Color Then
     Begin // пешка черная
@@ -707,15 +698,13 @@ Begin
             If ((I > -1) And (I < 8) And (Position.CoordCol > -1) And (Position.CoordCol < 8)) Then
             Begin
                 If (Board[I, Position.CoordCol].PPiece = Nil) Or
-                    (Board[I, Position.CoordCol].PPiece.Piece.IsLightPiece) Then
+                    Not(Board[I, Position.CoordCol].PPiece.Piece.IsLightPiece) Then
                 Begin
-                    Inc(Counter);
-                    New(PointerMove);
+                    TempPointer := PointerMove;
                     PointerMove^.PossibleMove.CoordRow := I;
                     PointerMove^.PossibleMove.CoordCol := Position.CoordCol;
-
-                    PointerMove^.Next := ListOfPossibleMoves;
-                    ListOfPossibleMoves := PointerMove;
+                    New(PointerMove);
+                    TempPointer^.Next := PointerMove;
                 End;
             End;
         End;
@@ -729,27 +718,17 @@ Begin
                 If (Board[I, Position.CoordCol].PPiece = Nil) Or
                     (Board[I, Position.CoordCol].PPiece.Piece.IsLightPiece) Then
                 Begin
-                    Inc(Counter);
-                    New(PointerMove);
+                    TempPointer := PointerMove;
                     PointerMove^.PossibleMove.CoordRow := I;
                     PointerMove^.PossibleMove.CoordCol := Position.CoordCol;
-
-                    PointerMove^.Next := ListOfPossibleMoves;
-                    ListOfPossibleMoves := PointerMove;
+                    New(PointerMove);
+                    TempPointer^.Next := PointerMove;
                 End;
             End;
         End;
     End;
 
-    Case Counter Of
-        0:
-            PointerMove := Nil;
-        1:
-            PointerMove^.Next := Nil;
-        Else
-            PointerMove^.Next^.Next := Nil;
-    End;
-
+    TempPointer^.Next := Nil;
     FindPossibleMoves := ListOfPossibleMoves;
 End;
 
