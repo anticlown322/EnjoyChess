@@ -15,10 +15,11 @@ Type
     { Общее для других типов }
 
     TLocation = Record
-        CoordRow: 0 .. 8; // 8 - для ходов за пределы доски и отсуствия на доске
+        CoordRow: 0 .. 8; // 8 - для отсуствия на доске
         CoordCol: 0 .. 8;
     End;
 
+    TChessEngine = Class;
     TPiece = Class;
 
     { Для клеток доски }
@@ -37,6 +38,25 @@ Type
     End;
 
     TBoard = Array Of Array OF TBoardCell;
+
+    { Для ходов и перемещений }
+
+    TMoveType = (TNormal, TEnPassant, TCastling, TPawnPromote);
+
+    TPMove = ^TMove;
+
+    TMove = Record
+        Piece: TPiece;
+        Source: TLocation;
+        Dest: TLocation;
+        Capture: Boolean;
+        Next: TPMove;
+        Case Kind: TMoveType Of
+            TEnPassant:
+                (EPCapture: TLocation);
+            TCastling:
+                (RookSource, RookDest: TLocation);
+    End;
 
     { для всех фигур }
 
@@ -60,38 +80,13 @@ Type
         Procedure SetIsLight(Value: Boolean);
         Function GetIsLight(): Boolean;
     Public
+        Function MakeMove(Board: TBoard; Dest: TLocation): TPMove;
         Function FindPossibleMoves(Position: TLocation; Board: TBoard): TPPossibleMoves; Virtual; Abstract;
         Property Position: TLocation Read GetPosition Write SetPosition;
         Property IsLight: Boolean Read GetIsLight Write SetIsLight;
         Property PBitmap: TBitmap Read GetBitmap Write SetBitmap;
         Constructor Create(Position: TLocation; IsPieceLight: Boolean); Virtual;
         Destructor Destroy; Override;
-    End;
-
-    { Для ходов и перемещений }
-
-    TPChange = ^TChange;
-
-    TChange = Record
-        Piece: TPiece;
-        Source: TLocation;
-        Dest: TLocation;
-    End;
-
-    TMoveType = (TNormal, TEnPassant, TCastling, TPawnPromote);
-
-    TPMove = ^TMove;
-
-    TMove = Record
-        Change: TChange;
-        Capture: Boolean;
-        Contents: TPiece;
-        Next: TPMove;
-        Case Kind: TMoveType Of
-            TEnPassant:
-                (EPCapture: TLocation);
-            TCastling:
-                (RookSource, RookDest: TLocation);
     End;
 
     { сами фигуры }
@@ -128,7 +123,7 @@ Type
     End;
 
     TNKnight = Class(TPiece)
-        // N поставлена намеренно, т.к. при работе со скинами читается вторая буква конкретно этого класса
+        // N поставлена намеренно, т.к. при работе со скинами читается вторая буква класса
     Public
         Function FindPossibleMoves(Position: TLocation; Board: TBoard): TPPossibleMoves; Override;
     End;
@@ -156,6 +151,7 @@ Type
         TakenBlackPieces: TPListOfPieces;
         PlayingBoard: TBoard;
         CurrentGameState: TGameState;
+        MakedMoves: TPMove;
         // Sound: TEnjoyChessSound;
     Protected
         Function GetListOfPieces(): TPListOfPieces;
@@ -168,12 +164,15 @@ Type
         Procedure SetBoard(Value: TBoard);
         Function GetGameState(): TGameState;
         Procedure SetGameState(Value: TGameState);
+        Function GetListOfMoves(): TPMove;
+        Procedure SetListOfMoves(Value: TPMove);
     Public
         Property Board: TBoard Read GetBoard Write SetBoard;
         Property GameState: TGameState Read GetGameState Write SetGameState;
         Property ListOfPieces: TPListOfPieces Read GetListOfPieces Write SetListOfPieces;
         Property TakenWhite: TPListOfPieces Read GetListOfTakenWPieces Write SetListOfTakenWPieces;
         Property TakenBlack: TPListOfPieces Read GetListOfTakenBPieces Write SetListOfTakenBPieces;
+        Property ListOfMoves: TPMove Read GetListOfMoves Write SetListOfMoves;
         // Procedure CheckWinState();
         Procedure InitializeBoard();
     End;
@@ -335,6 +334,16 @@ Begin
     GetListOfTakenWPieces := TakenWhite;
 End;
 
+Procedure TChessEngine.SetListOfMoves(Value: TPMove);
+Begin
+    MakedMoves := Value;
+End;
+
+Function TChessEngine.GetListOfMoves(): TPMove;
+Begin
+    GetListOfMoves := MakedMoves;
+End;
+
 Procedure TChessEngine.InitializeBoard();
 Const
     ROW_COUNT = 8;
@@ -370,11 +379,10 @@ Begin
     New(PointerPiece);
     ExistingPieces := PointerPiece;
 
-    // С левого верхнего угла + в массиве board индексация с нуля
     For I := 1 To 8 Do
     Begin
         // черная фигура
-        TempPos.CoordRow := 0;
+        TempPos.CoordRow := 0; // С левого верхнего угла + в массиве board индексация с нуля
         TempPos.CoordCol := I - 1;
 
         Case I Of
@@ -469,6 +477,32 @@ End;
 
 { для ходов }
 
+Function TPiece.MakeMove(Board: TBoard; Dest: TLocation): TPMove;
+Var
+    Head, PMove: TPMove;
+    TempPos: TLocation;
+Begin
+    New(PMove);
+
+    PMove.Source.CoordRow := Position.CoordRow;
+    PMove.Source.CoordCol := Position.CoordCol;
+    PMove.Dest.CoordRow := Dest.CoordRow;
+    PMove.Dest.CoordCol := Dest.CoordCol;
+    PMove.Piece := Board[Position.CoordRow, Position.CoordCol].PPiece.Piece;
+    PMove.Capture := False;
+    PMove.Kind := TNormal;
+
+    TempPos.CoordRow := Dest.CoordRow;
+    TempPos.CoordCol := Dest.CoordCol;
+    Board[Dest.CoordRow, Dest.CoordCol].PPiece := Board[Position.CoordRow, Position.CoordCol].PPiece;
+    Board[Position.CoordRow, Position.CoordCol].PPiece := nil;
+    Position := TempPos;
+
+    PMove^.Next := Head;
+    Head := PMove;
+    MakeMove := Head;
+End;
+
 Function TKing.FindPossibleMoves(Position: TLocation; Board: TBoard): TPPossibleMoves;
 Var
     I, J, Counter: Integer;
@@ -482,7 +516,7 @@ Begin
             If ((I > -1) And (I < 8) And (Position.CoordCol > -1) And (Position.CoordCol < 8)) And
                 ((I <> Position.CoordCol) And (J <> Position.CoordRow)) Then
             Begin
-                If Board[I, J].PPiece = Nil Then
+                If (Board[I, J].PPiece = Nil) Or (Board[I, J].PPiece.Piece.IsLightPiece <> GetIsLight) Then
                 Begin
                     Inc(Counter);
                     New(PointerMove);
@@ -519,7 +553,7 @@ Begin
         Begin
             If (I <> Position.CoordCol) And (J <> Position.CoordRow) Then
             Begin
-                If Board[I, J].PPiece = Nil Then
+                If (Board[I, J].PPiece = Nil) Or (Board[I, J].PPiece.Piece.IsLightPiece <> GetIsLight) Then
                 Begin
                     Inc(Counter);
                     New(PointerMove);
@@ -556,7 +590,7 @@ Begin
         Begin
             If (I <> Position.CoordCol) And (J <> Position.CoordRow) Then
             Begin
-                If Board[I, J].PPiece = Nil Then
+                If (Board[I, J].PPiece = Nil) Or (Board[I, J].PPiece.Piece.IsLightPiece <> GetIsLight) Then
                 Begin
                     Inc(Counter);
                     New(PointerMove);
@@ -592,7 +626,7 @@ Begin
         For J := 0 To 7 Do
         Begin
             Begin
-                If (Board[I, J].PPiece = Nil) Then
+                If (Board[I, J].PPiece = Nil) Or (Board[I, J].PPiece.Piece.IsLightPiece <> GetIsLight) Then
                 Begin
                     Inc(Counter);
                     New(PointerMove);
@@ -627,14 +661,17 @@ Begin
     For I := Position.CoordRow - 2 To Position.CoordRow + 2 Do
         For J := Position.CoordCol - 2 To Position.CoordCol + 2 Do
         Begin
-            If ((I > -1) And (I < 8) And (Position.CoordCol > -1) And (Position.CoordCol < 8)) Then
+            If (I > -1) And (I < 8) And (J > -1) And (J < 8) And (I <> Position.CoordRow) And
+                (J <> Position.CoordCol) Then
             Begin
-                If Board[I, J].PPiece = Nil Then
+                If (((Abs(I - Position.CoordRow) = 2) And (Abs(J - Position.CoordCol) = 1)) Or
+                    ((Abs(I - Position.CoordRow) = 1) And (Abs(J - Position.CoordCol) = 2))) And
+                    ((Board[I, J].PPiece = Nil) Or (Board[I, J].PPiece.Piece.IsLightPiece <> GetIsLight)) Then
                 Begin
                     Inc(Counter);
                     New(PointerMove);
                     PointerMove^.PossibleMove.CoordRow := I;
-                    PointerMove^.PossibleMove.CoordCol := Position.CoordCol;
+                    PointerMove^.PossibleMove.CoordCol := J;
 
                     PointerMove^.Next := ListOfPossibleMoves;
                     ListOfPossibleMoves := PointerMove;
@@ -669,7 +706,8 @@ Begin
         Begin
             If ((I > -1) And (I < 8) And (Position.CoordCol > -1) And (Position.CoordCol < 8)) Then
             Begin
-                If Board[I, Position.CoordCol].PPiece = Nil Then
+                If (Board[I, Position.CoordCol].PPiece = Nil) Or
+                    (Board[I, Position.CoordCol].PPiece.Piece.IsLightPiece) Then
                 Begin
                     Inc(Counter);
                     New(PointerMove);
@@ -688,7 +726,8 @@ Begin
         Begin
             If ((I > -1) And (I < 8) And (Position.CoordCol > -1) And (Position.CoordCol < 8)) Then
             Begin
-                If Board[I, Position.CoordCol].PPiece = Nil Then
+                If (Board[I, Position.CoordCol].PPiece = Nil) Or
+                    (Board[I, Position.CoordCol].PPiece.Piece.IsLightPiece) Then
                 Begin
                     Inc(Counter);
                     New(PointerMove);

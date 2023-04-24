@@ -12,12 +12,13 @@ Uses
     Vcl.Controls,
     Vcl.Forms,
     Vcl.Dialogs,
-    Vcl.ComCtrls, Vcl.ExtCtrls, Vcl.StdCtrls, Vcl.ColorGrd, VCLTee.TeCanvas;
+    Vcl.ComCtrls, Vcl.ExtCtrls, Vcl.StdCtrls, Vcl.ColorGrd, VCLTee.TeCanvas,
+  EnjoyChessDataImages, EnjoyChessVCLWelcomeWindow;
 
 Type
     TfrmSettings = Class(TForm)
-        TreeView1: TTreeView;
-    ButtonColor1: TButtonColor;
+    pBottom: TPanel;
+    grpbxSettings: TGroupBox;
         Procedure FormClose(Sender: TObject; Var Action: TCloseAction);
     Private
         { Private declarations }
@@ -31,9 +32,6 @@ Var
 Implementation
 
 {$R *.dfm}
-
-Uses EnjoyChessDataImages,
-    EnjoyChessVCLWelcomeWindow;
 
 Procedure TfrmSettings.FormClose(Sender: TObject; Var Action: TCloseAction);
 Begin

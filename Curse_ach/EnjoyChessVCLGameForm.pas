@@ -87,14 +87,17 @@ Type
         Procedure FormCreate(Sender: TObject);
         Procedure FormDestroy(Sender: TObject);
         Procedure PbBoardMouseUp(Sender: TObject; Button: TMouseButton; Shift: TShiftState; X, Y: Integer);
+        Procedure SdbtReverseClick(Sender: TObject);
     Private
-        ChessEngine: TChessEngine;
+        RotatedBoard: Boolean;
         Procedure DrawCell(Row, Col: Integer; CellRect: TRect; BufferBitmap: TBitmap);
-        Procedure DrawPiece(BufferBitmap: TBitmap; Piece: TPiece);
+        Procedure DrawPiece(BufferBitmap: TBitmap; Piece: TPiece; Row, Col: Integer);
         Procedure InitializeBoard();
         Function CellSize(): Integer;
         Function Cell(CoordX, CoordY: Integer): TBoardCell;
         Procedure UpdateScreen();
+    Public
+        ChessEngine: TChessEngine;
     End;
 
 Var
@@ -112,6 +115,7 @@ Begin
     // Setting := TSettings.Create;
     // дальше все свойства дефолт настроек
     InitializeBoard();
+    RotatedBoard := False;
     BorderStyle := BsNone;
     WindowState := WsMaximized;
 End;
@@ -229,6 +233,30 @@ Begin
         SplvMenu.Opened := False;
 End;
 
+{ обработка правой панели с кнопками опций для игры }
+
+Procedure TfrmGameForm.SdbtReverseClick(Sender: TObject);
+Const
+    ROW_COUNT = 8;
+    COL_COUNT = 8;
+Var
+    Row, Col: Integer;
+    TempBoard: TBoard;
+Begin
+    SetLength(TempBoard, ROW_COUNT, COL_COUNT);
+
+    For Row := 0 To ROW_COUNT - 1 Do
+        For Col := 0 To COL_COUNT - 1 Do
+            TempBoard[Row, Col] := ChessEngine.Board[7 - Row, 7 - Col];
+
+    For Row := 0 To ROW_COUNT - 1 Do
+        For Col := 0 To COL_COUNT - 1 Do
+            ChessEngine.Board[Row, Col] := TempBoard[Row, Col];
+
+    RotatedBoard := Not RotatedBoard;
+    UpdateScreen();
+End;
+
 { Обработка доски }
 
 Procedure TfrmGameForm.PbBoardPaint(Sender: TObject);
@@ -249,7 +277,8 @@ Begin
     BufferBitmap.Height := COL_COUNT * CellSide;
     BufferBitmap.Width := ROW_COUNT * CellSide;
 
-    // идем из левого верхнего вниз
+    // идем из левого верхнего угла
+
     For Row := 0 To ROW_COUNT - 1 Do
     Begin
         For Col := 0 To COL_COUNT - 1 Do
@@ -257,14 +286,6 @@ Begin
             CellRect := Rect(Col * CellSide, Row * CellSide, (Col + 1) * CellSide, (Row + 1) * CellSide);
             DrawCell(Row, Col, CellRect, BufferBitmap);
         End;
-    End;
-
-    ExistingPieces := ChessEngine.ListOfPieces;
-
-    While ExistingPieces^.Next <> Nil Do
-    Begin
-        DrawPiece(BufferBitmap, ExistingPieces^.Piece);
-        ExistingPieces := ExistingPieces^.Next;
     End;
 
     Try
@@ -329,13 +350,19 @@ Begin
     Begin
         BufferBitmap.Canvas.Brush.Color := $008000; // dark green
         BufferBitmap.Canvas.Pen.Color := $829769; // light green
+
         TempRect := Rect(Col * CellSide + CellSide Div 3, Row * CellSide + CellSide Div 3,
             (Col + 1) * CellSide - CellSide Div 3, (Row + 1) * CellSide - CellSide Div 3);
         BufferBitmap.Canvas.Ellipse(TempRect);
     End;
+
+    If ChessEngine.Board[Row, Col].PPiece <> Nil Then
+    Begin
+        DrawPiece(BufferBitmap, ChessEngine.Board[Row, Col].PPiece.Piece, Row, Col);
+    End;
 End;
 
-Procedure TfrmGameForm.DrawPiece(BufferBitmap: TBitmap; Piece: TPiece);
+Procedure TfrmGameForm.DrawPiece(BufferBitmap: TBitmap; Piece: TPiece; Row, Col: Integer);
 Var
     CellSide, Coeff: Integer;
     TempBitmap: TBitmap;
@@ -354,15 +381,14 @@ Begin
             SetStretchBltMode(TempBitmap.Canvas.Handle, STRETCH_HALFTONE);
             StretchBlt(TempBitmap.Canvas.Handle, 0, 0, CellSide, CellSide, Piece.PBitmap.Canvas.Handle, 0, 0,
                 CellSide * Coeff, CellSide * Coeff, SRCCopy);
-            BufferBitmap.Canvas.Draw(Piece.Position.CoordCol * CellSide + CellSide Div 8 + 2,
-                Piece.Position.CoordRow * CellSide + CellSide Div 10 + 2, TempBitmap);
+            BufferBitmap.Canvas.Draw(Col * CellSide + CellSide Div 8 + 2, Row * CellSide + CellSide Div 10 +
+                2, TempBitmap);
         Finally
             TempBitmap.Free;
         End;
     End
     Else
-        BufferBitmap.Canvas.Draw(Piece.Position.CoordCol * CellSide + 12, Piece.Position.CoordRow * CellSide +
-            10, Piece.PBitmap);
+        BufferBitmap.Canvas.Draw(Col * CellSide + 12, Row * CellSide + 10, Piece.PBitmap);
 End;
 
 Function TfrmGameForm.CellSize(): Integer;
@@ -388,9 +414,10 @@ End;
 Procedure TfrmGameForm.PbBoardMouseUp(Sender: TObject; Button: TMouseButton; Shift: TShiftState;
     X, Y: Integer);
 Var
-    Row, Col, CellSide: Integer;
+    Row, Col, CellSide, I, J: Integer;
     PPossibleMoves: TPPossibleMoves;
-    I, J: Integer;
+    WasActive: Boolean;
+    TempSrc, TempDest: TLocation;
 Begin
     CellSide := CellSize();
     Col := X Div CellSide;
@@ -402,6 +429,28 @@ Begin
     Case Button Of
         MbLeft:
             Begin
+                If ChessEngine.Board[Row, Col].IsActive = True Then
+                    WasActive := True
+                Else
+                Begin
+                    If ChessEngine.Board[Row, Col].IsPossibleToMove = True Then
+                    Begin
+                        For I := 0 To 7 Do
+                            For J := 0 To 7 Do
+                                If  ChessEngine.Board[I, J].IsActive = True Then
+                                begin
+                                    TempSrc.CoordRow := I;
+                                    TempSrc.CoordCol := J;
+                                end;
+                        TempDest.CoordRow := Row;
+                        TempDest.CoordCol := Col;
+                        ChessEngine.ListOfMoves := ChessEngine.Board[TempSrc.CoordRow, TempSrc.CoordCol].PPiece^.Piece.MakeMove
+                            (ChessEngine.Board, TempDest);
+                    End;
+
+                    WasActive := False;
+                End;
+
                 For I := 0 To 7 Do
                     For J := 0 To 7 Do
                     Begin
@@ -409,9 +458,8 @@ Begin
                         ChessEngine.Board[I, J].IsPossibleToMove := False;
                     End;
 
-                If ChessEngine.Board[Row, Col].IsActive = False Then
+                If WasActive = False Then
                 Begin
-
                     ChessEngine.Board[Row, Col].IsActive := True;
 
                     If ChessEngine.Board[Row, Col].PPiece <> Nil Then
@@ -426,6 +474,8 @@ Begin
                         End;
                     End;
                 End
+                Else
+                    ChessEngine.Board[Row, Col].IsActive := False;
             End;
         MbRight:
             Begin
