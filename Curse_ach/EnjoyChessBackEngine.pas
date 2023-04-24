@@ -548,38 +548,35 @@ End;
 
 Function TKing.FindPossibleMoves(Position: TLocation; Board: TBoard): TPPossibleMoves;
 Var
-    I, J, Counter: Integer;
-    ListOfPossibleMoves, PointerMove: TPPossibleMoves;
+    I, J: Integer;
+    ListOfPossibleMoves, PointerMove, TempPointer: TPPossibleMoves;
+    MovesExist: Boolean;
 Begin
-    Counter := 0;
+    New(PointerMove);
+    ListOfPossibleMoves := PointerMove;
+    MovesExist := False;
 
     For I := Position.CoordRow - 1 To Position.CoordRow + 1 Do
         For J := Position.CoordCol - 1 To Position.CoordCol + 1 Do
         Begin
-            If ((I > -1) And (I < 8) And (Position.CoordCol > -1) And (Position.CoordCol < 8)) And
-                ((I <> Position.CoordCol) And (J <> Position.CoordRow)) Then
+            If ((I > -1) And (I < 8) And (Position.CoordCol > -1) And (Position.CoordCol < 8)) Then
             Begin
                 If (Board[I, J].PPiece = Nil) Or (Board[I, J].PPiece.Piece.IsLightPiece <> GetIsLight) Then
                 Begin
-                    Inc(Counter);
-                    New(PointerMove);
+                    TempPointer := PointerMove;
                     PointerMove^.PossibleMove.CoordRow := I;
-                    PointerMove^.PossibleMove.CoordCol := Position.CoordCol;
-
-                    PointerMove^.Next := ListOfPossibleMoves;
-                    ListOfPossibleMoves := PointerMove;
+                    PointerMove^.PossibleMove.CoordCol := J;
+                    New(PointerMove);
+                    TempPointer^.Next := PointerMove;
+                    MovesExist := True;
                 End;
             End;
         End;
 
-    Case Counter Of
-        0:
-            PointerMove := Nil;
-        1:
-            PointerMove^.Next := Nil;
-        Else
-            PointerMove^.Next^.Next := Nil;
-    End;
+    If MovesExist Then
+        TempPointer^.Next := Nil
+    Else
+        ListOfPossibleMoves := Nil;
 
     FindPossibleMoves := ListOfPossibleMoves;
 End;
