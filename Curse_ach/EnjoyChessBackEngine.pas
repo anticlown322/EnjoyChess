@@ -174,7 +174,6 @@ Type
         Property TakenWhite: TPListOfPieces Read GetListOfTakenWPieces Write SetListOfTakenWPieces;
         Property TakenBlack: TPListOfPieces Read GetListOfTakenBPieces Write SetListOfTakenBPieces;
         Property ListOfMoves: TPMove Read GetListOfMoves Write SetListOfMoves;
-        // Procedure CheckWinState();
         Procedure InitializeBoard();
     End;
 
@@ -586,71 +585,115 @@ Var
     I, J, Counter: Integer;
     ListOfPossibleMoves, PointerMove: TPPossibleMoves;
 Begin
-    Counter := 0;
 
-    For I := 0 To 7 Do
-        For J := 0 To 7 Do
-        Begin
-            If (I <> Position.CoordCol) And (J <> Position.CoordRow) Then
-            Begin
-                If (Board[I, J].PPiece = Nil) Or (Board[I, J].PPiece.Piece.IsLightPiece <> GetIsLight) Then
-                Begin
-                    Inc(Counter);
-                    New(PointerMove);
-                    PointerMove^.PossibleMove.CoordRow := I;
-                    PointerMove^.PossibleMove.CoordCol := Position.CoordCol;
-
-                    PointerMove^.Next := ListOfPossibleMoves;
-                    ListOfPossibleMoves := PointerMove;
-                End;
-            End;
-        End;
-
-    Case Counter Of
-        0:
-            PointerMove := Nil;
-        1:
-            PointerMove^.Next := Nil;
-        Else
-            PointerMove^.Next^.Next := Nil;
-    End;
-
-    FindPossibleMoves := ListOfPossibleMoves;
+    FindPossibleMoves := Nil;
 End;
 
 Function TRook.FindPossibleMoves(Position: TLocation; Board: TBoard): TPPossibleMoves;
 Var
-    I, J, Counter: Integer;
-    ListOfPossibleMoves, PointerMove: TPPossibleMoves;
+    I, J: Integer;
+    ListOfPossibleMoves, PointerMove, TempPointer: TPPossibleMoves;
+    MovesExist, IsStop: Boolean;
 Begin
-    Counter := 0;
+    New(PointerMove);
+    ListOfPossibleMoves := PointerMove;
+    MovesExist := False;
 
-    For I := 0 To 7 Do
-        For J := 0 To 7 Do
-        Begin
-            If (I <> Position.CoordCol) And (J <> Position.CoordRow) Then
-            Begin
-                If (Board[I, J].PPiece = Nil) Or (Board[I, J].PPiece.Piece.IsLightPiece <> GetIsLight) Then
+    For I := 1 To 4 Do // количество направлений
+    Begin
+        IsStop := False;
+        Case I Of
+            1: // идем влево
                 Begin
-                    Inc(Counter);
-                    New(PointerMove);
-                    PointerMove^.PossibleMove.CoordRow := I;
-                    PointerMove^.PossibleMove.CoordCol := Position.CoordCol;
+                    J := Position.CoordCol - 1;
+                    If J > 0 Then
+                        While (J > -1) And ((Board[Position.CoordRow, J].PPiece = Nil) Or
+                            (Board[Position.CoordRow, J].PPiece.Piece.IsLightPiece <> GetIsLight)) And
+                            (IsStop = False) Do
+                        Begin
+                            TempPointer := PointerMove;
+                            PointerMove^.PossibleMove.CoordRow := Position.CoordRow;
+                            PointerMove^.PossibleMove.CoordCol := J;
+                            New(PointerMove);
+                            TempPointer^.Next := PointerMove;
+                            MovesExist := True;
 
-                    PointerMove^.Next := ListOfPossibleMoves;
-                    ListOfPossibleMoves := PointerMove;
+                            If ((Board[Position.CoordRow, J].PPiece <> Nil) And (Board[Position.CoordRow,
+                                J].PPiece.Piece.IsLightPiece <> GetIsLight)) Then
+                                IsStop := True;
+                            Dec(J);
+                        End;
                 End;
-            End;
-        End;
+            2: // идем вправо
+                Begin
+                    J := Position.CoordCol + 1;
+                    If J < 7 Then
+                        While (J < 8) And ((Board[Position.CoordRow, J].PPiece = Nil) Or
+                            (Board[Position.CoordRow, J].PPiece.Piece.IsLightPiece <> GetIsLight)) And
+                            (IsStop = False) Do
+                        Begin
+                            TempPointer := PointerMove;
+                            PointerMove^.PossibleMove.CoordRow := Position.CoordRow;
+                            PointerMove^.PossibleMove.CoordCol := J;
+                            New(PointerMove);
+                            TempPointer^.Next := PointerMove;
+                            MovesExist := True;
 
-    Case Counter Of
-        0:
-            PointerMove := Nil;
-        1:
-            PointerMove^.Next := Nil;
-        Else
-            PointerMove^.Next^.Next := Nil;
+                            If ((Board[Position.CoordRow, J].PPiece <> Nil) And (Board[Position.CoordRow,
+                                J].PPiece.Piece.IsLightPiece <> GetIsLight)) Then
+                                IsStop := True;
+                            Inc(J);
+                        End;
+                End;
+            3: // идем вниз
+                Begin
+                    J := Position.CoordRow + 1;
+                    If J < 7 Then
+                        While (J < 8) And ((Board[J, Position.CoordCol].PPiece = Nil) Or
+                            (Board[J, Position.CoordCol].PPiece.Piece.IsLightPiece <> GetIsLight)) And
+                            (IsStop = False) Do
+                        Begin
+                            TempPointer := PointerMove;
+                            PointerMove^.PossibleMove.CoordRow := J;
+                            PointerMove^.PossibleMove.CoordCol := Position.CoordCol;
+                            New(PointerMove);
+                            TempPointer^.Next := PointerMove;
+                            MovesExist := True;
+
+                            If ((Board[J, Position.CoordCol].PPiece <> Nil) And (Board[J, Position.CoordCol]
+                                .PPiece.Piece.IsLightPiece <> GetIsLight)) Then
+                                IsStop := True;
+                            Inc(J);
+                        End;
+                End;
+            4: // идем вверх
+                Begin
+                    J := Position.CoordRow - 1;
+                    If J > 0 Then
+                        While (J > -1) And ((Board[J, Position.CoordCol].PPiece = Nil) Or
+                            (Board[J, Position.CoordCol].PPiece.Piece.IsLightPiece <> GetIsLight)) And
+                            (IsStop = False) Do
+                        Begin
+                            TempPointer := PointerMove;
+                            PointerMove^.PossibleMove.CoordRow := J;
+                            PointerMove^.PossibleMove.CoordCol := Position.CoordCol;
+                            New(PointerMove);
+                            TempPointer^.Next := PointerMove;
+                            MovesExist := True;
+
+                            If ((Board[J, Position.CoordCol].PPiece <> Nil) And (Board[J, Position.CoordCol]
+                                .PPiece.Piece.IsLightPiece <> GetIsLight)) Then
+                                IsStop := True;
+                            Dec(J);
+                        End;
+                End;
+        End;
     End;
+
+    If MovesExist Then
+        TempPointer^.Next := Nil
+    Else
+        ListOfPossibleMoves := Nil;
 
     FindPossibleMoves := ListOfPossibleMoves;
 End;
