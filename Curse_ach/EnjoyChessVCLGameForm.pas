@@ -158,7 +158,7 @@ Begin
             StrPieceName := UpperCase(Copy(ChessEngine.ListOfMoves.Piece.ClassName, 2, 1));
         StrCoordCol := Char(97 + ChessEngine.ListOfMoves.Piece.Position.CoordCol);
         StrCoordRow := IntToStr(8 - ChessEngine.ListOfMoves.Piece.Position.CoordRow);
-        MemNotation.Text := MemNotation.Text + '   Ч   ' + StrPieceName + StrCoordCol + StrCoordRow + #13#10;
+        MemNotation.Text := MemNotation.Text + #9 + 'Ч' + #9 + StrPieceName + StrCoordCol + StrCoordRow + #13#10;
     End;
 End;
 
@@ -187,7 +187,8 @@ Begin
         Playing:
             UpdateCaption('»дет игра...');
     End;
-    If ChessEngine.GameState In [WhiteWin, BlackWin, Draw] Then;
+    If ChessEngine.GameState In [WhiteWin, BlackWin, Draw] Then
+        PbBoard.Enabled := False;
 End;
 
 { ќбработка панелей-кнопок на SplitView }

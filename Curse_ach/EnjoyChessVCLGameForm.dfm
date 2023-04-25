@@ -2642,7 +2642,6 @@ object frmGameForm: TfrmGameForm
         ParentFont = False
         ReadOnly = True
         TabOrder = 1
-        ExplicitLeft = 8
       end
       object pMoveOptions: TPanel
         AlignWithMargins = True
