@@ -105,7 +105,6 @@ Var
 Implementation
 
 {$R *.dfm}
-
 { сама форма }
 
 Procedure TfrmGameForm.FormCreate(Sender: TObject);
@@ -118,6 +117,7 @@ Begin
     RotatedBoard := False;
     BorderStyle := BsNone;
     WindowState := WsMaximized;
+    ChessEngine.IsWhiteTurn := True;
 End;
 
 Procedure TfrmGameForm.FormCloseQuery(Sender: TObject; Var CanClose: Boolean);
@@ -289,8 +289,8 @@ Begin
     End;
 
     Try
-        BitBlt(BoardCanvas.Handle, 0, 0, COL_COUNT * CellSide, ROW_COUNT * CellSide,
-            BufferBitmap.Canvas.Handle, 0, 0, SRCCOPY);
+        BitBlt(BoardCanvas.Handle, 0, 0, COL_COUNT * CellSide, ROW_COUNT * CellSide, BufferBitmap.Canvas.Handle, 0,
+            0, SRCCOPY);
     Finally
         BufferBitmap.Free;
     End;
@@ -382,8 +382,8 @@ Begin
             SetStretchBltMode(TempBitmap.Canvas.Handle, STRETCH_HALFTONE);
             StretchBlt(TempBitmap.Canvas.Handle, 0, 0, CellSide, CellSide, Piece.PBitmap.Canvas.Handle, 0, 0,
                 CellSide * Coeff, CellSide * Coeff, SRCCopy);
-            BufferBitmap.Canvas.Draw(Col * CellSide + CellSide Div 8 + 2, Row * CellSide + CellSide Div 10 +
-                2, TempBitmap);
+            BufferBitmap.Canvas.Draw(Col * CellSide + CellSide Div 8 + 2, Row * CellSide + CellSide Div 10 + 2,
+                TempBitmap);
         Finally
             TempBitmap.Free;
         End;
@@ -412,12 +412,11 @@ End;
 
 { обработка нажатий мыши }
 
-Procedure TfrmGameForm.PbBoardMouseUp(Sender: TObject; Button: TMouseButton; Shift: TShiftState;
-    X, Y: Integer);
+Procedure TfrmGameForm.PbBoardMouseUp(Sender: TObject; Button: TMouseButton; Shift: TShiftState; X, Y: Integer);
 Var
     Row, Col, CellSide, I, J: Integer;
     PPossibleMoves: TPPossibleMoves;
-    WasActive: Boolean;
+    WasActive, TempIsWhiteTurn: Boolean;
     TempSrc, TempDest: TLocation;
 Begin
     CellSide := CellSize();
@@ -430,6 +429,7 @@ Begin
     Case Button Of
         MbLeft:
             Begin
+                TempIsWhiteTurn := ChessEngine.IsWhiteTurn;
                 If ChessEngine.Board[Row, Col].IsActive = True Then
                     WasActive := True
                 Else
@@ -446,7 +446,8 @@ Begin
                         TempDest.CoordRow := Row;
                         TempDest.CoordCol := Col;
                         ChessEngine.ListOfMoves := ChessEngine.Board[TempSrc.CoordRow, TempSrc.CoordCol]
-                            .PPiece^.Piece.MakeMove(ChessEngine.Board, TempDest);
+                            .PPiece^.Piece.MakeMove(ChessEngine.Board, TempDest, TempIsWhiteTurn);
+                        ChessEngine.IsWhiteTurn := TempIsWhiteTurn;
                     End;
 
                     WasActive := False;
@@ -464,7 +465,9 @@ Begin
                 Begin
                     ChessEngine.Board[Row, Col].IsActive := True;
 
-                    If ChessEngine.Board[Row, Col].PPiece <> Nil Then
+                    If (ChessEngine.Board[Row, Col].PPiece <> Nil) And
+                        (((TempIsWhiteTurn = True) And (ChessEngine.Board[Row, Col].PPiece.Piece.IsLight = True)) Or
+                        ((TempIsWhiteTurn = False) And (ChessEngine.Board[Row, Col].PPiece.Piece.IsLight = False))) Then
                     Begin
                         PPossibleMoves := ChessEngine.Board[Row, Col].PPiece^.Piece.FindPossibleMoves
                             (ChessEngine.Board[Row, Col].PPiece^.Piece.Position, ChessEngine.Board);
