@@ -94,7 +94,7 @@ Type
         MoveNumber: Integer;
         Procedure DrawCell(Row, Col: Integer; CellRect: TRect; BufferBitmap: TBitmap);
         Procedure DrawPiece(BufferBitmap: TBitmap; Piece: TPiece; Row, Col: Integer);
-        Procedure AddToNotation(WhiteTurnWas: Boolean);
+        Procedure AddToNotation(WasWhiteTurn: Boolean);
         Procedure InitializeBoard();
         Function CellSize(): Integer;
         Function Cell(CoordX, CoordY: Integer): TBoardCell;
@@ -135,30 +135,31 @@ Begin
         CanClose := False;
 End;
 
-Procedure TfrmGameForm.AddToNotation(WhiteTurnWas: Boolean);
+Procedure TfrmGameForm.AddToNotation(WasWhiteTurn: Boolean);
 Var
-    StrPieceName, StrCoordCol, StrCoordRow: String;
+    StrPieceName, SrcCoordCol, SrcCoordRow, DestCoordCol, DestCoordRow: String;
 Begin
-    If WhiteTurnWas Then
+    If ChessEngine.ListOfMoves.Piece Is TPawn Then
+        StrPieceName := #10
+    Else
+        StrPieceName := UpperCase(Copy(ChessEngine.ListOfMoves.Piece.ClassName, 2, 1));
+
+    SrcCoordCol := Char(97 + ChessEngine.ListOfMoves.Source.CoordCol);
+    SrcCoordRow := IntToStr(8 - ChessEngine.ListOfMoves.Source.CoordRow);
+    DestCoordCol := Char(97 + ChessEngine.ListOfMoves.Dest.CoordCol);
+    DestCoordRow := IntToStr(8 - ChessEngine.ListOfMoves.Dest.CoordRow);
+
+    If WasWhiteTurn Then
     Begin
         Inc(MoveNumber);
-        If ChessEngine.ListOfMoves.Piece Is TPawn Then
-            StrPieceName := ''
-        Else
-            StrPieceName := UpperCase(Copy(ChessEngine.ListOfMoves.Piece.ClassName, 2, 1));
-        StrCoordCol := Char(97 + ChessEngine.ListOfMoves.Piece.Position.CoordCol);
-        StrCoordRow := IntToStr(8 - ChessEngine.ListOfMoves.Piece.Position.CoordRow);
-        MemNotation.Text := MemNotation.Text + IntToStr(MoveNumber) + '. ' + StrPieceName + StrCoordCol + StrCoordRow;
+
+        MemNotation.Text := MemNotation.Text + IntToStr(MoveNumber) + '. ' + StrPieceName + SrcCoordCol + SrcCoordRow +
+            ' - ' + StrPieceName + DestCoordCol + DestCoordRow;
     End
     Else
     Begin
-        If ChessEngine.ListOfMoves.Piece Is TPawn Then
-            StrPieceName := ''
-        Else
-            StrPieceName := UpperCase(Copy(ChessEngine.ListOfMoves.Piece.ClassName, 2, 1));
-        StrCoordCol := Char(97 + ChessEngine.ListOfMoves.Piece.Position.CoordCol);
-        StrCoordRow := IntToStr(8 - ChessEngine.ListOfMoves.Piece.Position.CoordRow);
-        MemNotation.Text := MemNotation.Text + #9 + '—' + #9 + StrPieceName + StrCoordCol + StrCoordRow + #13#10;
+        MemNotation.Text := MemNotation.Text + ' — ' + StrPieceName + SrcCoordCol + SrcCoordRow +
+            ' - ' + StrPieceName + DestCoordCol + DestCoordRow + #13#10;
     End;
 End;
 

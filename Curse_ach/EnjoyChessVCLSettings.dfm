@@ -3,7 +3,7 @@ object frmSettings: TfrmSettings
   Top = 0
   BorderStyle = bsSingle
   Caption = #1053#1072#1089#1090#1088#1086#1081#1082#1080
-  ClientHeight = 471
+  ClientHeight = 502
   ClientWidth = 694
   Color = clBtnFace
   Constraints.MinHeight = 500
@@ -324,19 +324,149 @@ object frmSettings: TfrmSettings
   TextHeight = 13
   object pBottom: TPanel
     Left = 0
-    Top = 432
+    Top = 463
     Width = 694
     Height = 39
     Align = alBottom
     TabOrder = 0
+    ExplicitTop = 465
   end
-  object grpbxSettings: TGroupBox
+  object pgcContent: TPageControl
+    Left = 135
+    Top = 0
+    Width = 559
+    Height = 463
+    ActivePage = Visual
+    Align = alClient
+    TabOrder = 1
+    ExplicitLeft = 137
+    ExplicitWidth = 557
+    object Visual: TTabSheet
+      Caption = 'Visual'
+      TabVisible = False
+      object btcFrontColor: TButtonColor
+        Left = 168
+        Top = 120
+        Caption = 'btcFrontColor'
+        TabOrder = 0
+      end
+      object btcBackColor: TButtonColor
+        Left = 168
+        Top = 151
+        Caption = 'btcBackColor'
+        TabOrder = 1
+      end
+      object chbxMaximize: TCheckBox
+        Left = 146
+        Top = 208
+        Width = 97
+        Height = 17
+        Caption = 'chbxMaximize'
+        TabOrder = 2
+      end
+    end
+    object visualboard: TTabSheet
+      Caption = 'visualboard'
+      ImageIndex = 1
+      TabVisible = False
+      object btcLightColor: TButtonColor
+        Left = 3
+        Top = 3
+        Width = 313
+        Height = 65
+        Caption = #1062#1074#1077#1090' '#1073#1077#1083#1086#1081' '#1082#1083#1077#1090#1082#1080
+        Font.Charset = DEFAULT_CHARSET
+        Font.Color = clWindowText
+        Font.Height = -24
+        Font.Name = 'Tahoma'
+        Font.Style = [fsBold]
+        ImageAlignment = iaRight
+        ParentFont = False
+        TabOrder = 0
+      end
+      object btcDarlColor: TButtonColor
+        Left = 2
+        Top = 167
+        Width = 313
+        Height = 65
+        Caption = #1062#1074#1077#1090' '#1095#1077#1088#1085#1086#1081' '#1082#1083#1077#1090#1082#1080':'
+        Font.Charset = DEFAULT_CHARSET
+        Font.Color = clWindowText
+        Font.Height = -24
+        Font.Name = 'Tahoma'
+        Font.Style = [fsBold]
+        ParentFont = False
+        TabOrder = 1
+      end
+      object btcMemoFontColor: TButtonColor
+        Left = 176
+        Top = 288
+        Caption = 'ButtonColor1'
+        TabOrder = 2
+      end
+    end
+    object sound: TTabSheet
+      Caption = 'sound'
+      ImageIndex = 2
+      TabVisible = False
+      object trkbVolume: TTrackBar
+        Left = 136
+        Top = 176
+        Width = 150
+        Height = 45
+        TabOrder = 0
+      end
+    end
+  end
+  object grpbxOptions: TGroupBox
     Left = 0
     Top = 0
-    Width = 185
-    Height = 432
+    Width = 135
+    Height = 463
     Align = alLeft
-    TabOrder = 1
-    ExplicitTop = -6
+    TabOrder = 2
+    ExplicitLeft = -2
+    object rdbVisual: TRadioButton
+      AlignWithMargins = True
+      Left = 5
+      Top = 25
+      Width = 125
+      Height = 17
+      Margins.Top = 10
+      Margins.Bottom = 10
+      Align = alTop
+      Caption = #1042#1085#1077#1096#1085#1080#1081' '#1074#1080#1076
+      TabOrder = 0
+      ExplicitLeft = 3
+      ExplicitTop = 10
+      ExplicitWidth = 131
+    end
+    object rdbVisualBoard: TRadioButton
+      AlignWithMargins = True
+      Left = 5
+      Top = 62
+      Width = 125
+      Height = 17
+      Margins.Top = 10
+      Margins.Bottom = 10
+      Align = alTop
+      Caption = #1042#1080#1076' '#1080#1075#1088#1086#1074#1086#1075#1086' '#1087#1086#1083#1103
+      TabOrder = 1
+      ExplicitLeft = 7
+    end
+    object rdbSound: TRadioButton
+      AlignWithMargins = True
+      Left = 5
+      Top = 99
+      Width = 125
+      Height = 17
+      Margins.Top = 10
+      Margins.Bottom = 10
+      Align = alTop
+      Caption = #1047#1074#1091#1082
+      TabOrder = 2
+      ExplicitLeft = 4
+      ExplicitTop = 79
+    end
   end
 end

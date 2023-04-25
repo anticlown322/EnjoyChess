@@ -42,9 +42,22 @@ Type
         Property IsWindowMaximized: Boolean Read GetWindowState Write SetWindowState;
         Property VolumeValue: Integer Read GetVolumeValue Write SetVolumeValue;
         Property MemoFontColor: TColor Read GetMemoFontColor Write SetMemoFontColor;
+        Constructor Create();
     End;
 
 Implementation
+
+Constructor TSettings.Create();
+Begin
+    SkinName := 'chesscom';
+    LightColor := $E5D3B3;
+    DarkColor := $B58863;
+    BackColor := $00312E2B;
+    FrontColor := $002B2722;
+    IsWindowMaximized := True;
+    Volume := 50;
+    MemoFontColor := ClWhite;
+End;
 
 Procedure TSettings.SetSkinName(Value: String);
 Begin
@@ -53,7 +66,7 @@ End;
 
 Function TSettings.GetSkinName(): String;
 Begin
-     GetSkinName := Skin;
+    GetSkinName := Skin;
 End;
 
 Procedure TSettings.SetLightColor(Value: TColor);
@@ -63,7 +76,7 @@ End;
 
 Function TSettings.GetLightColor(): TColor;
 Begin
-     GetLightColor := Light;
+    GetLightColor := Light;
 End;
 
 Procedure TSettings.SetDarkColor(Value: TColor);
@@ -73,7 +86,7 @@ End;
 
 Function TSettings.GetDarkColor(): TColor;
 Begin
-     GetDarkColor := Dark;
+    GetDarkColor := Dark;
 End;
 
 Procedure TSettings.SetBackColor(Value: TColor);
@@ -83,7 +96,7 @@ End;
 
 Function TSettings.GetBackColor(): TColor;
 Begin
-     GetBackColor := Back;
+    GetBackColor := Back;
 End;
 
 Procedure TSettings.SetFrontColor(Value: TColor);
@@ -93,7 +106,7 @@ End;
 
 Function TSettings.GetFrontColor(): TColor;
 Begin
-     GetFrontColor := Front;
+    GetFrontColor := Front;
 End;
 
 Procedure TSettings.SetWindowState(Value: Boolean);
@@ -123,7 +136,7 @@ End;
 
 Function TSettings.GetMemoFontColor(): TColor;
 Begin
-     GetMemoFontColor := MemFColor;
+    GetMemoFontColor := MemFColor;
 End;
 
 End.

@@ -18,7 +18,21 @@ Uses
 Type
     TfrmSettings = Class(TForm)
     pBottom: TPanel;
-    grpbxSettings: TGroupBox;
+    pgcContent: TPageControl;
+    Visual: TTabSheet;
+    visualboard: TTabSheet;
+    sound: TTabSheet;
+    grpbxOptions: TGroupBox;
+    rdbVisual: TRadioButton;
+    rdbVisualBoard: TRadioButton;
+    rdbSound: TRadioButton;
+    btcFrontColor: TButtonColor;
+    btcBackColor: TButtonColor;
+    btcLightColor: TButtonColor;
+    btcDarlColor: TButtonColor;
+    btcMemoFontColor: TButtonColor;
+    trkbVolume: TTrackBar;
+    chbxMaximize: TCheckBox;
         Procedure FormClose(Sender: TObject; Var Action: TCloseAction);
     Private
         { Private declarations }
