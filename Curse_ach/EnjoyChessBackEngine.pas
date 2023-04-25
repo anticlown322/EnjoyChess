@@ -101,6 +101,7 @@ Type
         Function GetIsCastled(): Boolean;
         Procedure SetIsCastled(Value: Boolean);
     Public
+        Function MakeMove(Board: TBoard; Dest: TLocation; Var IsWhiteTurn: Boolean): TPMove; Override;
         Function FindPossibleMoves(Position: TLocation; Board: TBoard): TPPossibleMoves; Override;
         Property IsPossibleToCastle: Boolean Read GetIsPossibleCastle Write SetIsPossibleCastle;
         Property IsAlreadyCastled: Boolean Read GetIsCastled Write SetIsCastled;
@@ -602,8 +603,8 @@ Begin
                     J := Position.CoordCol - 1;
                     If (I > -1) And (J > -1) Then
                         While (I > -1) And (J > -1) And
-                            ((Board[I, J].PPiece = Nil) Or (Board[I, J].PPiece.Piece.IsLight <> TempPiece.IsLight))
-                            And (IsStop = False) Do
+                            ((Board[I, J].PPiece = Nil) Or (Board[I, J].PPiece.Piece.IsLight <> TempPiece.IsLight)) And
+                            (IsStop = False) Do
                         Begin
                             Iteration(TempPointer, PointerMove, I, J, MovesExist);
 
@@ -620,8 +621,8 @@ Begin
                     J := Position.CoordCol + 1;
                     If (I > -1) And (J < 8) Then
                         While (I > -1) And (J < 8) And
-                            ((Board[I, J].PPiece = Nil) Or (Board[I, J].PPiece.Piece.IsLight <> TempPiece.IsLight))
-                            And (IsStop = False) Do
+                            ((Board[I, J].PPiece = Nil) Or (Board[I, J].PPiece.Piece.IsLight <> TempPiece.IsLight)) And
+                            (IsStop = False) Do
                         Begin
                             Iteration(TempPointer, PointerMove, I, J, MovesExist);
 
@@ -638,8 +639,8 @@ Begin
                     J := Position.CoordCol + 1;
                     If (I < 8) And (J < 8) Then
                         While (I < 8) And (J < 8) And
-                            ((Board[I, J].PPiece = Nil) Or (Board[I, J].PPiece.Piece.IsLight <> TempPiece.IsLight))
-                            And (IsStop = False) Do
+                            ((Board[I, J].PPiece = Nil) Or (Board[I, J].PPiece.Piece.IsLight <> TempPiece.IsLight)) And
+                            (IsStop = False) Do
                         Begin
                             Iteration(TempPointer, PointerMove, I, J, MovesExist);
 
@@ -656,8 +657,8 @@ Begin
                     J := Position.CoordCol - 1;
                     If (I < 8) And (J > -1) Then
                         While (I < 8) And (J > -1) And
-                            ((Board[I, J].PPiece = Nil) Or (Board[I, J].PPiece.Piece.IsLight <> TempPiece.IsLight))
-                            And (IsStop = False) Do
+                            ((Board[I, J].PPiece = Nil) Or (Board[I, J].PPiece.Piece.IsLight <> TempPiece.IsLight)) And
+                            (IsStop = False) Do
                         Begin
                             Iteration(TempPointer, PointerMove, I, J, MovesExist);
 
@@ -741,15 +742,68 @@ Begin
     MakeMove := Head;
 End;
 
+Function TKing.MakeMove(Board: TBoard; Dest: TLocation; Var IsWhiteTurn: Boolean): TPMove;
+Var
+    Head, PMove: TPMove;
+    TempPos: TLocation;
+Begin
+    New(PMove);
+
+    PMove.Source.CoordRow := Position.CoordRow;
+    PMove.Source.CoordCol := Position.CoordCol;
+    PMove.Dest.CoordRow := Dest.CoordRow;
+    PMove.Dest.CoordCol := Dest.CoordCol;
+    PMove.Piece := Board[PMove.Source.CoordRow, PMove.Source.CoordCol].PPiece.Piece;
+
+    If Abs(PMove.Dest.CoordCol - PMove.Source.CoordCol) > 1 Then
+    Begin
+        IsCastled := True;
+        PMove.Kind := TCastling;
+        If PMove.Dest.CoordCol > PMove.Source.CoordCol Then
+        Begin
+            TempPos.CoordRow := PMove.Source.CoordRow;
+            TempPos.CoordCol := PMove.Source.CoordCol + 1;
+            Board[PMove.Source.CoordRow, PMove.Source.CoordCol + 1].PPiece := Board[PMove.Source.CoordRow, 7].PPiece;
+            Board[PMove.Source.CoordRow, 7].PPiece.Piece.Position := TempPos;
+            Board[PMove.Source.CoordRow, 7].PPiece := nil;
+        End
+        Else
+        Begin
+            TempPos.CoordRow := PMove.Source.CoordRow;
+            TempPos.CoordCol := PMove.Source.CoordCol - 1;
+            Board[PMove.Source.CoordRow, PMove.Source.CoordCol - 1].PPiece := Board[PMove.Source.CoordRow, 0].PPiece;
+            Board[PMove.Source.CoordRow, 0].PPiece.Piece.Position := TempPos;
+            Board[PMove.Source.CoordRow, 0].PPiece := nil;
+        End;
+    End;
+
+    If Board[PMove.Dest.CoordRow, PMove.Dest.CoordCol].PPiece <> Nil Then
+        PMove.Capture := True
+    Else
+        PMove.Capture := False;
+
+    Board[PMove.Dest.CoordRow, PMove.Dest.CoordCol].PPiece :=
+        Board[PMove.Source.CoordRow, PMove.Source.CoordCol].PPiece;
+    Board[PMove.Source.CoordRow, PMove.Source.CoordCol].PPiece := Nil;
+    Position := Dest;
+
+    IsPossibleCastle := False;
+    IsWhiteTurn := Not IsWhiteTurn;
+    PMove^.Next := Head;
+    Head := PMove;
+    MakeMove := Head;
+End;
+
 Function TKing.FindPossibleMoves(Position: TLocation; Board: TBoard): TPPossibleMoves;
 Var
     I, J: Integer;
     ListOfPossibleMoves, PointerMove, TempPointer: TPPossibleMoves;
-    MovesExist: Boolean;
+    MovesExist, TempIsPossibleCastle: Boolean;
 Begin
     New(PointerMove);
     ListOfPossibleMoves := PointerMove;
     MovesExist := False;
+    TempIsPossibleCastle := IsPossibleCastle;
 
     For I := Position.CoordRow - 1 To Position.CoordRow + 1 Do
         For J := Position.CoordCol - 1 To Position.CoordCol + 1 Do
@@ -763,22 +817,23 @@ Begin
             End;
         End;
 
-    If IsPossibleCastle Then
+    If TempIsPossibleCastle Then
     Begin
         For I := Position.CoordCol + 1 To Position.CoordCol + 2 Do
             If (Board[Position.CoordRow, I].PPiece <> Nil) Then
-                IsPossibleCastle := False;
+                TempIsPossibleCastle := False;
 
-        For I := Position.CoordCol - 1 DownTo Position.CoordCol - 3 Do
-            If (Board[Position.CoordRow, I].PPiece <> Nil) Then
-                IsPossibleCastle := False;
-
-        If ((IsPossibleCastle) And (Board[Position.CoordRow, Position.CoordCol + 3].PPiece.Piece is TRook) And
+        If ((TempIsPossibleCastle) And (Board[Position.CoordRow, Position.CoordCol + 3].PPiece.Piece Is TRook) And
             (Board[Position.CoordRow, Position.CoordCol + 3].PPiece.Piece.IsLight = IsLight)) Then
         Begin
             Iteration(TempPointer, PointerMove, Position.CoordRow, Position.CoordCol + 2, MovesExist);
         End;
-        If ((IsPossibleCastle) And (Board[Position.CoordRow, Position.CoordCol - 4].PPiece.Piece is TRook) And
+
+        For I := Position.CoordCol - 1 DownTo Position.CoordCol - 3 Do
+            If (Board[Position.CoordRow, I].PPiece <> Nil) Then
+                TempIsPossibleCastle := False;
+
+        If ((TempIsPossibleCastle) And (Board[Position.CoordRow, Position.CoordCol - 4].PPiece.Piece Is TRook) And
             (Board[Position.CoordRow, Position.CoordCol - 4].PPiece.Piece.IsLight = IsLight)) Then
         Begin
             Iteration(TempPointer, PointerMove, Position.CoordRow, Position.CoordCol - 2, MovesExist);

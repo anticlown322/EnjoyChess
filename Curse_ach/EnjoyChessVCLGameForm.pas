@@ -419,79 +419,88 @@ Var
     WasActive, TempIsWhiteTurn: Boolean;
     TempSrc, TempDest: TLocation;
 Begin
+    If ChessEngine.GameState <> Playing Then
+        Exit;
+
     CellSide := CellSize();
     Col := X Div CellSide;
     Row := Y Div CellSide;
 
-    If ChessEngine.GameState <> Playing Then
-        Exit;
-
-    Case Button Of
-        MbLeft:
-            Begin
-                TempIsWhiteTurn := ChessEngine.IsWhiteTurn;
-                If ChessEngine.Board[Row, Col].IsActive = True Then
-                    WasActive := True
-                Else
+    If (Row > 7) Or (Row < 0) Or (Col > 7) Or (Col < 0) Then
+    Begin
+        // придумать что-то если клик вне поля
+    End
+    Else
+    Begin
+        Case Button Of
+            MbLeft:
                 Begin
-                    If ChessEngine.Board[Row, Col].IsPossibleToMove = True Then
+                    TempIsWhiteTurn := ChessEngine.IsWhiteTurn;
+                    If ChessEngine.Board[Row, Col].IsActive = True Then
+                        WasActive := True
+                    Else
                     Begin
-                        For I := 0 To 7 Do
-                            For J := 0 To 7 Do
-                                If ChessEngine.Board[I, J].IsActive = True Then
-                                Begin
-                                    TempSrc.CoordRow := I;
-                                    TempSrc.CoordCol := J;
-                                End;
-                        TempDest.CoordRow := Row;
-                        TempDest.CoordCol := Col;
-                        ChessEngine.ListOfMoves := ChessEngine.Board[TempSrc.CoordRow, TempSrc.CoordCol]
-                            .PPiece^.Piece.MakeMove(ChessEngine.Board, TempDest, TempIsWhiteTurn);
-                        ChessEngine.IsWhiteTurn := TempIsWhiteTurn;
-                    End;
-
-                    WasActive := False;
-                End;
-
-                For I := 0 To 7 Do
-                    For J := 0 To 7 Do
-                    Begin
-                        ChessEngine.Board[I, J].IsActive := False;
-                        ChessEngine.Board[I, J].IsPossibleToMove := False;
-                        ChessEngine.Board[I, J].IsTake := False;
-                    End;
-
-                If WasActive = False Then
-                Begin
-                    ChessEngine.Board[Row, Col].IsActive := True;
-
-                    If (ChessEngine.Board[Row, Col].PPiece <> Nil) And
-                        (((TempIsWhiteTurn = True) And (ChessEngine.Board[Row, Col].PPiece.Piece.IsLight = True)) Or
-                        ((TempIsWhiteTurn = False) And (ChessEngine.Board[Row, Col].PPiece.Piece.IsLight = False))) Then
-                    Begin
-                        PPossibleMoves := ChessEngine.Board[Row, Col].PPiece^.Piece.FindPossibleMoves
-                            (ChessEngine.Board[Row, Col].PPiece^.Piece.Position, ChessEngine.Board);
-                        While PPossibleMoves <> Nil Do
+                        If ChessEngine.Board[Row, Col].IsPossibleToMove = True Then
                         Begin
-                            ChessEngine.Board[PPossibleMoves^.PossibleMove.CoordRow,
-                                PPossibleMoves^.PossibleMove.CoordCol].IsPossibleToMove := True;
-                            PPossibleMoves := PPossibleMoves^.Next;
+                            For I := 0 To 7 Do
+                                For J := 0 To 7 Do
+                                    If ChessEngine.Board[I, J].IsActive = True Then
+                                    Begin
+                                        TempSrc.CoordRow := I;
+                                        TempSrc.CoordCol := J;
+                                    End;
+                            TempDest.CoordRow := Row;
+                            TempDest.CoordCol := Col;
+                            ChessEngine.ListOfMoves := ChessEngine.Board[TempSrc.CoordRow, TempSrc.CoordCol]
+                                .PPiece^.Piece.MakeMove(ChessEngine.Board, TempDest, TempIsWhiteTurn);
+                            ChessEngine.IsWhiteTurn := TempIsWhiteTurn;
                         End;
+
+                        WasActive := False;
                     End;
-                End
-                Else
-                    ChessEngine.Board[Row, Col].IsActive := False;
-            End;
-        MbRight:
-            Begin
-                If ChessEngine.Board[Row, Col].IsHighlighted = False Then
-                    ChessEngine.Board[Row, Col].IsHighlighted := True
-                Else
-                    ChessEngine.Board[Row, Col].IsHighlighted := False;
-            End;
+
+                    For I := 0 To 7 Do
+                        For J := 0 To 7 Do
+                        Begin
+                            ChessEngine.Board[I, J].IsActive := False;
+                            ChessEngine.Board[I, J].IsPossibleToMove := False;
+                            ChessEngine.Board[I, J].IsTake := False;
+                        End;
+
+                    If WasActive = False Then
+                    Begin
+                        ChessEngine.Board[Row, Col].IsActive := True;
+
+                        If (ChessEngine.Board[Row, Col].PPiece <> Nil) And
+                            (((TempIsWhiteTurn = True) And (ChessEngine.Board[Row, Col].PPiece.Piece.IsLight = True)) Or
+                            ((TempIsWhiteTurn = False) And (ChessEngine.Board[Row,
+                            Col].PPiece.Piece.IsLight = False))) Then
+                        Begin
+                            PPossibleMoves := ChessEngine.Board[Row, Col].PPiece^.Piece.FindPossibleMoves
+                                (ChessEngine.Board[Row, Col].PPiece^.Piece.Position, ChessEngine.Board);
+                            While PPossibleMoves <> Nil Do
+                            Begin
+                                ChessEngine.Board[PPossibleMoves^.PossibleMove.CoordRow,
+                                    PPossibleMoves^.PossibleMove.CoordCol].IsPossibleToMove := True;
+                                PPossibleMoves := PPossibleMoves^.Next;
+                            End;
+                        End;
+                    End
+                    Else
+                        ChessEngine.Board[Row, Col].IsActive := False;
+                End;
+            MbRight:
+                Begin
+                    If ChessEngine.Board[Row, Col].IsHighlighted = False Then
+                        ChessEngine.Board[Row, Col].IsHighlighted := True
+                    Else
+                        ChessEngine.Board[Row, Col].IsHighlighted := False;
+                End;
+        End;
+
+        UpdateScreen();
     End;
 
-    UpdateScreen();
 End;
 
 End.
