@@ -91,8 +91,10 @@ Type
     Private
         ChessEngine: TChessEngine;
         RotatedBoard: Boolean;
+        MoveNumber: Integer;
         Procedure DrawCell(Row, Col: Integer; CellRect: TRect; BufferBitmap: TBitmap);
         Procedure DrawPiece(BufferBitmap: TBitmap; Piece: TPiece; Row, Col: Integer);
+        Procedure AddToNotation(WhiteTurnWas: Boolean);
         Procedure InitializeBoard();
         Function CellSize(): Integer;
         Function Cell(CoordX, CoordY: Integer): TBoardCell;
@@ -118,6 +120,7 @@ Begin
     BorderStyle := BsNone;
     WindowState := WsMaximized;
     ChessEngine.IsWhiteTurn := True;
+    MoveNumber := 0;
 End;
 
 Procedure TfrmGameForm.FormCloseQuery(Sender: TObject; Var CanClose: Boolean);
@@ -130,6 +133,33 @@ Begin
     End
     Else
         CanClose := False;
+End;
+
+Procedure TfrmGameForm.AddToNotation(WhiteTurnWas: Boolean);
+Var
+    StrPieceName, StrCoordCol, StrCoordRow: String;
+Begin
+    If WhiteTurnWas Then
+    Begin
+        Inc(MoveNumber);
+        If ChessEngine.ListOfMoves.Piece Is TPawn Then
+            StrPieceName := ''
+        Else
+            StrPieceName := UpperCase(Copy(ChessEngine.ListOfMoves.Piece.ClassName, 2, 1));
+        StrCoordCol := Char(97 + ChessEngine.ListOfMoves.Piece.Position.CoordCol);
+        StrCoordRow := IntToStr(8 - ChessEngine.ListOfMoves.Piece.Position.CoordRow);
+        MemNotation.Text := MemNotation.Text + IntToStr(MoveNumber) + '. ' + StrPieceName + StrCoordCol + StrCoordRow;
+    End
+    Else
+    Begin
+        If ChessEngine.ListOfMoves.Piece Is TPawn Then
+            StrPieceName := ''
+        Else
+            StrPieceName := UpperCase(Copy(ChessEngine.ListOfMoves.Piece.ClassName, 2, 1));
+        StrCoordCol := Char(97 + ChessEngine.ListOfMoves.Piece.Position.CoordCol);
+        StrCoordRow := IntToStr(8 - ChessEngine.ListOfMoves.Piece.Position.CoordRow);
+        MemNotation.Text := MemNotation.Text + '   —   ' + StrPieceName + StrCoordCol + StrCoordRow + #13#10;
+    End;
 End;
 
 Procedure TfrmGameForm.FormDestroy(Sender: TObject);
@@ -453,6 +483,7 @@ Begin
                             TempDest.CoordCol := Col;
                             ChessEngine.ListOfMoves := ChessEngine.Board[TempSrc.CoordRow, TempSrc.CoordCol]
                                 .PPiece^.Piece.MakeMove(ChessEngine.Board, TempDest, TempIsWhiteTurn);
+                            AddToNotation(ChessEngine.IsWhiteTurn);
                             ChessEngine.IsWhiteTurn := TempIsWhiteTurn;
                         End;
 

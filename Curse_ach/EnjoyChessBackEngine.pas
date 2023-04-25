@@ -805,7 +805,7 @@ Begin
     MovesExist := False;
     TempIsPossibleCastle := IsPossibleCastle;
 
-    For I := Position.CoordRow - 1 To Position.CoordRow + 1 Do
+    For I := Position.CoordRow - 1 To Position.CoordRow + 1 Do  // исследуем квадрат 3 на 3
         For J := Position.CoordCol - 1 To Position.CoordCol + 1 Do
         Begin
             If ((I > -1) And (I < 8) And (Position.CoordCol > -1) And (Position.CoordCol < 8)) Then
@@ -916,7 +916,7 @@ Begin
     ListOfPossibleMoves := PointerMove;
     MovesExist := False;
 
-    For I := Position.CoordRow - 2 To Position.CoordRow + 2 Do
+    For I := Position.CoordRow - 2 To Position.CoordRow + 2 Do // исследуем квадрат 5 на 5
         For J := Position.CoordCol - 2 To Position.CoordCol + 2 Do
         Begin
             If (I > -1) And (I < 8) And (J > -1) And (J < 8) And

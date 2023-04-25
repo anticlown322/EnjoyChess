@@ -2632,16 +2632,17 @@ object frmGameForm: TfrmGameForm
         Color = 2499617
         Constraints.MaxHeight = 420
         Enabled = False
-        Font.Charset = DEFAULT_CHARSET
+        Font.Charset = ANSI_CHARSET
         Font.Color = clWhite
-        Font.Height = -13
-        Font.Name = 'Tahoma'
+        Font.Height = -24
+        Font.Name = 'Univers 45 Light'
         Font.Style = [fsBold]
         Lines.Strings = (
           '')
         ParentFont = False
         ReadOnly = True
         TabOrder = 1
+        ExplicitLeft = 8
       end
       object pMoveOptions: TPanel
         AlignWithMargins = True
