@@ -327,95 +327,32 @@ object frmSettings: TfrmSettings
     Top = 463
     Width = 694
     Height = 39
+    Margins.Left = 0
+    Margins.Top = 0
+    Margins.Right = 0
+    Margins.Bottom = 0
     Align = alBottom
+    BevelOuter = bvNone
+    Color = 2828066
+    ParentBackground = False
     TabOrder = 0
-    ExplicitTop = 465
-  end
-  object pgcContent: TPageControl
-    Left = 135
-    Top = 0
-    Width = 559
-    Height = 463
-    ActivePage = Visual
-    Align = alClient
-    TabOrder = 1
-    ExplicitLeft = 137
-    ExplicitWidth = 557
-    object Visual: TTabSheet
-      Caption = 'Visual'
-      TabVisible = False
-      object btcFrontColor: TButtonColor
-        Left = 168
-        Top = 120
-        Caption = 'btcFrontColor'
-        TabOrder = 0
-      end
-      object btcBackColor: TButtonColor
-        Left = 168
-        Top = 151
-        Caption = 'btcBackColor'
-        TabOrder = 1
-      end
-      object chbxMaximize: TCheckBox
-        Left = 146
-        Top = 208
-        Width = 97
-        Height = 17
-        Caption = 'chbxMaximize'
-        TabOrder = 2
-      end
+    ExplicitLeft = 5
+    ExplicitTop = 391
+    object Button1: TButton
+      Left = 608
+      Top = 6
+      Width = 75
+      Height = 25
+      Caption = 'Button1'
+      TabOrder = 0
     end
-    object visualboard: TTabSheet
-      Caption = 'visualboard'
-      ImageIndex = 1
-      TabVisible = False
-      object btcLightColor: TButtonColor
-        Left = 3
-        Top = 3
-        Width = 313
-        Height = 65
-        Caption = #1062#1074#1077#1090' '#1073#1077#1083#1086#1081' '#1082#1083#1077#1090#1082#1080
-        Font.Charset = DEFAULT_CHARSET
-        Font.Color = clWindowText
-        Font.Height = -24
-        Font.Name = 'Tahoma'
-        Font.Style = [fsBold]
-        ImageAlignment = iaRight
-        ParentFont = False
-        TabOrder = 0
-      end
-      object btcDarlColor: TButtonColor
-        Left = 2
-        Top = 167
-        Width = 313
-        Height = 65
-        Caption = #1062#1074#1077#1090' '#1095#1077#1088#1085#1086#1081' '#1082#1083#1077#1090#1082#1080':'
-        Font.Charset = DEFAULT_CHARSET
-        Font.Color = clWindowText
-        Font.Height = -24
-        Font.Name = 'Tahoma'
-        Font.Style = [fsBold]
-        ParentFont = False
-        TabOrder = 1
-      end
-      object btcMemoFontColor: TButtonColor
-        Left = 176
-        Top = 288
-        Caption = 'ButtonColor1'
-        TabOrder = 2
-      end
-    end
-    object sound: TTabSheet
-      Caption = 'sound'
-      ImageIndex = 2
-      TabVisible = False
-      object trkbVolume: TTrackBar
-        Left = 136
-        Top = 176
-        Width = 150
-        Height = 45
-        TabOrder = 0
-      end
+    object Button2: TButton
+      Left = 471
+      Top = 6
+      Width = 75
+      Height = 25
+      Caption = 'Button2'
+      TabOrder = 1
     end
   end
   object grpbxOptions: TGroupBox
@@ -423,9 +360,16 @@ object frmSettings: TfrmSettings
     Top = 0
     Width = 135
     Height = 463
+    Margins.Left = 0
+    Margins.Top = 0
+    Margins.Right = 0
+    Margins.Bottom = 0
     Align = alLeft
-    TabOrder = 2
-    ExplicitLeft = -2
+    Color = 2828066
+    ParentBackground = False
+    ParentColor = False
+    TabOrder = 1
+    ExplicitLeft = 1
     object rdbVisual: TRadioButton
       AlignWithMargins = True
       Left = 5
@@ -437,9 +381,6 @@ object frmSettings: TfrmSettings
       Align = alTop
       Caption = #1042#1085#1077#1096#1085#1080#1081' '#1074#1080#1076
       TabOrder = 0
-      ExplicitLeft = 3
-      ExplicitTop = 10
-      ExplicitWidth = 131
     end
     object rdbVisualBoard: TRadioButton
       AlignWithMargins = True
@@ -452,7 +393,6 @@ object frmSettings: TfrmSettings
       Align = alTop
       Caption = #1042#1080#1076' '#1080#1075#1088#1086#1074#1086#1075#1086' '#1087#1086#1083#1103
       TabOrder = 1
-      ExplicitLeft = 7
     end
     object rdbSound: TRadioButton
       AlignWithMargins = True
@@ -464,9 +404,91 @@ object frmSettings: TfrmSettings
       Margins.Bottom = 10
       Align = alTop
       Caption = #1047#1074#1091#1082
+      Color = clOlive
+      Font.Charset = DEFAULT_CHARSET
+      Font.Color = clOlive
+      Font.Height = -11
+      Font.Name = 'Tahoma'
+      Font.Style = []
+      ParentColor = False
+      ParentFont = False
       TabOrder = 2
-      ExplicitLeft = 4
-      ExplicitTop = 79
+      ExplicitLeft = 7
+    end
+  end
+  object scrlbxContent: TScrollBox
+    Left = 135
+    Top = 0
+    Width = 559
+    Height = 463
+    HorzScrollBar.Visible = False
+    Align = alClient
+    BevelInner = bvNone
+    BevelOuter = bvNone
+    TabOrder = 2
+    ExplicitLeft = 136
+    ExplicitTop = -3
+    object trkbVolume: TTrackBar
+      Left = 72
+      Top = 272
+      Width = 150
+      Height = 45
+      TabOrder = 0
+    end
+    object btcBackColor: TButtonColor
+      Left = 168
+      Top = 151
+      Caption = 'btcBackColor'
+      TabOrder = 1
+    end
+    object btcFrontColor: TButtonColor
+      Left = 168
+      Top = 120
+      Caption = 'btcFrontColor'
+      TabOrder = 2
+    end
+    object chbxMaximize: TCheckBox
+      Left = 146
+      Top = 208
+      Width = 97
+      Height = 17
+      Caption = 'chbxMaximize'
+      TabOrder = 3
+    end
+    object btcDarlColor: TButtonColor
+      Left = -32
+      Top = 190
+      Width = 313
+      Height = 65
+      Caption = #1062#1074#1077#1090' '#1095#1077#1088#1085#1086#1081' '#1082#1083#1077#1090#1082#1080':'
+      Font.Charset = DEFAULT_CHARSET
+      Font.Color = clWindowText
+      Font.Height = -24
+      Font.Name = 'Tahoma'
+      Font.Style = [fsBold]
+      ParentFont = False
+      TabOrder = 4
+    end
+    object btcLightColor: TButtonColor
+      Left = 16
+      Top = 93
+      Width = 313
+      Height = 65
+      Caption = #1062#1074#1077#1090' '#1073#1077#1083#1086#1081' '#1082#1083#1077#1090#1082#1080
+      Font.Charset = DEFAULT_CHARSET
+      Font.Color = clWindowText
+      Font.Height = -24
+      Font.Name = 'Tahoma'
+      Font.Style = [fsBold]
+      ImageAlignment = iaRight
+      ParentFont = False
+      TabOrder = 5
+    end
+    object btcMemoFontColor: TButtonColor
+      Left = 206
+      Top = 52
+      Caption = 'ButtonColor1'
+      TabOrder = 6
     end
   end
 end

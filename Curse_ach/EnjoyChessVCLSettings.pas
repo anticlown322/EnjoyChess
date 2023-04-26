@@ -12,32 +12,32 @@ Uses
     Vcl.Controls,
     Vcl.Forms,
     Vcl.Dialogs,
-    Vcl.ComCtrls, Vcl.ExtCtrls, Vcl.StdCtrls, Vcl.ColorGrd, VCLTee.TeCanvas,
-  EnjoyChessDataImages, EnjoyChessVCLWelcomeWindow;
+    Vcl.ComCtrls,
+    Vcl.ExtCtrls,
+    Vcl.StdCtrls,
+    Vcl.ColorGrd,
+    VCLTee.TeCanvas,
+    EnjoyChessDataImages,
+    EnjoyChessVCLWelcomeWindow;
 
 Type
     TfrmSettings = Class(TForm)
-    pBottom: TPanel;
-    pgcContent: TPageControl;
-    Visual: TTabSheet;
-    visualboard: TTabSheet;
-    sound: TTabSheet;
-    grpbxOptions: TGroupBox;
-    rdbVisual: TRadioButton;
-    rdbVisualBoard: TRadioButton;
-    rdbSound: TRadioButton;
-    btcFrontColor: TButtonColor;
-    btcBackColor: TButtonColor;
-    btcLightColor: TButtonColor;
-    btcDarlColor: TButtonColor;
-    btcMemoFontColor: TButtonColor;
-    trkbVolume: TTrackBar;
-    chbxMaximize: TCheckBox;
+        PBottom: TPanel;
+        GrpbxOptions: TGroupBox;
+        RdbVisual: TRadioButton;
+        RdbVisualBoard: TRadioButton;
+        RdbSound: TRadioButton;
+        BtcFrontColor: TButtonColor;
+        BtcBackColor: TButtonColor;
+        BtcLightColor: TButtonColor;
+        BtcDarlColor: TButtonColor;
+        BtcMemoFontColor: TButtonColor;
+        TrkbVolume: TTrackBar;
+        ChbxMaximize: TCheckBox;
+        ScrlbxContent: TScrollBox;
+    Button1: TButton;
+    Button2: TButton;
         Procedure FormClose(Sender: TObject; Var Action: TCloseAction);
-    Private
-        { Private declarations }
-    Public
-        { Public declarations }
     End;
 
 Var

@@ -139,27 +139,49 @@ Procedure TfrmGameForm.AddToNotation(WasWhiteTurn: Boolean);
 Var
     StrPieceName, SrcCoordCol, SrcCoordRow, DestCoordCol, DestCoordRow: String;
 Begin
-    If ChessEngine.ListOfMoves.Piece Is TPawn Then
-        StrPieceName := #10
-    Else
-        StrPieceName := UpperCase(Copy(ChessEngine.ListOfMoves.Piece.ClassName, 2, 1));
+    Case ChessEngine.ListOfMoves.Kind Of
+        TNormal:
+            Begin
+                If ChessEngine.ListOfMoves.Piece Is TPawn Then
+                    StrPieceName := #10
+                Else
+                    StrPieceName := UpperCase(Copy(ChessEngine.ListOfMoves.Piece.ClassName, 2, 1));
 
-    SrcCoordCol := Char(97 + ChessEngine.ListOfMoves.Source.CoordCol);
-    SrcCoordRow := IntToStr(8 - ChessEngine.ListOfMoves.Source.CoordRow);
-    DestCoordCol := Char(97 + ChessEngine.ListOfMoves.Dest.CoordCol);
-    DestCoordRow := IntToStr(8 - ChessEngine.ListOfMoves.Dest.CoordRow);
+                SrcCoordCol := Char(97 + ChessEngine.ListOfMoves.Source.CoordCol);
+                SrcCoordRow := IntToStr(8 - ChessEngine.ListOfMoves.Source.CoordRow);
+                DestCoordCol := Char(97 + ChessEngine.ListOfMoves.Dest.CoordCol);
+                DestCoordRow := IntToStr(8 - ChessEngine.ListOfMoves.Dest.CoordRow);
 
-    If WasWhiteTurn Then
-    Begin
-        Inc(MoveNumber);
+                If WasWhiteTurn Then
+                Begin
+                    Inc(MoveNumber);
 
-        MemNotation.Text := MemNotation.Text + IntToStr(MoveNumber) + '. ' + StrPieceName + SrcCoordCol + SrcCoordRow +
-            ' - ' + StrPieceName + DestCoordCol + DestCoordRow;
-    End
-    Else
-    Begin
-        MemNotation.Text := MemNotation.Text + ' — ' + StrPieceName + SrcCoordCol + SrcCoordRow +
-            ' - ' + StrPieceName + DestCoordCol + DestCoordRow + #13#10;
+                    MemNotation.Text := MemNotation.Text + IntToStr(MoveNumber) + '. ' + StrPieceName + SrcCoordCol +
+                        SrcCoordRow + ' - ' + StrPieceName + DestCoordCol + DestCoordRow;
+                End
+                Else
+                Begin
+                    MemNotation.Text := MemNotation.Text + ' — ' + StrPieceName + SrcCoordCol + SrcCoordRow + ' - ' +
+                        StrPieceName + DestCoordCol + DestCoordRow + #13#10;
+                End;
+            End;
+        TCastling:
+            Begin
+                If (ChessEngine.ListOfMoves.Dest.CoordCol - ChessEngine.ListOfMoves.Source.CoordCol = 2) Then
+                    StrPieceName := 'O-O'
+                Else
+                    StrPieceName := 'O-O-O';
+
+                If WasWhiteTurn Then
+                Begin
+                    Inc(MoveNumber);
+                    MemNotation.Text := MemNotation.Text + IntToStr(MoveNumber) + '. ' + StrPieceName;
+                End
+                Else
+                Begin
+                    MemNotation.Text := MemNotation.Text + ' — ' + StrPieceName + #13#10;
+                End;
+            End;
     End;
 End;
 
@@ -330,8 +352,9 @@ End;
 
 Procedure TfrmGameForm.DrawCell(Row, Col: Integer; CellRect: TRect; BufferBitmap: TBitmap);
 Var
-    CellSide: Integer;
+    CellSide, TempRow, TempCol: Integer;
     TempRect: TRect;
+    TempPointer: TPListOfPieces;
 Begin
     CellSide := CellSize();
     BufferBitmap.Canvas.Pen.Width := 1;
@@ -392,6 +415,25 @@ Begin
         TempRect := Rect(Col * CellSide + CellSide Div 3, Row * CellSide + CellSide Div 3,
             (Col + 1) * CellSide - CellSide Div 3, (Row + 1) * CellSide - CellSide Div 3);
         BufferBitmap.Canvas.Ellipse(TempRect);
+    End;
+
+    If (ChessEngine.IsCheck) Then
+    Begin
+        BufferBitmap.Canvas.Pen.Color := ClRed;
+        BufferBitmap.Canvas.Pen.Width := 5;
+        TempPointer := ChessEngine.ListOfPieces;
+        If (ChessEngine.IsWhiteTurn) Then
+            While (TempPointer^.Piece Is TKing) And (TempPointer^.Piece.IsLight) Do
+                TempPointer := TempPointer^.Next
+        Else
+            While (TempPointer^.Piece Is TKing) And (TempPointer^.Piece.IsLight) Do
+                TempPointer := TempPointer^.Next;
+
+        TempRow := TempPointer^.Piece.Position.CoordRow;
+        TempCol := TempPointer^.Piece.Position.CoordCol;
+        BufferBitmap.Canvas.Arc(TempCol * CellSide + 2, TempRow * CellSide + 2, (TempCol + 1) * CellSide - 2,
+            (TempRow + 1) * CellSide - 2, TempCol * CellSide, TempRow * CellSide, TempCol * CellSide,
+            TempRow * CellSide);
     End;
 End;
 
@@ -468,6 +510,7 @@ Begin
             MbLeft:
                 Begin
                     TempIsWhiteTurn := ChessEngine.IsWhiteTurn;
+
                     If ChessEngine.Board[Row, Col].IsActive = True Then
                         WasActive := True
                     Else
@@ -483,9 +526,17 @@ Begin
                                     End;
                             TempDest.CoordRow := Row;
                             TempDest.CoordCol := Col;
+
                             ChessEngine.ListOfMoves := ChessEngine.Board[TempSrc.CoordRow, TempSrc.CoordCol]
                                 .PPiece^.Piece.MakeMove(ChessEngine.Board, TempDest, TempIsWhiteTurn);
                             AddToNotation(ChessEngine.IsWhiteTurn);
+
+                            PPossibleMoves := ChessEngine.Board[TempDest.CoordRow, TempDest.CoordCol]
+                                .PPiece^.Piece.FindPossibleMoves(ChessEngine.Board[TempDest.CoordRow, TempDest.CoordCol]
+                                .PPiece^.Piece.Position, ChessEngine.Board);
+                            ChessEngine.FindIsCheck(ChessEngine.Board, ChessEngine.Board[TempDest.CoordRow,
+                                TempDest.CoordCol].PPiece, PPossibleMoves);
+
                             ChessEngine.IsWhiteTurn := TempIsWhiteTurn;
                         End;
 

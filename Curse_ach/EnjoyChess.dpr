@@ -11,7 +11,8 @@ uses
   Vcl.Styles,
   EnjoyChessBackEngine in 'EnjoyChessBackEngine.pas',
   EnjoyChessLoadingScreen in 'EnjoyChessLoadingScreen.pas' {frmLoadingScreen},
-  EnjoyChessSettings in 'EnjoyChessSettings.pas';
+  EnjoyChessSettings in 'EnjoyChessSettings.pas',
+  EnjoyChessSound in 'EnjoyChessSound.pas';
 
 {$R *.res}
 

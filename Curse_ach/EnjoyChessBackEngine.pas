@@ -15,8 +15,8 @@ Type
     { Общее для других типов }
 
     TLocation = Record
-        CoordRow: 0 .. 8; // 8 - для отсуствия на доске
-        CoordCol: 0 .. 8;
+        CoordRow: 0 .. 7;
+        CoordCol: 0 .. 7;
     End;
 
     TChessEngine = Class;
@@ -142,7 +142,7 @@ Type
         Constructor Create(Position: TLocation; IsLightPiece: Boolean); Override;
     End;
 
-    { общий интерфейс между бэком и формой игры }
+    { интерфейс между этим юнитом и формой }
 
     TGameState = (Playing, WhiteWin, BlackWin, Draw);
 
@@ -155,6 +155,8 @@ Type
         CurrentGameState: TGameState;
         MakedMoves: TPMove;
         IsLightTurn: Boolean;
+        IsKingChecked: Boolean;
+        CheckingPiece: TPListOfPieces;
         // Sound: TEnjoyChessSound;
     Protected
         Function GetListOfPieces(): TPListOfPieces;
@@ -171,6 +173,10 @@ Type
         Procedure SetListOfMoves(Value: TPMove);
         Function GetIsWhiteTurn(): Boolean;
         Procedure SetIsWhiteTurn(Value: Boolean);
+        Function GetIsCheck(): Boolean;
+        Procedure SetIsCheck(Value: Boolean);
+        Function GetCheckPiece(): TPListOfPieces;
+        Procedure SetCheckPiece(Value: TPListOfPieces);
     Public
         Property Board: TBoard Read GetBoard Write SetBoard;
         Property GameState: TGameState Read GetGameState Write SetGameState;
@@ -179,6 +185,9 @@ Type
         Property TakenBlack: TPListOfPieces Read GetListOfTakenBPieces Write SetListOfTakenBPieces;
         Property ListOfMoves: TPMove Read GetListOfMoves Write SetListOfMoves;
         Property IsWhiteTurn: Boolean Read GetIsWhiteTurn Write SetIsWhiteTurn;
+        Property IsCheck: Boolean Read GetIsCheck Write SetIsCheck;
+        Property CheckPiece: TPListOfPieces Read GetCheckPiece Write SetCheckPiece;
+        Procedure FindIsCheck(Board: TBoard; PSrcPiece: TPListOfPieces; PossibleMoves: TPPossibleMoves);
         Procedure InitializeBoard();
     End;
 
@@ -359,6 +368,26 @@ Begin
     GetIsWhiteTurn := IsLightTurn;
 End;
 
+Procedure TChessEngine.SetIsCheck(Value: Boolean);
+Begin
+    IsKingChecked := Value;
+End;
+
+Function TChessEngine.GetIsCheck(): Boolean;
+Begin
+    GetIsCheck := IsKingChecked;
+End;
+
+Procedure TChessEngine.SetCheckPiece(Value: TPListOfPieces);
+Begin
+    CheckingPiece := Value;
+End;
+
+Function TChessEngine.GetCheckPiece(): TPListOfPieces;
+Begin
+    GetCheckPiece := CheckingPiece;
+End;
+
 Procedure TChessEngine.InitializeBoard();
 Const
     ROW_COUNT = 8;
@@ -492,6 +521,25 @@ Begin
 End;
 
 { для ходов }
+
+Procedure TChessEngine.FindIsCheck(Board: TBoard; PSrcPiece: TPListOfPieces; PossibleMoves: TPPossibleMoves);
+Var
+    TempRow, TempCol: Integer;
+Begin
+    While (PossibleMoves <> Nil) And (IsCheck = False) Do
+    Begin
+        TempRow := PossibleMoves^.PossibleMove.CoordRow;
+        TempCol := PossibleMoves^.PossibleMove.CoordCol;
+
+        If (Board[TempRow, TempCol].PPiece <> Nil) And (Board[TempRow, TempCol].PPiece^.Piece Is TKing) And
+            (Board[TempRow, TempCol].PPiece^.Piece.IsLight <> PSrcPiece^.Piece.IsLight) Then
+        Begin
+            IsCheck := True;
+            CheckPiece := PSrcPiece;
+        End;
+        PossibleMoves := PossibleMoves^.Next;
+    End;
+End;
 
 Procedure Iteration(Var TempPointer, PointerMove: TPPossibleMoves; Const Row, Col: Integer; Var MovesExist: Boolean);
 Begin
@@ -725,10 +773,11 @@ Begin
     Else
         PMove.Capture := False;
 
-    If GetIsLight And (Dest.CoordRow = 0) Then
-        PMove.Kind := TPawnPromote;
-    If GetIsLight = False And (Dest.CoordRow = 7) Then
-        PMove.Kind := TPawnPromote;
+    If ((GetIsLight) And ((Dest.CoordRow) = 0)) Or ((GetIsLight = False) And (Dest.CoordRow = 7)) Then
+        PMove.Kind := TPawnPromote
+    Else
+        PMove.Kind := TNormal;
+    // алгос для взятия на проходе
 
     TempPos.CoordRow := Dest.CoordRow;
     TempPos.CoordCol := Dest.CoordCol;
@@ -765,7 +814,7 @@ Begin
             TempPos.CoordCol := PMove.Source.CoordCol + 1;
             Board[PMove.Source.CoordRow, PMove.Source.CoordCol + 1].PPiece := Board[PMove.Source.CoordRow, 7].PPiece;
             Board[PMove.Source.CoordRow, 7].PPiece.Piece.Position := TempPos;
-            Board[PMove.Source.CoordRow, 7].PPiece := nil;
+            Board[PMove.Source.CoordRow, 7].PPiece := Nil;
         End
         Else
         Begin
@@ -773,7 +822,7 @@ Begin
             TempPos.CoordCol := PMove.Source.CoordCol - 1;
             Board[PMove.Source.CoordRow, PMove.Source.CoordCol - 1].PPiece := Board[PMove.Source.CoordRow, 0].PPiece;
             Board[PMove.Source.CoordRow, 0].PPiece.Piece.Position := TempPos;
-            Board[PMove.Source.CoordRow, 0].PPiece := nil;
+            Board[PMove.Source.CoordRow, 0].PPiece := Nil;
         End;
     End;
 
@@ -805,7 +854,7 @@ Begin
     MovesExist := False;
     TempIsPossibleCastle := IsPossibleCastle;
 
-    For I := Position.CoordRow - 1 To Position.CoordRow + 1 Do  // исследуем квадрат 3 на 3
+    For I := Position.CoordRow - 1 To Position.CoordRow + 1 Do // исследуем квадрат 3 на 3
         For J := Position.CoordCol - 1 To Position.CoordCol + 1 Do
         Begin
             If ((I > -1) And (I < 8) And (Position.CoordCol > -1) And (Position.CoordCol < 8)) Then
