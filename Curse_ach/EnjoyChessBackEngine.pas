@@ -138,8 +138,7 @@ Type
     Public
         Function MakeMove(Board: TBoard; Dest: TLocation; Var IsWhiteTurn: Boolean): TPMove; Override;
         Function FindPossibleMoves(Position: TLocation; Board: TBoard): TPPossibleMoves; Override;
-        Procedure SearchPawnMoves(Position: TLocation; Board: TBoard; Var TempPointer, PointerMove: TPPossibleMoves;
-            Var MovesExist: Boolean);
+        Procedure SearchPawnMoves(Position: TLocation; Board: TBoard; Var TempPointer, PointerMove: TPPossibleMoves; Var MovesExist: Boolean);
         Property IsFirstMove: Boolean Read GetIsFirstMove Write SetIsFirstMove;
         Constructor Create(Position: TLocation; IsLightPiece: Boolean); Override;
     End;
@@ -554,8 +553,7 @@ Begin
     MovesExist := True;
 End;
 
-Procedure SearchKingMoves(Position: TLocation; Board: TBoard; Var TempPointer, PointerMove: TPPossibleMoves;
-    Var MovesExist: Boolean);
+Procedure SearchKingMoves(Position: TLocation; Board: TBoard; Var TempPointer, PointerMove: TPPossibleMoves; Var MovesExist: Boolean);
 Var
     I, J: Integer;
     TempPiece: TPiece;
@@ -575,8 +573,7 @@ Begin
         End;
 End;
 
-Procedure SearchVertAndHorizMoves(Position: TLocation; Board: TBoard; Var TempPointer, PointerMove: TPPossibleMoves;
-    Var MovesExist: Boolean);
+Procedure SearchVertAndHorizMoves(Position: TLocation; Board: TBoard; Var TempPointer, PointerMove: TPPossibleMoves; Var MovesExist: Boolean);
 Var
     Directions, I: Integer;
     IsStop: Boolean;
@@ -593,8 +590,7 @@ Begin
                     I := Position.CoordCol - 1;
                     If I > -1 Then
                         While (I > -1) And ((Board[Position.CoordRow, I].PPiece = Nil) Or
-                            (Board[Position.CoordRow, I].PPiece.Piece.IsLight <> TempPiece.IsLight)) And
-                            (IsStop = False) Do
+                            (Board[Position.CoordRow, I].PPiece.Piece.IsLight <> TempPiece.IsLight)) And (IsStop = False) Do
                         Begin
                             Iteration(TempPointer, PointerMove, Position.CoordRow, I, MovesExist);
 
@@ -609,8 +605,7 @@ Begin
                     I := Position.CoordCol + 1;
                     If I < 8 Then
                         While (I < 8) And ((Board[Position.CoordRow, I].PPiece = Nil) Or
-                            (Board[Position.CoordRow, I].PPiece.Piece.IsLight <> TempPiece.IsLight)) And
-                            (IsStop = False) Do
+                            (Board[Position.CoordRow, I].PPiece.Piece.IsLight <> TempPiece.IsLight)) And (IsStop = False) Do
                         Begin
                             Iteration(TempPointer, PointerMove, Position.CoordRow, I, MovesExist);
 
@@ -625,8 +620,7 @@ Begin
                     I := Position.CoordRow + 1;
                     If I < 8 Then
                         While (I < 8) And ((Board[I, Position.CoordCol].PPiece = Nil) Or
-                            (Board[I, Position.CoordCol].PPiece.Piece.IsLight <> TempPiece.IsLight)) And
-                            (IsStop = False) Do
+                            (Board[I, Position.CoordCol].PPiece.Piece.IsLight <> TempPiece.IsLight)) And (IsStop = False) Do
                         Begin
                             Iteration(TempPointer, PointerMove, I, Position.CoordCol, MovesExist);
 
@@ -641,8 +635,7 @@ Begin
                     I := Position.CoordRow - 1;
                     If I > -1 Then
                         While (I > -1) And ((Board[I, Position.CoordCol].PPiece = Nil) Or
-                            (Board[I, Position.CoordCol].PPiece.Piece.IsLight <> TempPiece.IsLight)) And
-                            (IsStop = False) Do
+                            (Board[I, Position.CoordCol].PPiece.Piece.IsLight <> TempPiece.IsLight)) And (IsStop = False) Do
                         Begin
                             Iteration(TempPointer, PointerMove, I, Position.CoordCol, MovesExist);
 
@@ -656,8 +649,7 @@ Begin
     End;
 End;
 
-Procedure SearchDiagonalMoves(Position: TLocation; Board: TBoard; Var TempPointer, PointerMove: TPPossibleMoves;
-    Var MovesExist: Boolean);
+Procedure SearchDiagonalMoves(Position: TLocation; Board: TBoard; Var TempPointer, PointerMove: TPPossibleMoves; Var MovesExist: Boolean);
 Var
     Directions, I, J: Integer;
     IsStop: Boolean;
@@ -674,14 +666,12 @@ Begin
                     I := Position.CoordRow - 1;
                     J := Position.CoordCol - 1;
                     If (I > -1) And (J > -1) Then
-                        While (I > -1) And (J > -1) And
-                            ((Board[I, J].PPiece = Nil) Or (Board[I, J].PPiece.Piece.IsLight <> TempPiece.IsLight)) And
+                        While (I > -1) And (J > -1) And ((Board[I, J].PPiece = Nil) Or (Board[I, J].PPiece.Piece.IsLight <> TempPiece.IsLight)) And
                             (IsStop = False) Do
                         Begin
                             Iteration(TempPointer, PointerMove, I, J, MovesExist);
 
-                            If ((Board[I, J].PPiece <> Nil) And
-                                (Board[I, J].PPiece.Piece.IsLight <> TempPiece.IsLight)) Then
+                            If ((Board[I, J].PPiece <> Nil) And (Board[I, J].PPiece.Piece.IsLight <> TempPiece.IsLight)) Then
                                 IsStop := True;
                             Dec(I);
                             Dec(J);
@@ -692,14 +682,12 @@ Begin
                     I := Position.CoordRow - 1;
                     J := Position.CoordCol + 1;
                     If (I > -1) And (J < 8) Then
-                        While (I > -1) And (J < 8) And
-                            ((Board[I, J].PPiece = Nil) Or (Board[I, J].PPiece.Piece.IsLight <> TempPiece.IsLight)) And
+                        While (I > -1) And (J < 8) And ((Board[I, J].PPiece = Nil) Or (Board[I, J].PPiece.Piece.IsLight <> TempPiece.IsLight)) And
                             (IsStop = False) Do
                         Begin
                             Iteration(TempPointer, PointerMove, I, J, MovesExist);
 
-                            If ((Board[I, J].PPiece <> Nil) And
-                                (Board[I, J].PPiece.Piece.IsLight <> TempPiece.IsLight)) Then
+                            If ((Board[I, J].PPiece <> Nil) And (Board[I, J].PPiece.Piece.IsLight <> TempPiece.IsLight)) Then
                                 IsStop := True;
                             Dec(I);
                             Inc(J);
@@ -710,14 +698,12 @@ Begin
                     I := Position.CoordRow + 1;
                     J := Position.CoordCol + 1;
                     If (I < 8) And (J < 8) Then
-                        While (I < 8) And (J < 8) And
-                            ((Board[I, J].PPiece = Nil) Or (Board[I, J].PPiece.Piece.IsLight <> TempPiece.IsLight)) And
+                        While (I < 8) And (J < 8) And ((Board[I, J].PPiece = Nil) Or (Board[I, J].PPiece.Piece.IsLight <> TempPiece.IsLight)) And
                             (IsStop = False) Do
                         Begin
                             Iteration(TempPointer, PointerMove, I, J, MovesExist);
 
-                            If ((Board[I, J].PPiece <> Nil) And
-                                (Board[I, J].PPiece.Piece.IsLight <> TempPiece.IsLight)) Then
+                            If ((Board[I, J].PPiece <> Nil) And (Board[I, J].PPiece.Piece.IsLight <> TempPiece.IsLight)) Then
                                 IsStop := True;
                             Inc(I);
                             Inc(J);
@@ -728,14 +714,12 @@ Begin
                     I := Position.CoordRow + 1;
                     J := Position.CoordCol - 1;
                     If (I < 8) And (J > -1) Then
-                        While (I < 8) And (J > -1) And
-                            ((Board[I, J].PPiece = Nil) Or (Board[I, J].PPiece.Piece.IsLight <> TempPiece.IsLight)) And
+                        While (I < 8) And (J > -1) And ((Board[I, J].PPiece = Nil) Or (Board[I, J].PPiece.Piece.IsLight <> TempPiece.IsLight)) And
                             (IsStop = False) Do
                         Begin
                             Iteration(TempPointer, PointerMove, I, J, MovesExist);
 
-                            If ((Board[I, J].PPiece <> Nil) And
-                                (Board[I, J].PPiece.Piece.IsLightPiece <> TempPiece.IsLight)) Then
+                            If ((Board[I, J].PPiece <> Nil) And (Board[I, J].PPiece.Piece.IsLightPiece <> TempPiece.IsLight)) Then
                                 IsStop := True;
                             Inc(I);
                             Dec(J);
@@ -745,8 +729,7 @@ Begin
     End;
 End;
 
-Procedure SearchKnightMoves(Position: TLocation; Board: TBoard; Var TempPointer, PointerMove: TPPossibleMoves;
-    Var MovesExist: Boolean);
+Procedure SearchKnightMoves(Position: TLocation; Board: TBoard; Var TempPointer, PointerMove: TPPossibleMoves; Var MovesExist: Boolean);
 Var
     I, J: Integer;
     TempPiece: TPiece;
@@ -756,8 +739,7 @@ Begin
     For I := Position.CoordRow - 2 To Position.CoordRow + 2 Do // исследуем квадрат 5 на 5
         For J := Position.CoordCol - 2 To Position.CoordCol + 2 Do
         Begin
-            If (I > -1) And (I < 8) And (J > -1) And (J < 8) And
-                ((I <> Position.CoordRow) And (J <> Position.CoordCol)) Then
+            If (I > -1) And (I < 8) And (J > -1) And (J < 8) And ((I <> Position.CoordRow) And (J <> Position.CoordCol)) Then
             Begin
                 If (((Abs(I - Position.CoordRow) = 2) And (Abs(J - Position.CoordCol) = 1)) Or
                     ((Abs(I - Position.CoordRow) = 1) And (Abs(J - Position.CoordCol) = 2))) And
@@ -769,8 +751,7 @@ Begin
         End;
 End;
 
-Procedure TPawn.SearchPawnMoves(Position: TLocation; Board: TBoard; Var TempPointer, PointerMove: TPPossibleMoves;
-    Var MovesExist: Boolean);
+Procedure TPawn.SearchPawnMoves(Position: TLocation; Board: TBoard; Var TempPointer, PointerMove: TPPossibleMoves; Var MovesExist: Boolean);
 Var
     I, J, Start: Integer;
     IsStop: Boolean;
@@ -958,8 +939,7 @@ Begin
     Else
         PMove.Capture := False;
 
-    Board[PMove.Dest.CoordRow, PMove.Dest.CoordCol].PPiece :=
-        Board[PMove.Source.CoordRow, PMove.Source.CoordCol].PPiece;
+    Board[PMove.Dest.CoordRow, PMove.Dest.CoordCol].PPiece := Board[PMove.Source.CoordRow, PMove.Source.CoordCol].PPiece;
     Board[PMove.Source.CoordRow, PMove.Source.CoordCol].PPiece := Nil;
     Position := Dest;
 
@@ -968,80 +948,6 @@ Begin
     PMove^.Next := Head;
     Head := PMove;
     MakeMove := Head;
-End;
-
-Function TChessEngine.FindIsCheck(Board: TBoard; King: TPListOfPieces): Boolean;
-Var
-    TempCol, TempRow: Integer;
-    ListOfPossibleMoves, PointerMove, TempPointer: TPPossibleMoves;
-    IsCheck, MovesExist: Boolean;
-Begin
-    New(PointerMove);
-    ListOfPossibleMoves := PointerMove;
-    MovesExist := False;
-    IsCheck := False;
-
-    SearchVertAndHorizMoves(King.Piece.PiecePosition, Board, TempPointer, PointerMove, MovesExist);
-    If MovesExist Then
-        TempPointer^.Next := Nil
-    Else
-        ListOfPossibleMoves := Nil;
-
-    While (ListOfPossibleMoves <> Nil) And (IsCheck = False) Do
-    Begin
-        TempRow := ListOfPossibleMoves.PossibleMove.CoordRow;
-        TempCol := ListOfPossibleMoves.PossibleMove.CoordCol;
-
-        If (Board[TempRow, TempCol].PPiece <> Nil) And
-            ((Board[TempRow, TempCol].PPiece.Piece Is TRook) Or (Board[TempRow, TempCol].PPiece.Piece Is TQueen)) And
-            (Board[TempRow, TempCol].PPiece.Piece.IsLight <> King.Piece.IsLight) Then
-            IsCheck := True;
-
-        ListOfPossibleMoves := ListOfPossibleMoves^.Next;
-    End;
-
-    ListOfPossibleMoves := PointerMove;
-    MovesExist := False;
-    SearchDiagonalMoves(King.Piece.PiecePosition, Board, TempPointer, PointerMove, MovesExist);
-    If MovesExist Then
-        TempPointer^.Next := Nil
-    Else
-        ListOfPossibleMoves := Nil;
-
-    While (ListOfPossibleMoves <> Nil) And (IsCheck = False) Do
-    Begin
-        TempRow := ListOfPossibleMoves.PossibleMove.CoordRow;
-        TempCol := ListOfPossibleMoves.PossibleMove.CoordCol;
-
-        If (Board[TempRow, TempCol].PPiece <> Nil) And ((Board[TempRow, TempCol].PPiece.Piece Is TBishop) Or
-            (Board[TempRow, TempCol].PPiece.Piece Is TQueen)) And
-            (Board[TempRow, TempCol].PPiece.Piece.IsLight <> King.Piece.IsLight) Then
-            IsCheck := True;
-
-        ListOfPossibleMoves := ListOfPossibleMoves^.Next;
-    End;
-
-    ListOfPossibleMoves := PointerMove;
-    MovesExist := False;
-    SearchKnightMoves(King.Piece.PiecePosition, Board, TempPointer, PointerMove, MovesExist);
-    If MovesExist Then
-        TempPointer^.Next := Nil
-    Else
-        ListOfPossibleMoves := Nil;
-
-    While (ListOfPossibleMoves <> Nil) And (IsCheck = False) Do
-    Begin
-        TempRow := ListOfPossibleMoves.PossibleMove.CoordRow;
-        TempCol := ListOfPossibleMoves.PossibleMove.CoordCol;
-
-        If (Board[TempRow, TempCol].PPiece <> Nil) And (Board[TempRow, TempCol].PPiece.Piece Is TNKnight) And
-            (Board[TempRow, TempCol].PPiece.Piece.IsLight <> King.Piece.IsLight) Then
-            IsCheck := True;
-
-        ListOfPossibleMoves := ListOfPossibleMoves^.Next;
-    End;
-
-    FindIsCheck := IsCheck;
 End;
 
 Function TKing.FindPossibleMoves(Position: TLocation; Board: TBoard): TPPossibleMoves;
@@ -1182,6 +1088,116 @@ Begin
         ListOfPossibleMoves := Nil;
 
     FindPossibleMoves := ListOfPossibleMoves;
+End;
+
+Function TChessEngine.FindIsCheck(Board: TBoard; King: TPListOfPieces): Boolean;
+Var
+    TempCol, TempRow: Integer;
+    ListOfPossibleMoves, PointerMove, TempPointer: TPPossibleMoves;
+    IsCheck, MovesExist: Boolean;
+Begin
+    New(PointerMove);
+    ListOfPossibleMoves := PointerMove;
+    MovesExist := False;
+    IsCheck := False;
+
+    SearchVertAndHorizMoves(King.Piece.PiecePosition, Board, TempPointer, PointerMove, MovesExist);
+    If MovesExist Then
+        TempPointer^.Next := Nil
+    Else
+        ListOfPossibleMoves := Nil;
+
+    While (ListOfPossibleMoves <> Nil) And (IsCheck = False) Do
+    Begin
+        TempRow := ListOfPossibleMoves.PossibleMove.CoordRow;
+        TempCol := ListOfPossibleMoves.PossibleMove.CoordCol;
+
+        If (Board[TempRow, TempCol].PPiece <> Nil) And
+            ((Board[TempRow, TempCol].PPiece.Piece Is TRook) Or (Board[TempRow, TempCol].PPiece.Piece Is TQueen)) And
+            (Board[TempRow, TempCol].PPiece.Piece.IsLight <> King.Piece.IsLight) Then
+            IsCheck := True;
+
+        ListOfPossibleMoves := ListOfPossibleMoves^.Next;
+    End;
+
+    ListOfPossibleMoves := PointerMove;
+    MovesExist := False;
+    SearchDiagonalMoves(King.Piece.PiecePosition, Board, TempPointer, PointerMove, MovesExist);
+    If MovesExist Then
+        TempPointer^.Next := Nil
+    Else
+        ListOfPossibleMoves := Nil;
+
+    While (ListOfPossibleMoves <> Nil) And (IsCheck = False) Do
+    Begin
+        TempRow := ListOfPossibleMoves.PossibleMove.CoordRow;
+        TempCol := ListOfPossibleMoves.PossibleMove.CoordCol;
+
+        If (Board[TempRow, TempCol].PPiece <> Nil) And ((Board[TempRow, TempCol].PPiece.Piece Is TBishop) Or
+            (Board[TempRow, TempCol].PPiece.Piece Is TQueen)) And (Board[TempRow, TempCol].PPiece.Piece.IsLight <> King.Piece.IsLight) Then
+            IsCheck := True;
+
+        ListOfPossibleMoves := ListOfPossibleMoves^.Next;
+    End;
+
+    ListOfPossibleMoves := PointerMove;
+    MovesExist := False;
+    SearchKnightMoves(King.Piece.PiecePosition, Board, TempPointer, PointerMove, MovesExist);
+    If MovesExist Then
+        TempPointer^.Next := Nil
+    Else
+        ListOfPossibleMoves := Nil;
+
+    While (ListOfPossibleMoves <> Nil) And (IsCheck = False) Do
+    Begin
+        TempRow := ListOfPossibleMoves.PossibleMove.CoordRow;
+        TempCol := ListOfPossibleMoves.PossibleMove.CoordCol;
+
+        If (Board[TempRow, TempCol].PPiece <> Nil) And (Board[TempRow, TempCol].PPiece.Piece Is TNKnight) And
+            (Board[TempRow, TempCol].PPiece.Piece.IsLight <> King.Piece.IsLight) Then
+            IsCheck := True;
+
+        ListOfPossibleMoves := ListOfPossibleMoves^.Next;
+    End;
+
+    ListOfPossibleMoves := PointerMove;
+    MovesExist := False;
+
+    If King.Piece.IsLight Then // для пешек
+    Begin
+        TempRow := King.Piece.PiecePosition.CoordRow - 1;
+        TempCol := King.Piece.PiecePosition.CoordCol - 1;
+        Iteration(TempPointer, PointerMove, TempRow, TempCol, MovesExist);
+        TempCol := King.Piece.PiecePosition.CoordCol + 1;
+        Iteration(TempPointer, PointerMove, TempRow, TempCol, MovesExist);
+    End
+    Else
+    Begin
+        TempRow := King.Piece.PiecePosition.CoordRow + 1;
+        TempCol := King.Piece.PiecePosition.CoordCol - 1;
+        Iteration(TempPointer, PointerMove, TempRow, TempCol, MovesExist);
+        TempCol := King.Piece.PiecePosition.CoordCol + 1;
+        Iteration(TempPointer, PointerMove, TempRow, TempCol, MovesExist);
+    End;
+
+    If MovesExist Then
+        TempPointer^.Next := Nil
+    Else
+        ListOfPossibleMoves := Nil;
+
+    While (ListOfPossibleMoves <> Nil) And (IsCheck = False) Do
+    Begin
+        TempRow := ListOfPossibleMoves.PossibleMove.CoordRow;
+        TempCol := ListOfPossibleMoves.PossibleMove.CoordCol;
+
+        If (Board[TempRow, TempCol].PPiece <> Nil) And (Board[TempRow, TempCol].PPiece.Piece Is TPawn) And
+            (Board[TempRow, TempCol].PPiece.Piece.IsLight <> King.Piece.IsLight) Then
+            IsCheck := True;
+
+        ListOfPossibleMoves := ListOfPossibleMoves^.Next;
+    End;
+
+    FindIsCheck := IsCheck;
 End;
 
 End.

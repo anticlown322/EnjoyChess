@@ -535,7 +535,7 @@ Begin
                                 ChessEngine.IsCheck := ChessEngine.FindIsCheck(ChessEngine.Board, ChessEngine.BlackKing)
                             Else
                                 ChessEngine.IsCheck := ChessEngine.FindIsCheck(ChessEngine.Board,
-                                    ChessEngine.BlackKing);
+                                    ChessEngine.WhiteKing);
 
                             ChessEngine.IsWhiteTurn := TempIsWhiteTurn;
                         End;
