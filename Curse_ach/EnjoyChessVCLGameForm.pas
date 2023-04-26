@@ -322,7 +322,6 @@ Var
     CellRect: TRect;
     Col, Row, CellSide: Integer;
     BufferBitmap: TBitmap;
-    ExistingPieces: TPListOfPieces;
 Begin
     CellSide := CellSize();
 
@@ -419,14 +418,15 @@ Begin
 
     If (ChessEngine.IsCheck) Then
     Begin
-        BufferBitmap.Canvas.Pen.Color := ClRed;
+        BufferBitmap.Canvas.Pen.Color := ClMaroon;
         BufferBitmap.Canvas.Pen.Width := 5;
+
         TempPointer := ChessEngine.ListOfPieces;
         If (ChessEngine.IsWhiteTurn) Then
-            While (TempPointer^.Piece Is TKing) And (TempPointer^.Piece.IsLight) Do
+            While Not((TempPointer^.Piece Is TKing) And (TempPointer^.Piece.IsLight)) Do
                 TempPointer := TempPointer^.Next
         Else
-            While (TempPointer^.Piece Is TKing) And (TempPointer^.Piece.IsLight) Do
+            While Not((TempPointer^.Piece Is TKing) And (TempPointer^.Piece.IsLight = False)) Do
                 TempPointer := TempPointer^.Next;
 
         TempRow := TempPointer^.Piece.Position.CoordRow;
@@ -531,11 +531,11 @@ Begin
                                 .PPiece^.Piece.MakeMove(ChessEngine.Board, TempDest, TempIsWhiteTurn);
                             AddToNotation(ChessEngine.IsWhiteTurn);
 
-                            PPossibleMoves := ChessEngine.Board[TempDest.CoordRow, TempDest.CoordCol]
-                                .PPiece^.Piece.FindPossibleMoves(ChessEngine.Board[TempDest.CoordRow, TempDest.CoordCol]
-                                .PPiece^.Piece.Position, ChessEngine.Board);
-                            ChessEngine.FindIsCheck(ChessEngine.Board, ChessEngine.Board[TempDest.CoordRow,
-                                TempDest.CoordCol].PPiece, PPossibleMoves);
+                            If ChessEngine.IsWhiteTurn Then
+                                ChessEngine.IsCheck := ChessEngine.FindIsCheck(ChessEngine.Board, ChessEngine.BlackKing)
+                            Else
+                                ChessEngine.IsCheck := ChessEngine.FindIsCheck(ChessEngine.Board,
+                                    ChessEngine.BlackKing);
 
                             ChessEngine.IsWhiteTurn := TempIsWhiteTurn;
                         End;
