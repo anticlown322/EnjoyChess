@@ -527,12 +527,10 @@ Begin
                                 TempDest, TempIsWhiteTurn);
                             AddToNotation(ChessEngine.IsWhiteTurn);
 
-                            {
-                              If ChessEngine.IsWhiteTurn Then
-                              ChessEngine.IsCheck := ChessEngine.FindIsCheck(ChessEngine.Board, ChessEngine.BlackKing)
-                              Else
-                              ChessEngine.IsCheck := ChessEngine.FindIsCheck(ChessEngine.Board, ChessEngine.WhiteKing);
-                            }
+                            If ChessEngine.IsWhiteTurn Then
+                                ChessEngine.IsCheck := ChessEngine.FindIsCheck(ChessEngine.Board, ChessEngine.BlackKing)
+                            Else
+                                ChessEngine.IsCheck := ChessEngine.FindIsCheck(ChessEngine.Board, ChessEngine.WhiteKing);
 
                             ChessEngine.IsWhiteTurn := TempIsWhiteTurn;
                         End;
@@ -558,10 +556,10 @@ Begin
                         Begin
                             If ChessEngine.IsWhiteTurn Then
                                 PPossibleMoves := ChessEngine.Board[Row, Col].PPiece^.Piece.FindPossibleMoves
-                                    (ChessEngine.Board[Row, Col].PPiece^.Piece.Position, ChessEngine.Board, ChessEngine.WhiteKing)
+                                    (ChessEngine.Board[Row, Col].PPiece^.Piece.Position, ChessEngine.Board, ChessEngine.WhiteKing, ChessEngine)
                             Else
                                 PPossibleMoves := ChessEngine.Board[Row, Col].PPiece^.Piece.FindPossibleMoves
-                                    (ChessEngine.Board[Row, Col].PPiece^.Piece.Position, ChessEngine.Board, ChessEngine.BlackKing);
+                                    (ChessEngine.Board[Row, Col].PPiece^.Piece.Position, ChessEngine.Board, ChessEngine.BlackKing, ChessEngine);
                             While PPossibleMoves <> Nil Do
                             Begin
                                 ChessEngine.Board[PPossibleMoves^.PossibleMove.CoordRow, PPossibleMoves^.PossibleMove.CoordCol]

@@ -12,6 +12,7 @@ Uses
     Pngimage;
 
 Type
+
     { Общее для других типов }
 
     TLocation = Record
@@ -80,9 +81,10 @@ Type
         Procedure SetIsLight(Value: Boolean);
         Function GetIsLight(): Boolean;
     Public
-        Procedure WillBeCheck(Board: TBoard; King: TPListOfPieces; Var Moves: TPPossibleMoves);
+        Procedure WillBeCheck(Board: TBoard; King: TPListOfPieces; Var Moves: TPPossibleMoves; ChessEng: TChessEngine);
         Function MakeMove(Board: TBoard; Dest: TLocation; Var IsWhiteTurn: Boolean): TPMove; Virtual;
-        Function FindPossibleMoves(Position: TLocation; Board: TBoard; King: TPListOfPieces): TPPossibleMoves; Virtual; Abstract;
+        Function FindPossibleMoves(Position: TLocation; Board: TBoard; King: TPListOfPieces; ChessEng: TChessEngine): TPPossibleMoves;
+            Virtual; Abstract;
         Property Position: TLocation Read GetPosition Write SetPosition;
         Property IsLight: Boolean Read GetIsLight Write SetIsLight;
         Property PBitmap: TBitmap Read GetBitmap Write SetBitmap;
@@ -103,7 +105,7 @@ Type
         Procedure SetIsCastled(Value: Boolean);
     Public
         Function MakeMove(Board: TBoard; Dest: TLocation; Var IsWhiteTurn: Boolean): TPMove; Override;
-        Function FindPossibleMoves(Position: TLocation; Board: TBoard; King: TPListOfPieces): TPPossibleMoves; Override;
+        Function FindPossibleMoves(Position: TLocation; Board: TBoard; King: TPListOfPieces; ChessEng: TChessEngine): TPPossibleMoves; Override;
         Property IsPossibleToCastle: Boolean Read GetIsPossibleCastle Write SetIsPossibleCastle;
         Property IsAlreadyCastled: Boolean Read GetIsCastled Write SetIsCastled;
         Constructor Create(Position: TLocation; IsLightPiece: Boolean); Override;
@@ -111,23 +113,23 @@ Type
 
     TQueen = Class(TPiece)
     Public
-        Function FindPossibleMoves(Position: TLocation; Board: TBoard; King: TPListOfPieces): TPPossibleMoves; Override;
+        Function FindPossibleMoves(Position: TLocation; Board: TBoard; King: TPListOfPieces; ChessEng: TChessEngine): TPPossibleMoves; Override;
     End;
 
     TBishop = Class(TPiece)
     Public
-        Function FindPossibleMoves(Position: TLocation; Board: TBoard; King: TPListOfPieces): TPPossibleMoves; Override;
+        Function FindPossibleMoves(Position: TLocation; Board: TBoard; King: TPListOfPieces; ChessEng: TChessEngine): TPPossibleMoves; Override;
     End;
 
     TRook = Class(TPiece)
     Public
-        Function FindPossibleMoves(Position: TLocation; Board: TBoard; King: TPListOfPieces): TPPossibleMoves; Override;
+        Function FindPossibleMoves(Position: TLocation; Board: TBoard; King: TPListOfPieces; ChessEng: TChessEngine): TPPossibleMoves; Override;
     End;
 
     TNKnight = Class(TPiece)
         // N поставлена намеренно, т.к. при работе со скинами читается вторая буква класса
     Public
-        Function FindPossibleMoves(Position: TLocation; Board: TBoard; King: TPListOfPieces): TPPossibleMoves; Override;
+        Function FindPossibleMoves(Position: TLocation; Board: TBoard; King: TPListOfPieces; ChessEng: TChessEngine): TPPossibleMoves; Override;
     End;
 
     TPawn = Class(TPiece)
@@ -138,7 +140,7 @@ Type
         Procedure SetIsFirstMove(Value: Boolean);
     Public
         Function MakeMove(Board: TBoard; Dest: TLocation; Var IsWhiteTurn: Boolean): TPMove; Override;
-        Function FindPossibleMoves(Position: TLocation; Board: TBoard; King: TPListOfPieces): TPPossibleMoves; Override;
+        Function FindPossibleMoves(Position: TLocation; Board: TBoard; King: TPListOfPieces; ChessEng: TChessEngine): TPPossibleMoves; Override;
         Procedure SearchPawnMoves(Position: TLocation; Board: TBoard; Var TempPointer, PointerMove: TPPossibleMoves; Var MovesExist: Boolean);
         Property IsFirstMove: Boolean Read GetIsFirstMove Write SetIsFirstMove;
         Constructor Create(Position: TLocation; IsLightPiece: Boolean); Override;
@@ -193,8 +195,8 @@ Type
         Property IsCheck: Boolean Read GetIsCheck Write SetIsCheck;
         Property WhiteKing: TPListOfPieces Read GetWhiteKingPointer Write SetWhiteKingPointer;
         Property BlackKing: TPListOfPieces Read GetBlackKingPointer Write SetBlackKingPointer;
+        Function FindIsCheck(Board: TBoard; King: TPListOfPieces): Boolean;
         Procedure InitializeBoard();
-        // Function FindIsCheck(Board: TBoard; King: TPListOfPieces): Boolean;
     End;
 
 Implementation
@@ -830,7 +832,7 @@ Begin
     End;
 End;
 
-Function FindIsCheck(Board: TBoard; King: TPListOfPieces): Boolean;
+Function TChessEngine.FindIsCheck(Board: TBoard; King: TPListOfPieces): Boolean;
 Var
     TempCol, TempRow: Integer;
     ListOfPossibleMoves, PointerMove, TempPointer: TPPossibleMoves;
@@ -1082,11 +1084,11 @@ Begin
     End;
 End;
 
-Procedure TPiece.WillBeCheck(Board: TBoard; King: TPListOfPieces; Var Moves: TPPossibleMoves);
+Procedure TPiece.WillBeCheck(Board: TBoard; King: TPListOfPieces; Var Moves: TPPossibleMoves; ChessEng: TChessEngine);
 Var
     PSaveSrc, PSaveDst: TPListOfPieces;
-    TempDest: TLocation;
-    WillCheck: Boolean;
+    TempDest, TempSrc: TLocation;
+    WillCheck, Flag: Boolean;
     Head, TempMoves: TPPossibleMoves;
 Begin
     Head := Moves;
@@ -1095,6 +1097,7 @@ Begin
     Begin
         WillCheck := False;
         PSaveSrc := Board[Position.CoordRow, Position.CoordCol].PPiece;
+        TempSrc := Board[Position.CoordRow, Position.CoordCol].PPiece.Piece.Position;
         TempDest.CoordRow := TempMoves^.PossibleMove.CoordRow;
         TempDest.CoordCol := TempMoves^.PossibleMove.CoordCol;
         PSaveDst := Board[TempDest.CoordRow, TempDest.CoordCol].PPiece;
@@ -1103,20 +1106,23 @@ Begin
         Board[Position.CoordRow, Position.CoordCol].PPiece := Nil;
         Board[TempDest.CoordRow, TempDest.CoordCol].PPiece.Piece.Position := TempDest;
 
-        WillCheck := FindIsCheck(Board, King);
+        WillCheck := ChessEng.FindIsCheck(Board, King);
         If WillCheck Then
         Begin
             DelElem(Head, TempMoves);
+            Flag := True;
         End;
 
+        Board[TempDest.CoordRow, TempDest.CoordCol].PPiece.Piece.Position := TempSrc;
         Board[Position.CoordRow, Position.CoordCol].PPiece := PSaveSrc;
         Board[TempDest.CoordRow, TempDest.CoordCol].PPiece := PSaveDst;
         TempMoves := TempMoves^.Next;
     End;
     Moves := Head;
+    // WillBeCheck := ;
 End;
 
-Function TKing.FindPossibleMoves(Position: TLocation; Board: TBoard; King: TPListOfPieces): TPPossibleMoves;
+Function TKing.FindPossibleMoves(Position: TLocation; Board: TBoard; King: TPListOfPieces; ChessEng: TChessEngine): TPPossibleMoves;
 Var
     I, J: Integer;
     ListOfPossibleMoves, PointerMove, TempPointer: TPPossibleMoves;
@@ -1157,12 +1163,12 @@ Begin
     Else
         ListOfPossibleMoves := Nil;
 
-    WillBeCheck(Board, King, ListOfPossibleMoves);
+    WillBeCheck(Board, King, ListOfPossibleMoves, ChessEng);
 
     FindPossibleMoves := ListOfPossibleMoves;
 End;
 
-Function TQueen.FindPossibleMoves(Position: TLocation; Board: TBoard; King: TPListOfPieces): TPPossibleMoves;
+Function TQueen.FindPossibleMoves(Position: TLocation; Board: TBoard; King: TPListOfPieces; ChessEng: TChessEngine): TPPossibleMoves;
 Var
     ListOfPossibleMoves, PointerMove, TempPointer: TPPossibleMoves;
     MovesExist: Boolean;
@@ -1179,12 +1185,12 @@ Begin
     Else
         ListOfPossibleMoves := Nil;
 
-    WillBeCheck(Board, King, ListOfPossibleMoves);
+    WillBeCheck(Board, King, ListOfPossibleMoves, ChessEng);
 
     FindPossibleMoves := ListOfPossibleMoves;
 End;
 
-Function TRook.FindPossibleMoves(Position: TLocation; Board: TBoard; King: TPListOfPieces): TPPossibleMoves;
+Function TRook.FindPossibleMoves(Position: TLocation; Board: TBoard; King: TPListOfPieces; ChessEng: TChessEngine): TPPossibleMoves;
 Var
     ListOfPossibleMoves, PointerMove, TempPointer: TPPossibleMoves;
     MovesExist: Boolean;
@@ -1200,12 +1206,12 @@ Begin
     Else
         ListOfPossibleMoves := Nil;
 
-    WillBeCheck(Board, King, ListOfPossibleMoves);
+    WillBeCheck(Board, King, ListOfPossibleMoves, ChessEng);
 
     FindPossibleMoves := ListOfPossibleMoves;
 End;
 
-Function TBishop.FindPossibleMoves(Position: TLocation; Board: TBoard; King: TPListOfPieces): TPPossibleMoves;
+Function TBishop.FindPossibleMoves(Position: TLocation; Board: TBoard; King: TPListOfPieces; ChessEng: TChessEngine): TPPossibleMoves;
 Var
     ListOfPossibleMoves, PointerMove, TempPointer: TPPossibleMoves;
     MovesExist: Boolean;
@@ -1221,12 +1227,12 @@ Begin
     Else
         ListOfPossibleMoves := Nil;
 
-    WillBeCheck(Board, King, ListOfPossibleMoves);
+    WillBeCheck(Board, King, ListOfPossibleMoves, ChessEng);
 
     FindPossibleMoves := ListOfPossibleMoves;
 End;
 
-Function TNKnight.FindPossibleMoves(Position: TLocation; Board: TBoard; King: TPListOfPieces): TPPossibleMoves;
+Function TNKnight.FindPossibleMoves(Position: TLocation; Board: TBoard; King: TPListOfPieces; ChessEng: TChessEngine): TPPossibleMoves;
 Var
     ListOfPossibleMoves, PointerMove, TempPointer: TPPossibleMoves;
     MovesExist: Boolean;
@@ -1242,12 +1248,12 @@ Begin
     Else
         ListOfPossibleMoves := Nil;
 
-    WillBeCheck(Board, King, ListOfPossibleMoves);
+    WillBeCheck(Board, King, ListOfPossibleMoves, ChessEng);
 
     FindPossibleMoves := ListOfPossibleMoves;
 End;
 
-Function TPawn.FindPossibleMoves(Position: TLocation; Board: TBoard; King: TPListOfPieces): TPPossibleMoves;
+Function TPawn.FindPossibleMoves(Position: TLocation; Board: TBoard; King: TPListOfPieces; ChessEng: TChessEngine): TPPossibleMoves;
 Var
     ListOfPossibleMoves, PointerMove, TempPointer: TPPossibleMoves;
     MovesExist: Boolean;
@@ -1263,7 +1269,7 @@ Begin
     Else
         ListOfPossibleMoves := Nil;
 
-    WillBeCheck(Board, King, ListOfPossibleMoves);
+    WillBeCheck(Board, King, ListOfPossibleMoves, ChessEng);
 
     FindPossibleMoves := ListOfPossibleMoves;
 End;

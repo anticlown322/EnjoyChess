@@ -1,18 +1,18 @@
 Program EnjoyChess;
 
-Uses
-    Vcl.Forms,
-    EnjoyChessVCLWelcomeWindow In 'EnjoyChessVCLWelcomeWindow.pas' {frmWelcomeWindow} ,
-    EnjoyChessDataImages In 'EnjoyChessDataImages.pas' {dtmdData: TDataModule} ,
-    EnjoyChessVCLAnalysis In 'EnjoyChessVCLAnalysis.pas' {frmAnalysis} ,
-    EnjoyChessVCLGameForm In 'EnjoyChessVCLGameForm.pas' {frmGameForm} ,
-    EnjoyChessVCLSettings In 'EnjoyChessVCLSettings.pas' {frmSettings} ,
-    Vcl.Themes,
-    Vcl.Styles,
-    EnjoyChessBackEngine In 'EnjoyChessBackEngine.pas',
-    EnjoyChessLoadingScreen In 'EnjoyChessLoadingScreen.pas' {frmLoadingScreen} ,
-    EnjoyChessSettings In 'EnjoyChessSettings.pas',
-    EnjoyChessSound In 'EnjoyChessSound.pas';
+uses
+  Vcl.Forms,
+  EnjoyChessVCLWelcomeWindow in 'EnjoyChessVCLWelcomeWindow.pas' {frmWelcomeWindow},
+  EnjoyChessDataImages in 'EnjoyChessDataImages.pas' {dtmdData: TDataModule},
+  EnjoyChessVCLAnalysis in 'EnjoyChessVCLAnalysis.pas' {frmAnalysis},
+  EnjoyChessVCLGameForm in 'EnjoyChessVCLGameForm.pas' {frmGameForm},
+  EnjoyChessVCLSettings in 'EnjoyChessVCLSettings.pas' {frmSettings},
+  Vcl.Themes,
+  Vcl.Styles,
+  EnjoyChessBackEngine in 'EnjoyChessBackEngine.pas',
+  EnjoyChessLoadingScreen in 'EnjoyChessLoadingScreen.pas' {frmLoadingScreen},
+  EnjoyChessSettings in 'EnjoyChessSettings.pas',
+  EnjoyChessSound in 'EnjoyChessSound.pas';
 
 {$R *.res}
 
@@ -27,7 +27,7 @@ Begin
 
     Application.MainFormOnTaskbar := False;
     Application.CreateForm(TFrmWelcomeWindow, FrmWelcomeWindow);
-    FrmLoadingScreen.Free;
+  FrmLoadingScreen.Free;
     Application.CreateForm(TDtmdData, DtmdDataImages);
     Application.Run;
 

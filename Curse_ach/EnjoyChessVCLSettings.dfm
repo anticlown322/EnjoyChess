@@ -336,8 +336,6 @@ object frmSettings: TfrmSettings
     Color = 2828066
     ParentBackground = False
     TabOrder = 0
-    ExplicitLeft = 5
-    ExplicitTop = 391
     object Button1: TButton
       Left = 608
       Top = 6
@@ -369,7 +367,6 @@ object frmSettings: TfrmSettings
     ParentBackground = False
     ParentColor = False
     TabOrder = 1
-    ExplicitLeft = 1
     object rdbVisual: TRadioButton
       AlignWithMargins = True
       Left = 5
@@ -413,7 +410,6 @@ object frmSettings: TfrmSettings
       ParentColor = False
       ParentFont = False
       TabOrder = 2
-      ExplicitLeft = 7
     end
   end
   object scrlbxContent: TScrollBox
@@ -429,35 +425,35 @@ object frmSettings: TfrmSettings
     ExplicitLeft = 136
     ExplicitTop = -3
     object trkbVolume: TTrackBar
-      Left = 72
-      Top = 272
+      Left = 144
+      Top = 65
       Width = 150
       Height = 45
       TabOrder = 0
     end
     object btcBackColor: TButtonColor
-      Left = 168
-      Top = 151
+      Left = 334
+      Top = 65
       Caption = 'btcBackColor'
       TabOrder = 1
     end
     object btcFrontColor: TButtonColor
-      Left = 168
-      Top = 120
+      Left = 352
+      Top = 44
       Caption = 'btcFrontColor'
       TabOrder = 2
     end
     object chbxMaximize: TCheckBox
-      Left = 146
-      Top = 208
+      Left = 495
+      Top = 48
       Width = 97
       Height = 17
       Caption = 'chbxMaximize'
       TabOrder = 3
     end
     object btcDarlColor: TButtonColor
-      Left = -32
-      Top = 190
+      Left = 176
+      Top = -6
       Width = 313
       Height = 65
       Caption = #1062#1074#1077#1090' '#1095#1077#1088#1085#1086#1081' '#1082#1083#1077#1090#1082#1080':'
@@ -470,8 +466,8 @@ object frmSettings: TfrmSettings
       TabOrder = 4
     end
     object btcLightColor: TButtonColor
-      Left = 16
-      Top = 93
+      Left = -70
+      Top = 19
       Width = 313
       Height = 65
       Caption = #1062#1074#1077#1090' '#1073#1077#1083#1086#1081' '#1082#1083#1077#1090#1082#1080
