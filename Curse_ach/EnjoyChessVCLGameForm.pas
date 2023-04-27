@@ -125,8 +125,8 @@ End;
 
 Procedure TfrmGameForm.FormCloseQuery(Sender: TObject; Var CanClose: Boolean);
 Begin
-    If Application.MessageBox(PChar('Вы уверены, что хотите выйти? Несохраненные данные будут утеряны.'),
-        PChar('Выход'), MB_ICONQUESTION + MB_YESNO + MB_DEFBUTTON1 + MB_TASKMODAL) = IDYES Then
+    If Application.MessageBox(PChar('Вы уверены, что хотите выйти? Несохраненные данные будут утеряны.'), PChar('Выход'),
+        MB_ICONQUESTION + MB_YESNO + MB_DEFBUTTON1 + MB_TASKMODAL) = IDYES Then
     Begin
         FrmWelcomeWindow.Show;
         CanClose := True
@@ -156,13 +156,13 @@ Begin
                 Begin
                     Inc(MoveNumber);
 
-                    MemNotation.Text := MemNotation.Text + IntToStr(MoveNumber) + '. ' + StrPieceName + SrcCoordCol +
-                        SrcCoordRow + ' - ' + StrPieceName + DestCoordCol + DestCoordRow;
+                    MemNotation.Text := MemNotation.Text + IntToStr(MoveNumber) + '. ' + StrPieceName + SrcCoordCol + SrcCoordRow + ' - ' +
+                        StrPieceName + DestCoordCol + DestCoordRow;
                 End
                 Else
                 Begin
-                    MemNotation.Text := MemNotation.Text + ' — ' + StrPieceName + SrcCoordCol + SrcCoordRow + ' - ' +
-                        StrPieceName + DestCoordCol + DestCoordRow + #13#10;
+                    MemNotation.Text := MemNotation.Text + ' — ' + StrPieceName + SrcCoordCol + SrcCoordRow + ' - ' + StrPieceName + DestCoordCol +
+                        DestCoordRow + #13#10;
                 End;
             End;
         TCastling:
@@ -342,8 +342,7 @@ Begin
     End;
 
     Try
-        BitBlt(BoardCanvas.Handle, 0, 0, COL_COUNT * CellSide, ROW_COUNT * CellSide, BufferBitmap.Canvas.Handle, 0,
-            0, SRCCOPY);
+        BitBlt(BoardCanvas.Handle, 0, 0, COL_COUNT * CellSide, ROW_COUNT * CellSide, BufferBitmap.Canvas.Handle, 0, 0, SRCCOPY);
     Finally
         BufferBitmap.Free;
     End;
@@ -378,8 +377,7 @@ Begin
 
     If (Row = 7) Then
     Begin
-        BufferBitmap.Canvas.TextOut(Col * CellSide + CellSide Div 10, Row * CellSide + CellSide - 17,
-            Chr(ORD('a') + Col));
+        BufferBitmap.Canvas.TextOut(Col * CellSide + CellSide Div 10, Row * CellSide + CellSide - 17, Chr(ORD('a') + Col));
     End;
     If (Col = 7) Then
     Begin
@@ -396,8 +394,8 @@ Begin
     Begin
         BufferBitmap.Canvas.Pen.Color := $008000; // dark green
         BufferBitmap.Canvas.Pen.Width := 5;
-        BufferBitmap.Canvas.Arc(Col * CellSide + 2, Row * CellSide + 2, (Col + 1) * CellSide - 2,
-            (Row + 1) * CellSide - 2, Col * CellSide, Row * CellSide, Col * CellSide, Row * CellSide);
+        BufferBitmap.Canvas.Arc(Col * CellSide + 2, Row * CellSide + 2, (Col + 1) * CellSide - 2, (Row + 1) * CellSide - 2, Col * CellSide,
+            Row * CellSide, Col * CellSide, Row * CellSide);
     End;
 
     If ChessEngine.Board[Row, Col].PPiece <> Nil Then
@@ -411,8 +409,8 @@ Begin
         BufferBitmap.Canvas.Pen.Color := $829769; // light green
         BufferBitmap.Canvas.Pen.Width := 1;
 
-        TempRect := Rect(Col * CellSide + CellSide Div 3, Row * CellSide + CellSide Div 3,
-            (Col + 1) * CellSide - CellSide Div 3, (Row + 1) * CellSide - CellSide Div 3);
+        TempRect := Rect(Col * CellSide + CellSide Div 3, Row * CellSide + CellSide Div 3, (Col + 1) * CellSide - CellSide Div 3,
+            (Row + 1) * CellSide - CellSide Div 3);
         BufferBitmap.Canvas.Ellipse(TempRect);
     End;
 
@@ -431,9 +429,8 @@ Begin
 
         TempRow := TempPointer^.Piece.Position.CoordRow;
         TempCol := TempPointer^.Piece.Position.CoordCol;
-        BufferBitmap.Canvas.Arc(TempCol * CellSide + 2, TempRow * CellSide + 2, (TempCol + 1) * CellSide - 2,
-            (TempRow + 1) * CellSide - 2, TempCol * CellSide, TempRow * CellSide, TempCol * CellSide,
-            TempRow * CellSide);
+        BufferBitmap.Canvas.Arc(TempCol * CellSide + 2, TempRow * CellSide + 2, (TempCol + 1) * CellSide - 2, (TempRow + 1) * CellSide - 2,
+            TempCol * CellSide, TempRow * CellSide, TempCol * CellSide, TempRow * CellSide);
     End;
 End;
 
@@ -454,10 +451,9 @@ Begin
 
         Try
             SetStretchBltMode(TempBitmap.Canvas.Handle, STRETCH_HALFTONE);
-            StretchBlt(TempBitmap.Canvas.Handle, 0, 0, CellSide, CellSide, Piece.PBitmap.Canvas.Handle, 0, 0,
-                CellSide * Coeff, CellSide * Coeff, SRCCopy);
-            BufferBitmap.Canvas.Draw(Col * CellSide + CellSide Div 8 + 2, Row * CellSide + CellSide Div 10 + 2,
-                TempBitmap);
+            StretchBlt(TempBitmap.Canvas.Handle, 0, 0, CellSide, CellSide, Piece.PBitmap.Canvas.Handle, 0, 0, CellSide * Coeff,
+                CellSide * Coeff, SRCCopy);
+            BufferBitmap.Canvas.Draw(Col * CellSide + CellSide Div 8 + 2, Row * CellSide + CellSide Div 10 + 2, TempBitmap);
         Finally
             TempBitmap.Free;
         End;
@@ -527,15 +523,16 @@ Begin
                             TempDest.CoordRow := Row;
                             TempDest.CoordCol := Col;
 
-                            ChessEngine.ListOfMoves := ChessEngine.Board[TempSrc.CoordRow, TempSrc.CoordCol]
-                                .PPiece^.Piece.MakeMove(ChessEngine.Board, TempDest, TempIsWhiteTurn);
+                            ChessEngine.ListOfMoves := ChessEngine.Board[TempSrc.CoordRow, TempSrc.CoordCol].PPiece^.Piece.MakeMove(ChessEngine.Board,
+                                TempDest, TempIsWhiteTurn);
                             AddToNotation(ChessEngine.IsWhiteTurn);
 
-                            If ChessEngine.IsWhiteTurn Then
-                                ChessEngine.IsCheck := ChessEngine.FindIsCheck(ChessEngine.Board, ChessEngine.BlackKing)
-                            Else
-                                ChessEngine.IsCheck := ChessEngine.FindIsCheck(ChessEngine.Board,
-                                    ChessEngine.WhiteKing);
+                            {
+                              If ChessEngine.IsWhiteTurn Then
+                              ChessEngine.IsCheck := ChessEngine.FindIsCheck(ChessEngine.Board, ChessEngine.BlackKing)
+                              Else
+                              ChessEngine.IsCheck := ChessEngine.FindIsCheck(ChessEngine.Board, ChessEngine.WhiteKing);
+                            }
 
                             ChessEngine.IsWhiteTurn := TempIsWhiteTurn;
                         End;
@@ -557,15 +554,18 @@ Begin
 
                         If (ChessEngine.Board[Row, Col].PPiece <> Nil) And
                             (((TempIsWhiteTurn = True) And (ChessEngine.Board[Row, Col].PPiece.Piece.IsLight = True)) Or
-                            ((TempIsWhiteTurn = False) And (ChessEngine.Board[Row,
-                            Col].PPiece.Piece.IsLight = False))) Then
+                            ((TempIsWhiteTurn = False) And (ChessEngine.Board[Row, Col].PPiece.Piece.IsLight = False))) Then
                         Begin
-                            PPossibleMoves := ChessEngine.Board[Row, Col].PPiece^.Piece.FindPossibleMoves
-                                (ChessEngine.Board[Row, Col].PPiece^.Piece.Position, ChessEngine.Board);
+                            If ChessEngine.IsWhiteTurn Then
+                                PPossibleMoves := ChessEngine.Board[Row, Col].PPiece^.Piece.FindPossibleMoves
+                                    (ChessEngine.Board[Row, Col].PPiece^.Piece.Position, ChessEngine.Board, ChessEngine.WhiteKing)
+                            Else
+                                PPossibleMoves := ChessEngine.Board[Row, Col].PPiece^.Piece.FindPossibleMoves
+                                    (ChessEngine.Board[Row, Col].PPiece^.Piece.Position, ChessEngine.Board, ChessEngine.BlackKing);
                             While PPossibleMoves <> Nil Do
                             Begin
-                                ChessEngine.Board[PPossibleMoves^.PossibleMove.CoordRow,
-                                    PPossibleMoves^.PossibleMove.CoordCol].IsPossibleToMove := True;
+                                ChessEngine.Board[PPossibleMoves^.PossibleMove.CoordRow, PPossibleMoves^.PossibleMove.CoordCol]
+                                    .IsPossibleToMove := True;
                                 PPossibleMoves := PPossibleMoves^.Next;
                             End;
                         End;
