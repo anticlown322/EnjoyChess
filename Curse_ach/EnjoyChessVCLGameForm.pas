@@ -28,7 +28,9 @@ Uses
     EnjoyChessDataImages,
     EnjoyChessVCLAnalysis,
     EnjoyChessVCLSettings,
-    EnjoyChessVCLWelcomeWindow;
+    EnjoyChessVCLWelcomeWindow,
+    Vcl.Grids,
+    EnjoyChessVCLPawnPromotion;
 
 Type
     TfrmGameForm = Class(TForm)
@@ -99,6 +101,7 @@ Type
         Function CellSize(): Integer;
         Function Cell(CoordX, CoordY: Integer): TBoardCell;
         Procedure UpdateScreen();
+        Procedure LeftClick(Row, Col: Integer);
     End;
 
 Var
@@ -147,8 +150,12 @@ Begin
                 Else
                     StrPieceName := UpperCase(Copy(ChessEngine.ListOfMoves.Piece.ClassName, 2, 1));
 
-                SrcCoordCol := Char(97 + ChessEngine.ListOfMoves.Source.CoordCol);
-                SrcCoordRow := IntToStr(8 - ChessEngine.ListOfMoves.Source.CoordRow);
+                If ChessEngine.ListOfMoves.Capture Then
+                    If ChessEngine.ListOfMoves.Piece Is TPawn Then
+                        StrPieceName := Char(97 + ChessEngine.ListOfMoves.Source.CoordCol) + 'x'
+                    Else
+                        StrPieceName := StrPieceName + 'x';
+
                 DestCoordCol := Char(97 + ChessEngine.ListOfMoves.Dest.CoordCol);
                 DestCoordRow := IntToStr(8 - ChessEngine.ListOfMoves.Dest.CoordRow);
 
@@ -156,13 +163,17 @@ Begin
                 Begin
                     Inc(MoveNumber);
 
-                    MemNotation.Text := MemNotation.Text + IntToStr(MoveNumber) + '. ' + StrPieceName + SrcCoordCol + SrcCoordRow + ' - ' +
-                        StrPieceName + DestCoordCol + DestCoordRow;
+                    MemNotation.Text := MemNotation.Text + IntToStr(MoveNumber) + '. ' + #9 + StrPieceName + DestCoordCol + DestCoordRow;
+                    If ChessEngine.IsCheck Then
+                        MemNotation.Text := MemNotation.Text + '+';
                 End
                 Else
                 Begin
-                    MemNotation.Text := MemNotation.Text + ' Ч ' + StrPieceName + SrcCoordCol + SrcCoordRow + ' - ' + StrPieceName + DestCoordCol +
-                        DestCoordRow + #13#10;
+                    MemNotation.Text := MemNotation.Text + #9 + StrPieceName + DestCoordCol + DestCoordRow;
+                    If ChessEngine.IsCheck Then
+                        MemNotation.Text := MemNotation.Text + '+' + #13#10
+                    Else
+                        MemNotation.Text := MemNotation.Text + #13#10;
                 End;
             End;
         TCastling:
@@ -175,14 +186,156 @@ Begin
                 If WasWhiteTurn Then
                 Begin
                     Inc(MoveNumber);
-                    MemNotation.Text := MemNotation.Text + IntToStr(MoveNumber) + '. ' + StrPieceName;
+                    MemNotation.Text := MemNotation.Text + IntToStr(MoveNumber) + '. ' + #9 + StrPieceName;
                 End
                 Else
                 Begin
-                    MemNotation.Text := MemNotation.Text + ' Ч ' + StrPieceName + #13#10;
+                    MemNotation.Text := MemNotation.Text + #9 + StrPieceName + #13#10;
                 End;
             End;
     End;
+End;
+
+Procedure TfrmGameForm.LeftClick(Row, Col: Integer);
+Var
+    I, J: Integer;
+    PPossibleMoves, AllPossibleMoves: TPPossibleMoves;
+    WasActive, TempIsWhiteTurn, IsMate: Boolean;
+    TempListOfPieces: TPListOfPieces;
+    TempSrc, TempDest: TLocation;
+Begin
+    TempIsWhiteTurn := ChessEngine.IsWhiteTurn;
+
+    If ChessEngine.Board[Row, Col].IsActive = True Then
+        WasActive := True
+    Else
+    Begin
+        If ChessEngine.Board[Row, Col].IsPossibleToMove = True Then
+        Begin
+            For I := 0 To 7 Do
+                For J := 0 To 7 Do
+                    If ChessEngine.Board[I, J].IsActive = True Then
+                    Begin
+                        TempSrc.CoordRow := I;
+                        TempSrc.CoordCol := J;
+                    End;
+
+            TempDest.CoordRow := Row;
+            TempDest.CoordCol := Col;
+
+            ChessEngine.ListOfMoves := ChessEngine.Board[TempSrc.CoordRow, TempSrc.CoordCol].PPiece^.Piece.MakeMove(ChessEngine.Board, TempDest,
+                TempIsWhiteTurn, ChessEngine);
+
+            If ChessEngine.ListOfMoves.Kind = TPawnPromote Then
+            Begin
+                FrmPromotion := TfrmPromotion.Create(Self);
+                FrmPromotion.IsWhite := ChessEngine.IsWhiteTurn;
+                FrmPromotion.PieceType := ChessEngine.Board[TempDest.CoordRow, TempDest.CoordCol].PPiece.Piece;
+                FrmPromotion.ShowModal;
+                ChessEngine.Board[TempDest.CoordRow, TempDest.CoordCol].PPiece^.Piece :=
+                    FrmPromotion.PieceType.Create(TempDest, ChessEngine.IsWhiteTurn);
+                FrmPromotion.Free;
+            End;
+
+            If ChessEngine.IsWhiteTurn Then
+                ChessEngine.IsCheck := ChessEngine.FindIsCheck(ChessEngine.Board, ChessEngine.BlackKing)
+            Else
+                ChessEngine.IsCheck := ChessEngine.FindIsCheck(ChessEngine.Board, ChessEngine.WhiteKing);
+
+            If ChessEngine.IsCheck Then
+            Begin
+                AllPossibleMoves := Nil;
+                TempListOfPieces := ChessEngine.ListOfPieces;
+                While (TempListOfPieces <> Nil) And (AllPossibleMoves = Nil) Do
+                Begin
+                    If (TempListOfPieces^.Piece.IsLight = TempIsWhiteTurn) Then
+                    Begin
+                        TempSrc.CoordRow := TempListOfPieces^.Piece.Position.CoordRow;
+                        TempSrc.CoordCol := TempListOfPieces^.Piece.Position.CoordCol;
+
+                        If TempIsWhiteTurn Then
+                            AllPossibleMoves := ChessEngine.Board[TempSrc.CoordRow, TempSrc.CoordCol].PPiece^.Piece.FindPossibleMoves
+                                (ChessEngine.Board[TempSrc.CoordRow, TempSrc.CoordCol].PPiece^.Piece.Position, ChessEngine.Board,
+                                ChessEngine.WhiteKing, ChessEngine)
+                        Else
+                            AllPossibleMoves := ChessEngine.Board[TempSrc.CoordRow, TempSrc.CoordCol].PPiece^.Piece.FindPossibleMoves
+                                (ChessEngine.Board[TempSrc.CoordRow, TempSrc.CoordCol].PPiece^.Piece.Position, ChessEngine.Board,
+                                ChessEngine.BlackKing, ChessEngine);
+                    End;
+                    TempListOfPieces := TempListOfPieces^.Next;
+                End;
+                If AllPossibleMoves = Nil Then
+                    If TempIsWhiteTurn Then
+                        ChessEngine.GameState := BlackWin
+                    Else
+                        ChessEngine.GameState := WhiteWin;
+            End
+            Else
+            Begin
+                AllPossibleMoves := Nil;
+                TempListOfPieces := ChessEngine.ListOfPieces;
+                While (TempListOfPieces <> Nil) And (AllPossibleMoves = Nil) Do
+                Begin
+                    If (TempListOfPieces^.Piece.IsLight = TempIsWhiteTurn) Then
+                    Begin
+                        TempSrc.CoordRow := TempListOfPieces^.Piece.Position.CoordRow;
+                        TempSrc.CoordCol := TempListOfPieces^.Piece.Position.CoordCol;
+
+                        If TempIsWhiteTurn Then
+                            AllPossibleMoves := ChessEngine.Board[TempSrc.CoordRow, TempSrc.CoordCol].PPiece^.Piece.FindPossibleMoves
+                                (ChessEngine.Board[TempSrc.CoordRow, TempSrc.CoordCol].PPiece^.Piece.Position, ChessEngine.Board,
+                                ChessEngine.WhiteKing, ChessEngine)
+                        Else
+                            AllPossibleMoves := ChessEngine.Board[TempSrc.CoordRow, TempSrc.CoordCol].PPiece^.Piece.FindPossibleMoves
+                                (ChessEngine.Board[TempSrc.CoordRow, TempSrc.CoordCol].PPiece^.Piece.Position, ChessEngine.Board,
+                                ChessEngine.BlackKing, ChessEngine);
+                    End;
+                    TempListOfPieces := TempListOfPieces^.Next;
+                End;
+                If AllPossibleMoves = Nil Then
+                    If TempIsWhiteTurn Then
+                        ChessEngine.GameState := Draw
+                    Else
+                        ChessEngine.GameState := Playing;
+            End;
+
+            AddToNotation(ChessEngine.IsWhiteTurn);
+            ChessEngine.IsWhiteTurn := TempIsWhiteTurn;
+        End;
+
+        WasActive := False;
+    End;
+
+    For I := 0 To 7 Do
+        For J := 0 To 7 Do
+        Begin
+            ChessEngine.Board[I, J].IsActive := False;
+            ChessEngine.Board[I, J].IsPossibleToMove := False;
+            ChessEngine.Board[I, J].IsTake := False;
+        End;
+
+    If WasActive = False Then
+    Begin
+        ChessEngine.Board[Row, Col].IsActive := True;
+
+        If (ChessEngine.Board[Row, Col].PPiece <> Nil) And (((TempIsWhiteTurn = True) And (ChessEngine.Board[Row, Col].PPiece.Piece.IsLight = True))
+            Or ((TempIsWhiteTurn = False) And (ChessEngine.Board[Row, Col].PPiece.Piece.IsLight = False))) Then
+        Begin
+            If ChessEngine.IsWhiteTurn Then
+                PPossibleMoves := ChessEngine.Board[Row, Col].PPiece^.Piece.FindPossibleMoves(ChessEngine.Board[Row, Col].PPiece^.Piece.Position,
+                    ChessEngine.Board, ChessEngine.WhiteKing, ChessEngine)
+            Else
+                PPossibleMoves := ChessEngine.Board[Row, Col].PPiece^.Piece.FindPossibleMoves(ChessEngine.Board[Row, Col].PPiece^.Piece.Position,
+                    ChessEngine.Board, ChessEngine.BlackKing, ChessEngine);
+            While PPossibleMoves <> Nil Do
+            Begin
+                ChessEngine.Board[PPossibleMoves^.PossibleMove.CoordRow, PPossibleMoves^.PossibleMove.CoordCol].IsPossibleToMove := True;
+                PPossibleMoves := PPossibleMoves^.Next;
+            End;
+        End;
+    End
+    Else
+        ChessEngine.Board[Row, Col].IsActive := False;
 End;
 
 Procedure TfrmGameForm.FormDestroy(Sender: TObject);
@@ -193,6 +346,7 @@ End;
 { обработка левой подпанели }
 
 Procedure TfrmGameForm.UpdateScreen();
+
     Procedure UpdateCaption(Caption: String);
     Begin
         LbGameState.Caption := Caption;
@@ -484,10 +638,7 @@ End;
 
 Procedure TfrmGameForm.PbBoardMouseUp(Sender: TObject; Button: TMouseButton; Shift: TShiftState; X, Y: Integer);
 Var
-    Row, Col, CellSide, I, J: Integer;
-    PPossibleMoves: TPPossibleMoves;
-    WasActive, TempIsWhiteTurn: Boolean;
-    TempSrc, TempDest: TLocation;
+    Row, Col, CellSide: Integer;
 Begin
     If ChessEngine.GameState <> Playing Then
         Exit;
@@ -505,71 +656,7 @@ Begin
         Case Button Of
             MbLeft:
                 Begin
-                    TempIsWhiteTurn := ChessEngine.IsWhiteTurn;
-
-                    If ChessEngine.Board[Row, Col].IsActive = True Then
-                        WasActive := True
-                    Else
-                    Begin
-                        If ChessEngine.Board[Row, Col].IsPossibleToMove = True Then
-                        Begin
-                            For I := 0 To 7 Do
-                                For J := 0 To 7 Do
-                                    If ChessEngine.Board[I, J].IsActive = True Then
-                                    Begin
-                                        TempSrc.CoordRow := I;
-                                        TempSrc.CoordCol := J;
-                                    End;
-                            TempDest.CoordRow := Row;
-                            TempDest.CoordCol := Col;
-
-                            ChessEngine.ListOfMoves := ChessEngine.Board[TempSrc.CoordRow, TempSrc.CoordCol].PPiece^.Piece.MakeMove(ChessEngine.Board,
-                                TempDest, TempIsWhiteTurn);
-                            AddToNotation(ChessEngine.IsWhiteTurn);
-
-                            If ChessEngine.IsWhiteTurn Then
-                                ChessEngine.IsCheck := ChessEngine.FindIsCheck(ChessEngine.Board, ChessEngine.BlackKing)
-                            Else
-                                ChessEngine.IsCheck := ChessEngine.FindIsCheck(ChessEngine.Board, ChessEngine.WhiteKing);
-
-                            ChessEngine.IsWhiteTurn := TempIsWhiteTurn;
-                        End;
-
-                        WasActive := False;
-                    End;
-
-                    For I := 0 To 7 Do
-                        For J := 0 To 7 Do
-                        Begin
-                            ChessEngine.Board[I, J].IsActive := False;
-                            ChessEngine.Board[I, J].IsPossibleToMove := False;
-                            ChessEngine.Board[I, J].IsTake := False;
-                        End;
-
-                    If WasActive = False Then
-                    Begin
-                        ChessEngine.Board[Row, Col].IsActive := True;
-
-                        If (ChessEngine.Board[Row, Col].PPiece <> Nil) And
-                            (((TempIsWhiteTurn = True) And (ChessEngine.Board[Row, Col].PPiece.Piece.IsLight = True)) Or
-                            ((TempIsWhiteTurn = False) And (ChessEngine.Board[Row, Col].PPiece.Piece.IsLight = False))) Then
-                        Begin
-                            If ChessEngine.IsWhiteTurn Then
-                                PPossibleMoves := ChessEngine.Board[Row, Col].PPiece^.Piece.FindPossibleMoves
-                                    (ChessEngine.Board[Row, Col].PPiece^.Piece.Position, ChessEngine.Board, ChessEngine.WhiteKing, ChessEngine)
-                            Else
-                                PPossibleMoves := ChessEngine.Board[Row, Col].PPiece^.Piece.FindPossibleMoves
-                                    (ChessEngine.Board[Row, Col].PPiece^.Piece.Position, ChessEngine.Board, ChessEngine.BlackKing, ChessEngine);
-                            While PPossibleMoves <> Nil Do
-                            Begin
-                                ChessEngine.Board[PPossibleMoves^.PossibleMove.CoordRow, PPossibleMoves^.PossibleMove.CoordCol]
-                                    .IsPossibleToMove := True;
-                                PPossibleMoves := PPossibleMoves^.Next;
-                            End;
-                        End;
-                    End
-                    Else
-                        ChessEngine.Board[Row, Col].IsActive := False;
+                    LeftClick(Row, Col);
                 End;
             MbRight:
                 Begin
@@ -582,7 +669,6 @@ Begin
 
         UpdateScreen();
     End;
-
 End;
 
 End.

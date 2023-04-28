@@ -12,7 +12,8 @@ uses
   EnjoyChessBackEngine in 'EnjoyChessBackEngine.pas',
   EnjoyChessLoadingScreen in 'EnjoyChessLoadingScreen.pas' {frmLoadingScreen},
   EnjoyChessSettings in 'EnjoyChessSettings.pas',
-  EnjoyChessSound in 'EnjoyChessSound.pas';
+  EnjoyChessSound in 'EnjoyChessSound.pas',
+  EnjoyChessVCLPawnPromotion in 'EnjoyChessVCLPawnPromotion.pas' {frmPromotion};
 
 {$R *.res}
 
@@ -27,6 +28,7 @@ Begin
 
     Application.MainFormOnTaskbar := False;
     Application.CreateForm(TFrmWelcomeWindow, FrmWelcomeWindow);
+  Application.CreateForm(TfrmPromotion, frmPromotion);
   FrmLoadingScreen.Free;
     Application.CreateForm(TDtmdData, DtmdDataImages);
     Application.Run;

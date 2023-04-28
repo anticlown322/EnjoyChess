@@ -12,7 +12,6 @@ Type
   TdtmdData = Class(TDataModule)
     ImcIcons: TImageCollection;
     ImcForButtons: TImageCollection;
-    ImcForBoard: TImageCollection;
     imcOther: TImageCollection;
   End;
 
