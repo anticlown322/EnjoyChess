@@ -24,7 +24,10 @@ Uses
     Vcl.ButtonGroup,
     VCLTee.TeeEdiGrad,
     Vcl.CategoryButtons,
-    Vcl.ControlList;
+    Vcl.ControlList,
+    EnjoyChessDataImages,
+    EnjoyChessSettings,
+    EnjoyChessVCLSettings;
 
 Type
     TfrmWelcomeWindow = Class(TForm)
@@ -66,6 +69,10 @@ Type
         Procedure BbtGoToSettingsClick(Sender: TObject);
         Procedure SdbtSettingsClick(Sender: TObject);
         Procedure SdbtAnalysisClick(Sender: TObject);
+        Procedure FormCreate(Sender: TObject);
+        Procedure FormDestroy(Sender: TObject);
+    Public
+        Settings: TSettings;
     End;
 
 Var
@@ -75,18 +82,25 @@ Implementation
 
 {$R *.dfm}
 
-Uses EnjoyChessDataImages,
-    EnjoyChessVCLGameForm,
-    EnjoyChessVCLAnalysis,
-    EnjoyChessVCLSettings;
+uses EnjoyChessVCLAnalysis, EnjoyChessVCLGameForm;
 
 Procedure TfrmWelcomeWindow.FormCloseQuery(Sender: TObject; Var CanClose: Boolean);
 Begin
-    If Application.MessageBox(PChar('Вы уверены, что хотите выйти?'), PChar('Выход'),
-        MB_ICONQUESTION + MB_YESNO + MB_DEFBUTTON1 + MB_TASKMODAL) = IDYES Then
+    If Application.MessageBox(PChar('Вы уверены, что хотите выйти?'), PChar('Выход'), MB_ICONQUESTION + MB_YESNO + MB_DEFBUTTON1 + MB_TASKMODAL)
+        = IDYES Then
         Application.Terminate
     Else
         CanClose := False;
+End;
+
+Procedure TfrmWelcomeWindow.FormCreate(Sender: TObject);
+Begin
+    Settings := TSettings.Create;
+End;
+
+Procedure TfrmWelcomeWindow.FormDestroy(Sender: TObject);
+Begin
+    Settings.Free;
 End;
 
 // Нажатие иконок соцсетей

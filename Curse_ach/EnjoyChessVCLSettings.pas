@@ -17,8 +17,7 @@ Uses
     Vcl.StdCtrls,
     Vcl.ColorGrd,
     VCLTee.TeCanvas,
-    EnjoyChessDataImages,
-    EnjoyChessVCLWelcomeWindow;
+    EnjoyChessDataImages;
 
 Type
     TfrmSettings = Class(TForm)
@@ -35,8 +34,8 @@ Type
         TrkbVolume: TTrackBar;
         ChbxMaximize: TCheckBox;
         ScrlbxContent: TScrollBox;
-    Button1: TButton;
-    Button2: TButton;
+        Button1: TButton;
+        Button2: TButton;
         Procedure FormClose(Sender: TObject; Var Action: TCloseAction);
     End;
 
@@ -46,6 +45,8 @@ Var
 Implementation
 
 {$R *.dfm}
+
+Uses EnjoyChessVCLWelcomeWindow;
 
 Procedure TfrmSettings.FormClose(Sender: TObject; Var Action: TCloseAction);
 Begin

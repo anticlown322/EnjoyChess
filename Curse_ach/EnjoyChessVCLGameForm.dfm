@@ -2219,7 +2219,7 @@ object frmGameForm: TfrmGameForm
         Anchors = [akLeft, akTop, akRight, akBottom]
         Color = 3223083
         ParentColor = False
-        OnMouseUp = pbBoardMouseUp
+        OnMouseDown = pbBoardMouseDown
         OnPaint = pbBoardPaint
       end
     end
@@ -2571,6 +2571,8 @@ object frmGameForm: TfrmGameForm
           ImageName = 'resign'
           Images = vilIcons
           Flat = True
+          OnClick = sdbtResignClick
+          ExplicitTop = 5
         end
         object sdbtDraw: TSpeedButton
           AlignWithMargins = True
@@ -2589,7 +2591,7 @@ object frmGameForm: TfrmGameForm
           ImageName = 'one-half'
           Images = vilIcons
           Flat = True
-          ExplicitLeft = 61
+          OnClick = sdbtDrawClick
           ExplicitTop = 5
         end
         object sdbtReverse: TSpeedButton

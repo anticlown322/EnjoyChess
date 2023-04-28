@@ -422,8 +422,6 @@ object frmSettings: TfrmSettings
     BevelInner = bvNone
     BevelOuter = bvNone
     TabOrder = 2
-    ExplicitLeft = 136
-    ExplicitTop = -3
     object trkbVolume: TTrackBar
       Left = 144
       Top = 65

@@ -2134,6 +2134,8 @@ object frmWelcomeWindow: TfrmWelcomeWindow
   OldCreateOrder = False
   Position = poScreenCenter
   OnCloseQuery = FormCloseQuery
+  OnCreate = FormCreate
+  OnDestroy = FormDestroy
   PixelsPerInch = 96
   TextHeight = 13
   object pBottom: TPanel

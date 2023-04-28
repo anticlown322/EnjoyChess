@@ -30,7 +30,8 @@ Uses
     EnjoyChessVCLSettings,
     EnjoyChessVCLWelcomeWindow,
     Vcl.Grids,
-    EnjoyChessVCLPawnPromotion;
+    EnjoyChessVCLPawnPromotion,
+    EnjoyChessSound;
 
 Type
     TfrmGameForm = Class(TForm)
@@ -88,8 +89,10 @@ Type
         Procedure PbBoardPaint(Sender: TObject);
         Procedure FormCreate(Sender: TObject);
         Procedure FormDestroy(Sender: TObject);
-        Procedure PbBoardMouseUp(Sender: TObject; Button: TMouseButton; Shift: TShiftState; X, Y: Integer);
         Procedure SdbtReverseClick(Sender: TObject);
+        Procedure PbBoardMouseDown(Sender: TObject; Button: TMouseButton; Shift: TShiftState; X, Y: Integer);
+        Procedure SdbtDrawClick(Sender: TObject);
+        Procedure SdbtResignClick(Sender: TObject);
     Private
         ChessEngine: TChessEngine;
         RotatedBoard: Boolean;
@@ -115,7 +118,7 @@ Implementation
 Procedure TfrmGameForm.FormCreate(Sender: TObject);
 Begin
     ChessEngine := TChessEngine.Create;
-    // ChessEngine.Sound := TEnjoyChessWindowsSound.Create;
+    ChessEngine.Sound := TEnjoyChessSound.Create;
     // Setting := TSettings.Create;
     // дальше все свойства дефолт настроек
     InitializeBoard();
@@ -343,7 +346,7 @@ Begin
     ChessEngine.Free;
 End;
 
-{ обработка левой подпанели }
+{ обработка левой подпанели и звука }
 
 Procedure TfrmGameForm.UpdateScreen();
 
@@ -364,8 +367,12 @@ Begin
         Playing:
             UpdateCaption('Идет игра...');
     End;
+
     If ChessEngine.GameState In [WhiteWin, BlackWin, Draw] Then
+    Begin
         PbBoard.Enabled := False;
+        ChessEngine.Sound.PlaySnd(ChessEngine.Sound.GameEndSound);
+    End;
 End;
 
 { Обработка панелей-кнопок на SplitView }
@@ -463,6 +470,29 @@ Begin
 
     RotatedBoard := Not RotatedBoard;
     UpdateScreen();
+End;
+
+Procedure TfrmGameForm.SdbtDrawClick(Sender: TObject);
+Begin
+    If Application.MessageBox(PChar('Вы согласны на ничью?'), PChar('Предложение ничьей'), MB_ICONQUESTION + MB_YESNO + MB_DEFBUTTON1 + MB_TASKMODAL)
+        = IDYES Then
+    Begin
+        ChessEngine.GameState := Draw;
+        UpdateScreen();
+    End;
+End;
+
+Procedure TfrmGameForm.SdbtResignClick(Sender: TObject);
+Begin
+    If Application.MessageBox(PChar('Вы уверены, что хотите сдаться?'), PChar('Сдаться'), MB_ICONQUESTION + MB_YESNO + MB_DEFBUTTON1 + MB_TASKMODAL)
+        = IDYES Then
+    Begin
+        If ChessEngine.IsWhiteTurn Then
+            ChessEngine.GameState := BlackWin
+        Else
+            ChessEngine.GameState := WhiteWin;
+        UpdateScreen();
+    End;
 End;
 
 { Обработка доски }
@@ -636,7 +666,7 @@ End;
 
 { обработка нажатий мыши }
 
-Procedure TfrmGameForm.PbBoardMouseUp(Sender: TObject; Button: TMouseButton; Shift: TShiftState; X, Y: Integer);
+Procedure TfrmGameForm.PbBoardMouseDown(Sender: TObject; Button: TMouseButton; Shift: TShiftState; X, Y: Integer);
 Var
     Row, Col, CellSide: Integer;
 Begin
@@ -668,6 +698,13 @@ Begin
         End;
 
         UpdateScreen();
+        {
+          If ChessEngine.ListOfMoves <> Nil Then
+          If ChessEngine.ListOfMoves^.Capture Then
+          ChessEngine.Sound.PlaySnd(ChessEngine.Sound.TakeSound)
+          Else
+          ChessEngine.Sound.PlaySnd(ChessEngine.Sound.MoveSound);
+        }
     End;
 End;
 

@@ -9,7 +9,8 @@ Uses
     Classes,
     Graphics,
     ExtCtrls,
-    Pngimage;
+    Pngimage,
+    EnjoyChessSound;
 
 Type
 
@@ -163,7 +164,7 @@ Type
         IsKingChecked: Boolean;
         PWhiteKing: TPListOfPieces;
         PBlackKing: TPListOfPieces;
-        // Sound: TEnjoyChessSound;
+        ChessEngSound: TEnjoyChessSound;
     Protected
         Function GetListOfPieces(): TPListOfPieces;
         Procedure SetListOfPieces(Value: TPListOfPieces);
@@ -197,8 +198,8 @@ Type
         Property WhiteKing: TPListOfPieces Read GetWhiteKingPointer Write SetWhiteKingPointer;
         Property BlackKing: TPListOfPieces Read GetBlackKingPointer Write SetBlackKingPointer;
         Function FindIsCheck(Board: TBoard; King: TPListOfPieces): Boolean;
+        Property Sound: TEnjoyChessSound Read ChessEngSound Write ChessEngSound;
         Procedure InitializeBoard();
-
     End;
 
 Implementation
