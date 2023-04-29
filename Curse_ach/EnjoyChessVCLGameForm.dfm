@@ -2673,6 +2673,7 @@ object frmGameForm: TfrmGameForm
           ImageIndex = 4
           ImageName = 'fast-forward'
           Images = vilIcons
+          Enabled = False
           Flat = True
           ExplicitLeft = 87
           ExplicitTop = -2
@@ -2688,10 +2689,10 @@ object frmGameForm: TfrmGameForm
           ImageIndex = 5
           ImageName = 'forward'
           Images = vilIcons
+          Enabled = False
           Flat = True
-          ExplicitLeft = 74
-          ExplicitWidth = 24
-          ExplicitHeight = 24
+          ExplicitLeft = 48
+          ExplicitTop = -2
         end
         object sdbtPrevMove: TSpeedButton
           Left = 27
@@ -2704,6 +2705,7 @@ object frmGameForm: TfrmGameForm
           ImageIndex = 2
           ImageName = 'back'
           Images = vilIcons
+          Enabled = False
           Flat = True
           ExplicitLeft = 21
           ExplicitTop = -2
@@ -2719,6 +2721,7 @@ object frmGameForm: TfrmGameForm
           ImageIndex = 3
           ImageName = 'fast-back'
           Images = vilIcons
+          Enabled = False
           Flat = True
           ExplicitTop = -2
         end

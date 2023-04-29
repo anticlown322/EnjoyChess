@@ -1013,13 +1013,14 @@ Begin
     Else
         If (PMove.Capture = False) And (Dest.CoordCol <> Position.CoordCol) Then
         Begin
-            Board[Dest.CoordRow - 1, Dest.CoordCol].PPiece := Nil;
+            If IsLightPiece Then
+                Board[Dest.CoordRow + 1, Dest.CoordCol].PPiece := Nil
+            Else
+                Board[Dest.CoordRow - 1, Dest.CoordCol].PPiece := Nil;
             PMove.Kind := TEnPassant;
         End
         Else
             PMove.Kind := TNormal;
-
-    // алгос для взятия на проходе
 
     TempPos.CoordRow := Dest.CoordRow;
     TempPos.CoordCol := Dest.CoordCol;
@@ -1166,6 +1167,8 @@ Begin
         Begin
             PossibleMoveIteration(TempPointer, PointerMove, Position.CoordRow, Position.CoordCol + 2, MovesExist);
         End;
+
+        TempIsPossibleCastle := IsPossibleCastle;
 
         For I := Position.CoordCol - 1 DownTo Position.CoordCol - 3 Do
             If (Board[Position.CoordRow, I].PPiece <> Nil) Then

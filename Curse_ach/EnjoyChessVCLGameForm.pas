@@ -372,6 +372,12 @@ Begin
     Begin
         PbBoard.Enabled := False;
         ChessEngine.Sound.PlaySnd(ChessEngine.Sound.GameEndSound);
+        SdbtResign.Enabled := False;
+        SdbtDraw.Enabled := False;
+        SdbtToEnding.Enabled := True;
+        SdbtToBegining.Enabled := True;
+        SdbtNextMove.Enabled := True;
+        SdbtPrevMove.Enabled := True;
     End;
 End;
 

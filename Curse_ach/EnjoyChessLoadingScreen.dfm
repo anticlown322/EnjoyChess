@@ -3697,7 +3697,7 @@ object frmLoadingScreen: TfrmLoadingScreen
     ParentFont = False
   end
   object tmrEndLoadingScreen: TTimer
-    Interval = 1
+    Interval = 2500
     OnTimer = tmrEndLoadingScreenTimer
     Left = 312
     Top = 16
