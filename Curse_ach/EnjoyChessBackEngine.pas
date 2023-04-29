@@ -154,16 +154,12 @@ Type
 
     TChessEngine = Class
     Private
-        ExistingPieces: TPListOfPieces;
-        TakenWhitePieces: TPListOfPieces;
-        TakenBlackPieces: TPListOfPieces;
+        ExistingPieces, TakenWhitePieces, TakenBlackPieces: TPListOfPieces;
         PlayingBoard: TBoard;
         CurrentGameState: TGameState;
         MakedMoves: TPMove;
-        IsLightTurn: Boolean;
-        IsKingChecked: Boolean;
-        PWhiteKing: TPListOfPieces;
-        PBlackKing: TPListOfPieces;
+        IsLightTurn, IsKingChecked, IsCheckMate: Boolean;
+        PWhiteKing, PBlackKing: TPListOfPieces;
         ChessEngSound: TEnjoyChessSound;
     Protected
         Function GetListOfPieces(): TPListOfPieces;
@@ -199,6 +195,7 @@ Type
         Property BlackKing: TPListOfPieces Read GetBlackKingPointer Write SetBlackKingPointer;
         Function FindIsCheck(Board: TBoard; King: TPListOfPieces): Boolean;
         Property Sound: TEnjoyChessSound Read ChessEngSound Write ChessEngSound;
+        Property IsMate: Boolean Read IsCheckMate Write IsCheckMate;
         Procedure InitializeBoard();
     End;
 

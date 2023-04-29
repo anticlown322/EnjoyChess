@@ -141,10 +141,6 @@
             <FormType>dfm</FormType>
             <DesignClass>TDataModule</DesignClass>
         </DCCReference>
-        <DCCReference Include="EnjoyChessVCLAnalysis.pas">
-            <Form>frmAnalysis</Form>
-            <FormType>dfm</FormType>
-        </DCCReference>
         <DCCReference Include="EnjoyChessVCLGameForm.pas">
             <Form>frmGameForm</Form>
             <FormType>dfm</FormType>

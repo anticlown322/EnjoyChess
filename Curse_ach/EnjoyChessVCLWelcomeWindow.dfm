@@ -5962,6 +5962,7 @@ object frmWelcomeWindow: TfrmWelcomeWindow
       Flat = True
       ParentShowHint = False
       ShowHint = True
+      OnClick = sdbtBoardEditorClick
     end
     object sdbtProfile: TSpeedButton
       Left = -1
@@ -5976,6 +5977,7 @@ object frmWelcomeWindow: TfrmWelcomeWindow
       Flat = True
       ParentShowHint = False
       ShowHint = True
+      OnClick = sdbtProfileClick
     end
     object sdbtExit: TSpeedButton
       Left = -1

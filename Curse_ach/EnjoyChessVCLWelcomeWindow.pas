@@ -71,6 +71,8 @@ Type
         Procedure SdbtAnalysisClick(Sender: TObject);
         Procedure FormCreate(Sender: TObject);
         Procedure FormDestroy(Sender: TObject);
+        Procedure SdbtBoardEditorClick(Sender: TObject);
+        Procedure SdbtProfileClick(Sender: TObject);
     Public
         Settings: TSettings;
     End;
@@ -82,7 +84,8 @@ Implementation
 
 {$R *.dfm}
 
-uses EnjoyChessVCLAnalysis, EnjoyChessVCLGameForm;
+Uses
+    EnjoyChessVCLGameForm;
 
 Procedure TfrmWelcomeWindow.FormCloseQuery(Sender: TObject; Var CanClose: Boolean);
 Begin
@@ -137,6 +140,11 @@ Begin
     BbtExitClick(Sender);
 End;
 
+Procedure TfrmWelcomeWindow.SdbtProfileClick(Sender: TObject);
+Begin
+    ShowMessage('Эта функция будет доступна в следующей версии.');
+End;
+
 Procedure TfrmWelcomeWindow.SdbtSettingsClick(Sender: TObject);
 Begin
     BbtGoToSettingsClick(Sender);
@@ -144,7 +152,13 @@ End;
 
 Procedure TfrmWelcomeWindow.SdbtAnalysisClick(Sender: TObject);
 Begin
-    BbtStartAnalysisClick(Sender);
+    ShowMessage('Эта функция будет доступна в следующей версии.');
+    // BbtStartAnalysisClick(Sender);
+End;
+
+Procedure TfrmWelcomeWindow.SdbtBoardEditorClick(Sender: TObject);
+Begin
+    ShowMessage('Эта функция будет доступна в следующей версии.');
 End;
 
 // Нажатие кнопок в клиенте
@@ -163,9 +177,12 @@ End;
 
 Procedure TfrmWelcomeWindow.BbtStartAnalysisClick(Sender: TObject);
 Begin
-    FrmAnalysis := TFrmAnalysis.Create(Self);
-    FrmWelcomeWindow.Hide;
-    FrmAnalysis.Show;
+    ShowMessage('Эта функция будет доступна в следующей версии.');
+    {
+      FrmAnalysis := TFrmAnalysis.Create(Self);
+      FrmWelcomeWindow.Hide;
+      FrmAnalysis.Show;
+    }
 End;
 
 Procedure TfrmWelcomeWindow.BbtStartGameClick(Sender: TObject);

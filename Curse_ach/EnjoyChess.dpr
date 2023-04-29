@@ -4,7 +4,6 @@ uses
   Vcl.Forms,
   EnjoyChessVCLWelcomeWindow in 'EnjoyChessVCLWelcomeWindow.pas' {frmWelcomeWindow},
   EnjoyChessDataImages in 'EnjoyChessDataImages.pas' {dtmdData: TDataModule},
-  EnjoyChessVCLAnalysis in 'EnjoyChessVCLAnalysis.pas' {frmAnalysis},
   EnjoyChessVCLGameForm in 'EnjoyChessVCLGameForm.pas' {frmGameForm},
   EnjoyChessVCLSettings in 'EnjoyChessVCLSettings.pas' {frmSettings},
   Vcl.Themes,
@@ -28,7 +27,6 @@ Begin
 
     Application.MainFormOnTaskbar := False;
     Application.CreateForm(TFrmWelcomeWindow, FrmWelcomeWindow);
-  Application.CreateForm(TfrmPromotion, frmPromotion);
   FrmLoadingScreen.Free;
     Application.CreateForm(TDtmdData, DtmdDataImages);
     Application.Run;

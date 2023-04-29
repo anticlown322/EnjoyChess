@@ -26,7 +26,6 @@ Uses
     Vcl.ActnList,
     EnjoyChessBackEngine,
     EnjoyChessDataImages,
-    EnjoyChessVCLAnalysis,
     EnjoyChessVCLSettings,
     EnjoyChessVCLWelcomeWindow,
     Vcl.Grids,
@@ -104,6 +103,7 @@ Type
         Function CellSize(): Integer;
         Function Cell(CoordX, CoordY: Integer): TBoardCell;
         Procedure UpdateScreen();
+        Procedure AddCheckOrMate(WasWhiteTurn: Boolean);
         Procedure LeftClick(Row, Col: Integer);
     End;
 
@@ -141,10 +141,34 @@ Begin
         CanClose := False;
 End;
 
+Procedure TfrmGameForm.AddCheckOrMate(WasWhiteTurn: Boolean);
+Begin
+    If WasWhiteTurn Then
+    Begin
+        If ChessEngine.IsMate Then
+            MemNotation.Text := MemNotation.Text + '#'
+        Else
+            If ChessEngine.IsCheck Then
+                MemNotation.Text := MemNotation.Text + '+';
+    End
+    Else
+    Begin
+        If ChessEngine.IsMate Then
+            MemNotation.Text := MemNotation.Text + '#' + #13#10
+        Else
+            If ChessEngine.IsCheck Then
+                MemNotation.Text := MemNotation.Text + '+' + #13#10
+            Else
+                MemNotation.Text := MemNotation.Text + #13#10
+    End;
+End;
+
 Procedure TfrmGameForm.AddToNotation(WasWhiteTurn: Boolean);
 Var
-    StrPieceName, SrcCoordCol, SrcCoordRow, DestCoordCol, DestCoordRow: String;
+    StrPieceName, DestCoordCol, DestCoordRow: String;
 Begin
+    If WasWhiteTurn Then
+        Inc(MoveNumber);
     Case ChessEngine.ListOfMoves.Kind Of
         TNormal:
             Begin
@@ -164,19 +188,13 @@ Begin
 
                 If WasWhiteTurn Then
                 Begin
-                    Inc(MoveNumber);
-
                     MemNotation.Text := MemNotation.Text + IntToStr(MoveNumber) + '. ' + #9 + StrPieceName + DestCoordCol + DestCoordRow;
-                    If ChessEngine.IsCheck Then
-                        MemNotation.Text := MemNotation.Text + '+';
+                    AddCheckOrMate(WasWhiteTurn);
                 End
                 Else
                 Begin
                     MemNotation.Text := MemNotation.Text + #9 + StrPieceName + DestCoordCol + DestCoordRow;
-                    If ChessEngine.IsCheck Then
-                        MemNotation.Text := MemNotation.Text + '+' + #13#10
-                    Else
-                        MemNotation.Text := MemNotation.Text + #13#10;
+                    AddCheckOrMate(WasWhiteTurn);
                 End;
             End;
         TCastling:
@@ -188,12 +206,28 @@ Begin
 
                 If WasWhiteTurn Then
                 Begin
-                    Inc(MoveNumber);
                     MemNotation.Text := MemNotation.Text + IntToStr(MoveNumber) + '. ' + #9 + StrPieceName;
                 End
                 Else
                 Begin
                     MemNotation.Text := MemNotation.Text + #9 + StrPieceName + #13#10;
+                End;
+                AddCheckOrMate(WasWhiteTurn);
+            End;
+        TEnPassant:
+            Begin
+                StrPieceName := #10 + Char(97 + ChessEngine.ListOfMoves.Source.CoordCol) + 'x';
+                DestCoordCol := Char(97 + ChessEngine.ListOfMoves.Dest.CoordCol);
+                DestCoordRow := IntToStr(8 - ChessEngine.ListOfMoves.Dest.CoordRow);
+                If WasWhiteTurn Then
+                Begin
+                    MemNotation.Text := MemNotation.Text + IntToStr(MoveNumber) + '. ' + #9 + StrPieceName + DestCoordCol + DestCoordRow;
+                    AddCheckOrMate(WasWhiteTurn);
+                End
+                Else
+                Begin
+                    MemNotation.Text := MemNotation.Text + #9 + StrPieceName + DestCoordCol + DestCoordRow;
+                    AddCheckOrMate(WasWhiteTurn);
                 End;
             End;
     End;
@@ -203,7 +237,7 @@ Procedure TfrmGameForm.LeftClick(Row, Col: Integer);
 Var
     I, J: Integer;
     PPossibleMoves, AllPossibleMoves: TPPossibleMoves;
-    WasActive, TempIsWhiteTurn, IsMate: Boolean;
+    WasActive, TempIsWhiteTurn: Boolean;
     TempListOfPieces: TPListOfPieces;
     TempSrc, TempDest: TLocation;
 Begin
@@ -268,10 +302,13 @@ Begin
                     TempListOfPieces := TempListOfPieces^.Next;
                 End;
                 If AllPossibleMoves = Nil Then
+                Begin
                     If TempIsWhiteTurn Then
                         ChessEngine.GameState := BlackWin
                     Else
                         ChessEngine.GameState := WhiteWin;
+                    ChessEngine.IsMate := True;
+                End;
             End
             Else
             Begin
@@ -434,9 +471,12 @@ End;
 
 Procedure TfrmGameForm.PMenuButtonAnalysisClick(Sender: TObject);
 Begin
-    FrmAnalysis := TfrmAnalysis.Create(Self);
-    FrmGameForm.Hide;
-    FrmAnalysis.Show;
+    ShowMessage('Эта функция будет доступна в следующей версии.');
+    {
+      FrmAnalysis := TfrmAnalysis.Create(Self);
+      FrmGameForm.Hide;
+      FrmAnalysis.Show;
+    }
 End;
 
 Procedure TfrmGameForm.PMenuButtonSettingsClick(Sender: TObject);
