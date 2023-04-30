@@ -68,10 +68,11 @@ Type
         PMenuButtonSave: TPanel;
         PMenuButtonBackToWelcome: TPanel;
         PbBoard: TPaintBox;
-        ActlAnimation: TActionList;
         LbGameState: TLabel;
         VilIcons: TVirtualImageList;
         SdbtReverse: TSpeedButton;
+        SdbtSaveNotation: TSpeedButton;
+        PSaveButton: TPanel;
         Procedure FormCloseQuery(Sender: TObject; Var CanClose: Boolean);
         Procedure ViMenuBarClick(Sender: TObject);
         Procedure PMenuButtonAnalysisMouseEnter(Sender: TObject);
@@ -92,6 +93,7 @@ Type
         Procedure PbBoardMouseDown(Sender: TObject; Button: TMouseButton; Shift: TShiftState; X, Y: Integer);
         Procedure SdbtDrawClick(Sender: TObject);
         Procedure SdbtResignClick(Sender: TObject);
+        Procedure SdbtSaveNotationClick(Sender: TObject);
     Private
         ChessEngine: TChessEngine;
         RotatedBoard: Boolean;
@@ -115,16 +117,49 @@ Implementation
 {$R *.dfm}
 { сама форма }
 
+Procedure Delay(Value: Cardinal);
+Var
+    F, N: Cardinal;
+Begin
+    N := 0;
+    While N <= (Value Div 10) Do
+    Begin
+        SleepEx(1, True);
+        Application.ProcessMessages;
+        Inc(N);
+    End;
+
+    F := GetTickCount;
+
+    Repeat
+        Application.ProcessMessages;
+        N := GetTickCount;
+    Until (N - F >= (Value Mod 10)) Or (N < F);
+End;
+
 Procedure TfrmGameForm.FormCreate(Sender: TObject);
 Begin
     ChessEngine := TChessEngine.Create;
     ChessEngine.Sound := TEnjoyChessSound.Create;
-    // Setting := TSettings.Create;
-    // дальше все свойства дефолт настроек
     InitializeBoard();
     RotatedBoard := False;
-    BorderStyle := BsNone;
-    WindowState := WsMaximized;
+
+    If FrmWelcomeWindow.Settings.IsWindowMaximized Then
+    Begin
+        BorderStyle := BsNone;
+        WindowState := WsMaximized;
+        MemNotation.Font.Size := 18;
+    End
+    Else
+    Begin
+        BorderStyle := BsSingle;
+        WindowState := WsNormal;
+        MemNotation.Font.Size := 10;
+    End;
+
+    LbTimeOpponent.Caption := FrmWelcomeWindow.Settings.MinAndSecClock;
+    LbTimePlayer.Caption := FrmWelcomeWindow.Settings.MinAndSecClock;
+
     ChessEngine.IsWhiteTurn := True;
     MoveNumber := 0;
 End;
@@ -173,7 +208,7 @@ Begin
         TNormal:
             Begin
                 If ChessEngine.ListOfMoves.Piece Is TPawn Then
-                    StrPieceName := #10
+                    StrPieceName := ''
                 Else
                     StrPieceName := UpperCase(Copy(ChessEngine.ListOfMoves.Piece.ClassName, 2, 1));
 
@@ -188,7 +223,7 @@ Begin
 
                 If WasWhiteTurn Then
                 Begin
-                    MemNotation.Text := MemNotation.Text + IntToStr(MoveNumber) + '. ' + #9 + StrPieceName + DestCoordCol + DestCoordRow;
+                    MemNotation.Text := MemNotation.Text + IntToStr(MoveNumber) + '.' + #9 + StrPieceName + DestCoordCol + DestCoordRow;
                     AddCheckOrMate(WasWhiteTurn);
                 End
                 Else
@@ -206,7 +241,7 @@ Begin
 
                 If WasWhiteTurn Then
                 Begin
-                    MemNotation.Text := MemNotation.Text + IntToStr(MoveNumber) + '. ' + #9 + StrPieceName;
+                    MemNotation.Text := MemNotation.Text + IntToStr(MoveNumber) + '.' + #9 + StrPieceName;
                 End
                 Else
                 Begin
@@ -221,7 +256,7 @@ Begin
                 DestCoordRow := IntToStr(8 - ChessEngine.ListOfMoves.Dest.CoordRow);
                 If WasWhiteTurn Then
                 Begin
-                    MemNotation.Text := MemNotation.Text + IntToStr(MoveNumber) + '. ' + #9 + StrPieceName + DestCoordCol + DestCoordRow;
+                    MemNotation.Text := MemNotation.Text + IntToStr(MoveNumber) + '.' + #9 + StrPieceName + DestCoordCol + DestCoordRow;
                     AddCheckOrMate(WasWhiteTurn);
                 End
                 Else
@@ -408,13 +443,15 @@ Begin
     If ChessEngine.GameState In [WhiteWin, BlackWin, Draw] Then
     Begin
         PbBoard.Enabled := False;
-        ChessEngine.Sound.PlaySnd(ChessEngine.Sound.GameEndSound);
+        If FrmWelcomeWindow.Settings.SoundsOn Then
+            ChessEngine.Sound.PlaySnd(ChessEngine.Sound.GameEndSound);
         SdbtResign.Enabled := False;
         SdbtDraw.Enabled := False;
         SdbtToEnding.Enabled := True;
         SdbtToBegining.Enabled := True;
         SdbtNextMove.Enabled := True;
         SdbtPrevMove.Enabled := True;
+        PSaveButton.Visible := True;
     End;
 End;
 
@@ -518,6 +555,61 @@ Begin
     UpdateScreen();
 End;
 
+Procedure TfrmGameForm.SdbtSaveNotationClick(Sender: TObject);
+Var
+    TempStr: String;
+    I: Integer;
+    OutputFile: TextFile;
+    Date: TDateTime;
+Begin
+    If MemNotation.Text <> '' Then
+    Begin
+        I := 1;
+        Date := Now;
+        Randomize;
+        AssignFile(OutputFile, ExtractFileDir(Application.ExeName) + '\games\game_' + FormatDateTime('ddddd', Date) + '_' + IntToStr(Random(1000))
+            + '.txt');
+
+        Try
+            Try
+                Rewrite(OutputFile);
+
+                Writeln(OutputFile, '[ Дата: ' + FormatDateTime('dd/mm/yy hh:mm:ss', Date) + ' ]');
+                Writeln(OutputFile, '[ Игроки: ' + LbnNamePlayer.Caption + ' - ' + LbNameOpponent.Caption + ' ]');
+                Writeln(OutputFile, '[ Оставшееся время на часах: ' + LbTimePlayer.Caption + ' - ' + LbTimeOpponent.Caption + ' ]');
+                Write(OutputFile, '[ Результат: ');
+
+                Case ChessEngine.GameState Of
+                    WhiteWin:
+                        Writeln(OutputFile, '1 - 0 ]');
+                    BlackWin:
+                        Writeln(OutputFile, '0 - 1 ]');
+                    Draw:
+                        Writeln(OutputFile, '0.5 - 0.5 ]');
+                End;
+
+                While I < MemNotation.Lines.Count Do
+                Begin
+                    TempStr := MemNotation.Lines[I];
+                    TempStr := StringReplace(TempStr, #9, #32, [RfReplaceAll]);
+                    Write(OutputFile, TempStr, ' ');
+                    Inc(I);
+                End;
+            Finally
+                CloseFile(OutputFile);
+            End;
+
+        Except
+            ShowMessage('Ошибка при сохранении в файл');
+        End;
+
+        ShowMessage('Партия успешно записана в файл!');
+        SdbtSaveNotation.Enabled := False;
+    End
+    Else
+        ShowMessage('Невозможно сохранить партию без ходов!');
+End;
+
 Procedure TfrmGameForm.SdbtDrawClick(Sender: TObject);
 Begin
     If Application.MessageBox(PChar('Вы согласны на ничью?'), PChar('Предложение ничьей'), MB_ICONQUESTION + MB_YESNO + MB_DEFBUTTON1 + MB_TASKMODAL)
@@ -591,13 +683,13 @@ Begin
 
     If ChessEngine.Board[Row, Col].IsLight Then
     Begin
-        BufferBitmap.Canvas.Brush.Color := $E5D3B3; // light
-        BufferBitmap.Canvas.Font.Color := $B58863; // dark
+        BufferBitmap.Canvas.Brush.Color := FrmWelcomeWindow.Settings.LightColor;
+        BufferBitmap.Canvas.Font.Color := FrmWelcomeWindow.Settings.DarkColor;
     End
     Else
     Begin
-        BufferBitmap.Canvas.Brush.Color := $B58863; // dark
-        BufferBitmap.Canvas.Font.Color := $E5D3B3; // light
+        BufferBitmap.Canvas.Brush.Color := FrmWelcomeWindow.Settings.DarkColor;
+        BufferBitmap.Canvas.Font.Color := FrmWelcomeWindow.Settings.LightColor;
     End;
 
     BufferBitmap.Canvas.FillRect(CellRect);
@@ -732,6 +824,8 @@ Begin
         Case Button Of
             MbLeft:
                 Begin
+                    If FrmWelcomeWindow.Settings.SoundsOn Then
+                        ChessEngine.Sound.PlaySnd(ChessEngine.Sound.ClickSound);
                     LeftClick(Row, Col);
                 End;
             MbRight:
@@ -744,13 +838,6 @@ Begin
         End;
 
         UpdateScreen();
-        {
-          If ChessEngine.ListOfMoves <> Nil Then
-          If ChessEngine.ListOfMoves^.Capture Then
-          ChessEngine.Sound.PlaySnd(ChessEngine.Sound.TakeSound)
-          Else
-          ChessEngine.Sound.PlaySnd(ChessEngine.Sound.MoveSound);
-        }
     End;
 End;
 

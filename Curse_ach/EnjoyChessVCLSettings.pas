@@ -17,13 +17,12 @@ Uses
     Vcl.StdCtrls,
     Vcl.ColorGrd,
     VCLTee.TeCanvas,
-    EnjoyChessDataImages;
+    EnjoyChessDataImages,
+    Vcl.Mask;
 
 Type
     TfrmSettings = Class(TForm)
         PBottom: TPanel;
-        BtcLightColor: TButtonColor;
-        TrkbVolume: TTrackBar;
         ChbxMaximize: TCheckBox;
         ScrlbxContent: TScrollBox;
         PSaveConfig: TButton;
@@ -31,22 +30,29 @@ Type
         PButtons: TPanel;
         PSound: TPanel;
         PVisual: TPanel;
-        PSolver: TPanel;
         PBoardVisual: TPanel;
-        LbSolver: TLabel;
         LbSound: TLabel;
         LbVisual: TLabel;
         LbVisualBoard: TLabel;
         CmbbxSkins: TComboBox;
         LbSkins: TLabel;
         LbLightColor: TLabel;
-        BtcDarkColor: TButtonColor;
         LbDarkColor: TLabel;
-        LbVolume: TLabel;
+        ClrbxDarkCell: TColorBox;
+        ClrbxLightCell: TColorBox;
+        ChkbxSound: TCheckBox;
+        LbClock: TLabel;
+        PClock: TPanel;
+        Label1: TLabel;
+        Label2: TLabel;
+        MeClockTime: TMaskEdit;
+        LbeAddition: TLabeledEdit;
+        Label3: TLabel;
         Procedure FormClose(Sender: TObject; Var Action: TCloseAction);
         Procedure PSaveConfigClick(Sender: TObject);
         Procedure PCancelClick(Sender: TObject);
         Procedure FormCreate(Sender: TObject);
+        Procedure MeClockTimeChange(Sender: TObject);
     End;
 
 Var
@@ -77,6 +83,12 @@ Begin
 
         FindClose(SearchResult);
     End;
+    CmbbxSkins.Text := FrmWelcomeWindow.Settings.SkinName;
+End;
+
+Procedure TfrmSettings.MeClockTimeChange(Sender: TObject);
+Begin
+    TMaskEdit(Sender).Modified := False;
 End;
 
 Procedure TfrmSettings.PCancelClick(Sender: TObject);
@@ -90,13 +102,34 @@ Begin
         MB_ICONQUESTION + MB_YESNO + MB_DEFBUTTON1 + MB_TASKMODAL) = IDYES Then
     Begin
         FrmWelcomeWindow.Settings.SkinName := CmbbxSkins.Text;
-        // FrmWelcomeWindow.Settings.LightColor := BtcLightColor.GetColorProc;
-        // FrmWelcomeWindow.Settings.DarkColor := BtcDarkColor.GetColorProc;
+        FrmWelcomeWindow.Settings.LightColor := ClrbxLightCell.Selected;
+        FrmWelcomeWindow.Settings.DarkColor := ClrbxDarkCell.Selected;
         FrmWelcomeWindow.Settings.BackColor := $00312E2B;
         FrmWelcomeWindow.Settings.FrontColor := $002B2722;
         FrmWelcomeWindow.Settings.IsWindowMaximized := ChbxMaximize.Checked;
-        FrmWelcomeWindow.Settings.VolumeValue := 50;
-        FrmWelcomeWindow.Settings.MemoFontColor := ClWhite;
+        FrmWelcomeWindow.Settings.SoundsOn := ChkbxSound.Checked;
+
+        If (AnsiPos(' ', MeClockTime.Text) = 0) And (StrToInt(Copy(MeClockTime.Text, 4, 2)) < 60) Then
+            FrmWelcomeWindow.Settings.MinAndSecClock := MeClockTime.Text
+        Else
+        Begin
+            ShowMessage('“ак были указаны неверные параметры в поле "¬рем€ на партию", то было установлено значени€ по умолчанию - 5 мин. и 0 сек.');
+            FrmWelcomeWindow.Settings.MinAndSecClock := '05:00';
+        End;
+
+        Try
+            If (StrToInt(LbeAddition.Text) > -1) And (StrToInt(LbeAddition.Text) < 61) Then
+                FrmWelcomeWindow.Settings.AdditionAfterMove := StrToInt(LbeAddition.Text)
+            Else
+            Begin
+                ShowMessage('“ак были указаны неверные параметры в поле "ƒобавление после хода", то было установлено значени€ по умолчанию - 0 сек.');
+                FrmWelcomeWindow.Settings.AdditionAfterMove := 0;
+            End;
+        Except
+            ShowMessage('ќшибка при считывани в поле "ƒобавление после хода". ”становлено значени€ по умолчанию - 0 сек.');
+            FrmWelcomeWindow.Settings.AdditionAfterMove := 0;
+        End;
+
         Close;
     End;
 End;

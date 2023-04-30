@@ -14,7 +14,9 @@ Type
         Back: TColor;
         Front: TColor;
         IsMaximized: Boolean;
-        Volume: Integer;
+        Volume: Boolean;
+        MinSec: String;
+        Addition: Integer;
         MemFColor: TColor;
     Protected
         Function GetSkinName(): String;
@@ -29,8 +31,6 @@ Type
         Procedure SetFrontColor(Value: TColor);
         Function GetWindowState(): Boolean;
         Procedure SetWindowState(Value: Boolean);
-        Function GetVolumeValue(): Integer;
-        Procedure SetVolumeValue(Value: Integer);
         Function GetMemoFontColor(): TColor;
         Procedure SetMemoFontColor(Value: TColor);
     Public
@@ -40,8 +40,10 @@ Type
         Property BackColor: TColor Read GetBackColor Write SetBackColor;
         Property FrontColor: TColor Read GetFrontColor Write SetFrontColor;
         Property IsWindowMaximized: Boolean Read GetWindowState Write SetWindowState;
-        Property VolumeValue: Integer Read GetVolumeValue Write SetVolumeValue;
+        Property SoundsOn: Boolean Read Volume Write Volume;
         Property MemoFontColor: TColor Read GetMemoFontColor Write SetMemoFontColor;
+        Property MinAndSecClock: String Read MinSec Write MinSec;
+        Property AdditionAfterMove: Integer Read Addition Write Addition;
         Constructor Create();
     End;
 
@@ -55,8 +57,10 @@ Begin
     BackColor := $00312E2B;
     FrontColor := $002B2722;
     IsWindowMaximized := True;
-    Volume := 50;
+    SoundsOn := True;
     MemoFontColor := ClWhite;
+    MinSec := '05:00';
+    Addition := 0;
 End;
 
 Procedure TSettings.SetSkinName(Value: String);
@@ -117,16 +121,6 @@ End;
 Function TSettings.GetWindowState(): Boolean;
 Begin
     GetWindowState := IsMaximized;
-End;
-
-Procedure TSettings.SetVolumeValue(Value: Integer);
-Begin
-    Volume := Value;
-End;
-
-Function TSettings.GetVolumeValue(): Integer;
-Begin
-    GetVolumeValue := Volume;
 End;
 
 Procedure TSettings.SetMemoFontColor(Value: TColor);

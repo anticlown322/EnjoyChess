@@ -2320,7 +2320,7 @@ object frmGameForm: TfrmGameForm
         Left = 0
         Top = 0
         Width = 0
-        Height = 420
+        Height = 317
         Color = 2828066
         Opened = False
         OpenedWidth = 200
@@ -2387,6 +2387,41 @@ object frmGameForm: TfrmGameForm
           OnMouseLeave = pMenuButtonBackToWelcomeMouseLeave
         end
       end
+      object PSaveButton: TPanel
+        AlignWithMargins = True
+        Left = 10
+        Top = 327
+        Width = 167
+        Height = 73
+        Margins.Left = 10
+        Margins.Top = 10
+        Margins.Right = 20
+        Margins.Bottom = 20
+        Align = alBottom
+        BevelOuter = bvNone
+        Color = 3683890
+        ParentBackground = False
+        TabOrder = 2
+        Visible = False
+        object sdbtSaveNotation: TSpeedButton
+          AlignWithMargins = True
+          Left = 0
+          Top = 0
+          Width = 167
+          Height = 73
+          Margins.Left = 0
+          Margins.Top = 0
+          Margins.Right = 0
+          Margins.Bottom = 0
+          Align = alClient
+          Caption = #1057#1086#1093#1088#1072#1085#1080#1090#1100' '#1074' PGN'
+          Images = vilIcons
+          Flat = True
+          OnClick = sdbtSaveNotationClick
+          ExplicitLeft = 8
+          ExplicitWidth = 24
+        end
+      end
     end
     object pTop: TPanel
       Left = 0
@@ -2422,15 +2457,14 @@ object frmGameForm: TfrmGameForm
       end
       object lbUsername: TLabel
         AlignWithMargins = True
-        Left = 711
+        Left = 877
         Top = 10
-        Width = 173
+        Width = 7
         Height = 38
         Margins.Top = 10
         Margins.Right = 10
         Align = alRight
         Alignment = taRightJustify
-        Caption = #1048#1084#1103' '#1087#1088#1086#1092#1080#1083#1103
         ExplicitHeight = 29
       end
     end
@@ -2644,6 +2678,7 @@ object frmGameForm: TfrmGameForm
         ParentFont = False
         ReadOnly = True
         TabOrder = 1
+        ExplicitLeft = 8
       end
       object pMoveOptions: TPanel
         AlignWithMargins = True
@@ -2771,10 +2806,6 @@ object frmGameForm: TfrmGameForm
     Height = 24
     Left = 728
     Top = 8
-  end
-  object actlAnimation: TActionList
-    Left = 689
-    Top = 9
   end
   object vilIcons: TVirtualImageList
     DisabledGrayscale = False

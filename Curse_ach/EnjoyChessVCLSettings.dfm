@@ -1,14 +1,12 @@
 object frmSettings: TfrmSettings
   Left = 0
   Top = 0
-  AutoSize = True
   BorderIcons = [biSystemMenu]
   BorderStyle = bsSingle
   Caption = #1053#1072#1089#1090#1088#1086#1081#1082#1080
-  ClientHeight = 471
-  ClientWidth = 562
+  ClientHeight = 510
+  ClientWidth = 494
   Color = clBtnFace
-  Constraints.MinHeight = 500
   Constraints.MinWidth = 500
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
@@ -327,9 +325,9 @@ object frmSettings: TfrmSettings
   TextHeight = 13
   object pBottom: TPanel
     Left = 0
-    Top = 420
-    Width = 562
-    Height = 51
+    Top = 461
+    Width = 494
+    Height = 49
     Margins.Left = 0
     Margins.Top = 0
     Margins.Right = 0
@@ -339,9 +337,9 @@ object frmSettings: TfrmSettings
     Color = clBlack
     ParentBackground = False
     TabOrder = 0
-    ExplicitLeft = 5
+    ExplicitTop = 162
     object pSaveConfig: TButton
-      Left = 470
+      Left = 408
       Top = 14
       Width = 75
       Height = 25
@@ -350,7 +348,7 @@ object frmSettings: TfrmSettings
       OnClick = pSaveConfigClick
     end
     object pCancel: TButton
-      Left = 379
+      Left = 321
       Top = 13
       Width = 75
       Height = 25
@@ -362,8 +360,8 @@ object frmSettings: TfrmSettings
   object scrlbxContent: TScrollBox
     Left = 145
     Top = 0
-    Width = 417
-    Height = 420
+    Width = 349
+    Height = 461
     Margins.Left = 0
     Margins.Top = 0
     Margins.Right = 0
@@ -382,29 +380,11 @@ object frmSettings: TfrmSettings
     ParentColor = False
     ParentFont = False
     TabOrder = 1
-    ExplicitLeft = 148
-    object lbSolver: TLabel
-      AlignWithMargins = True
-      Left = 20
-      Top = 245
-      Width = 394
-      Height = 39
-      Margins.Left = 20
-      Align = alTop
-      Caption = #1044#1074#1080#1078#1086#1082
-      Font.Charset = DEFAULT_CHARSET
-      Font.Color = clWindowText
-      Font.Height = -32
-      Font.Name = 'Tahoma'
-      Font.Style = [fsBold]
-      ParentFont = False
-      ExplicitTop = 249
-    end
     object lbSound: TLabel
       AlignWithMargins = True
       Left = 20
-      Top = 290
-      Width = 394
+      Top = 245
+      Width = 326
       Height = 39
       Margins.Left = 20
       Align = alTop
@@ -415,15 +395,13 @@ object frmSettings: TfrmSettings
       Font.Name = 'Tahoma'
       Font.Style = [fsBold]
       ParentFont = False
-      ExplicitLeft = 21
-      ExplicitTop = 294
       ExplicitWidth = 76
     end
     object lbVisual: TLabel
       AlignWithMargins = True
       Left = 20
       Top = 3
-      Width = 394
+      Width = 326
       Height = 39
       Margins.Left = 20
       Align = alTop
@@ -442,7 +420,7 @@ object frmSettings: TfrmSettings
       AlignWithMargins = True
       Left = 20
       Top = 81
-      Width = 394
+      Width = 326
       Height = 39
       Margins.Left = 20
       Align = alTop
@@ -453,8 +431,6 @@ object frmSettings: TfrmSettings
       Font.Name = 'Tahoma'
       Font.Style = [fsBold]
       ParentFont = False
-      ExplicitLeft = 21
-      ExplicitTop = 117
       ExplicitWidth = 229
     end
     object lbSkins: TLabel
@@ -519,46 +495,85 @@ object frmSettings: TfrmSettings
       ExplicitLeft = 3
       ExplicitTop = 163
     end
-    object lbVolume: TLabel
+    object lbClock: TLabel
       AlignWithMargins = True
       Left = 20
-      Top = 335
-      Width = 80
-      Height = 19
+      Top = 323
+      Width = 326
+      Height = 39
       Margins.Left = 20
       Align = alTop
+      Caption = #1063#1072#1089#1099
+      Font.Charset = DEFAULT_CHARSET
+      Font.Color = clWindowText
+      Font.Height = -32
+      Font.Name = 'Tahoma'
+      Font.Style = [fsBold]
+      ParentFont = False
+      ExplicitWidth = 86
+    end
+    object Label1: TLabel
+      AlignWithMargins = True
+      Left = 223
+      Top = 375
+      Width = 74
+      Height = 19
+      Margins.Left = 20
+      Margins.Top = 10
       AutoSize = False
-      Caption = #1043#1088#1086#1084#1082#1086#1089#1090#1100':'
-      Constraints.MaxWidth = 80
+      Caption = '('#1084#1080#1085':'#1089#1077#1082')'
+      Constraints.MaxWidth = 140
       Font.Charset = DEFAULT_CHARSET
       Font.Color = clWindowText
       Font.Height = -16
       Font.Name = 'Tahoma'
       Font.Style = []
       ParentFont = False
-      ExplicitLeft = 21
     end
-    object trkbVolume: TTrackBar
-      Left = 106
-      Top = 327
-      Width = 252
-      Height = 50
-      Max = 20
-      TabOrder = 0
-      ThumbLength = 30
+    object Label2: TLabel
+      AlignWithMargins = True
+      Left = 20
+      Top = 417
+      Width = 190
+      Height = 19
+      Margins.Left = 20
+      Margins.Top = 20
+      Align = alTop
+      AutoSize = False
+      Caption = #1044#1086#1073#1072#1074#1083#1077#1085#1080#1077' '#1087#1086#1089#1083#1077' '#1093#1086#1076#1072':'
+      Constraints.MaxWidth = 190
+      Font.Charset = DEFAULT_CHARSET
+      Font.Color = clWindowText
+      Font.Height = -16
+      Font.Name = 'Tahoma'
+      Font.Style = []
+      ParentFont = False
+      ExplicitTop = 412
     end
-    object btcLightColor: TButtonColor
-      Left = 186
-      Top = 126
-      Width = 25
-      Height = 30
-      TabOrder = 1
+    object Label3: TLabel
+      AlignWithMargins = True
+      Left = 20
+      Top = 375
+      Width = 140
+      Height = 19
+      Margins.Left = 20
+      Margins.Top = 10
+      Align = alTop
+      AutoSize = False
+      Caption = #1042#1088#1077#1084#1103' '#1085#1072' '#1087#1072#1088#1090#1080#1102':'
+      Constraints.MaxWidth = 140
+      Font.Charset = DEFAULT_CHARSET
+      Font.Color = clWindowText
+      Font.Height = -16
+      Font.Name = 'Tahoma'
+      Font.Style = []
+      ParentFont = False
     end
     object chbxMaximize: TCheckBox
       AlignWithMargins = True
       Left = 20
       Top = 48
-      Width = 394
+      Width = 326
       Height = 27
       Margins.Left = 20
       Align = alTop
@@ -571,40 +586,142 @@ object frmSettings: TfrmSettings
       Font.Style = []
       ParentFont = False
       State = cbChecked
-      TabOrder = 2
-      ExplicitTop = 47
+      TabOrder = 0
+      ExplicitWidth = 309
     end
     object cmbbxSkins: TComboBox
       Left = 136
       Top = 222
       Width = 145
       Height = 21
+      Color = clBtnFace
+      Font.Charset = DEFAULT_CHARSET
+      Font.Color = clBlack
+      Font.Height = -11
+      Font.Name = 'Tahoma'
+      Font.Style = []
+      ParentFont = False
+      TabOrder = 1
+    end
+    object clrbxDarkCell: TColorBox
+      Left = 176
+      Top = 172
+      Width = 145
+      Height = 26
+      DefaultColorColor = 11896931
+      NoneColorColor = 11896931
+      Selected = 11896931
+      Style = [cbStandardColors, cbExtendedColors, cbSystemColors, cbCustomColor, cbCustomColors]
+      Font.Charset = DEFAULT_CHARSET
+      Font.Color = clBlack
+      Font.Height = -11
+      Font.Name = 'Tahoma'
+      Font.Style = []
+      ItemHeight = 20
+      ParentFont = False
+      TabOrder = 2
+    end
+    object clrbxLightCell: TColorBox
+      Left = 181
+      Top = 123
+      Width = 145
+      Height = 26
+      DefaultColorColor = 15061939
+      NoneColorColor = 15061939
+      Selected = 15061939
+      Style = [cbStandardColors, cbExtendedColors, cbSystemColors, cbCustomColor, cbCustomColors]
+      Color = clWhite
+      Font.Charset = DEFAULT_CHARSET
+      Font.Color = clBlack
+      Font.Height = -11
+      Font.Name = 'Tahoma'
+      Font.Style = []
+      ItemHeight = 20
+      ParentFont = False
       TabOrder = 3
     end
-    object btcDarkColor: TButtonColor
-      Left = 186
-      Top = 171
-      Width = 25
-      Height = 30
+    object chkbxSound: TCheckBox
+      AlignWithMargins = True
+      Left = 20
+      Top = 290
+      Width = 326
+      Height = 27
+      Margins.Left = 20
+      Align = alTop
+      Caption = #1042#1082#1083#1102#1095#1080#1090#1100' '#1079#1074#1091#1082#1080' '#1080#1075#1088#1099
+      Checked = True
+      Font.Charset = DEFAULT_CHARSET
+      Font.Color = clWindowText
+      Font.Height = -21
+      Font.Name = 'Tahoma'
+      Font.Style = []
+      ParentFont = False
+      State = cbChecked
       TabOrder = 4
+      ExplicitWidth = 309
+    end
+    object meClockTime: TMaskEdit
+      Left = 159
+      Top = 368
+      Width = 51
+      Height = 27
+      Alignment = taCenter
+      EditMask = '!90:00;1;_'
+      Font.Charset = DEFAULT_CHARSET
+      Font.Color = clBlack
+      Font.Height = -16
+      Font.Name = 'Tahoma'
+      Font.Style = []
+      MaxLength = 5
+      ParentFont = False
+      TabOrder = 5
+      Text = '  :  '
+      OnChange = meClockTimeChange
+    end
+    object lbeAddition: TLabeledEdit
+      Left = 216
+      Top = 414
+      Width = 41
+      Height = 27
+      Alignment = taCenter
+      EditLabel.Width = 28
+      EditLabel.Height = 19
+      EditLabel.Caption = #1089#1077#1082'.'
+      EditLabel.Color = clBtnText
+      EditLabel.Font.Charset = DEFAULT_CHARSET
+      EditLabel.Font.Color = clBlack
+      EditLabel.Font.Height = -16
+      EditLabel.Font.Name = 'Tahoma'
+      EditLabel.Font.Style = []
+      EditLabel.ParentColor = False
+      EditLabel.ParentFont = False
+      Font.Charset = DEFAULT_CHARSET
+      Font.Color = clBackground
+      Font.Height = -16
+      Font.Name = 'Tahoma'
+      Font.Style = []
+      LabelPosition = lpRight
+      LabelSpacing = 10
+      MaxLength = 2
+      NumbersOnly = True
+      ParentFont = False
+      TabOrder = 6
     end
   end
   object pButtons: TPanel
     Left = 0
     Top = 0
     Width = 145
-    Height = 420
+    Height = 461
     Align = alLeft
     BevelOuter = bvNone
     Color = 2828066
     ParentBackground = False
     TabOrder = 2
-    ExplicitLeft = 1
-    ExplicitTop = -2
-    ExplicitHeight = 471
+    ExplicitHeight = 162
     object pSound: TPanel
       Left = 0
-      Top = 123
+      Top = 82
       Width = 145
       Height = 41
       Align = alTop
@@ -619,7 +736,7 @@ object frmSettings: TfrmSettings
       ParentFont = False
       TabOrder = 0
       ExplicitLeft = -3
-      ExplicitTop = 126
+      ExplicitTop = 81
     end
     object pBoardVisual: TPanel
       Left = 0
@@ -637,9 +754,6 @@ object frmSettings: TfrmSettings
       ParentColor = True
       ParentFont = False
       TabOrder = 1
-      ExplicitLeft = 1
-      ExplicitTop = 42
-      ExplicitWidth = 143
     end
     object pVisual: TPanel
       Left = 0
@@ -657,18 +771,15 @@ object frmSettings: TfrmSettings
       ParentColor = True
       ParentFont = False
       TabOrder = 2
-      ExplicitLeft = 1
-      ExplicitTop = 1
-      ExplicitWidth = 143
     end
-    object pSolver: TPanel
+    object pClock: TPanel
       Left = 0
-      Top = 82
+      Top = 123
       Width = 145
       Height = 41
       Align = alTop
       BevelOuter = bvNone
-      Caption = #1044#1074#1080#1078#1086#1082
+      Caption = #1063#1072#1089#1099
       Font.Charset = DEFAULT_CHARSET
       Font.Color = clWhite
       Font.Height = -19
@@ -678,7 +789,7 @@ object frmSettings: TfrmSettings
       ParentFont = False
       TabOrder = 3
       ExplicitLeft = -3
-      ExplicitTop = 81
+      ExplicitTop = 126
     end
   end
 end

@@ -203,6 +203,8 @@ Implementation
 
 { Для фигур }
 
+Uses EnjoyChessVCLWelcomeWindow;
+
 Constructor TPiece.Create(Position: TLocation; IsPieceLight: Boolean);
 Var
     PieceName: String;
@@ -219,7 +221,7 @@ Begin
     PieceName := PieceName + UpperCase(Copy(ClassName, 2, 1));
     PieceBitmap := TBitmap.Create;
     TempPNG := TPngImage.Create;
-    TempPNG.LoadFromFile('skins\chesscom\' + PieceName + '.png');
+    TempPNG.LoadFromFile('skins\' + FrmWelcomeWindow.Settings.SkinName + '\' + PieceName + '.png');
     PieceBitmap.Assign(TempPNG);
     PieceBitmap.Transparent := True;
     TempPNG.Free;
@@ -1064,7 +1066,9 @@ Begin
             Board[PMove.Source.CoordRow, 0].PPiece.Piece.Position := TempPos;
             Board[PMove.Source.CoordRow, 0].PPiece := Nil;
         End;
-    End;
+    End
+    Else
+        PMove.Kind := TNormal;
 
     If Board[PMove.Dest.CoordRow, PMove.Dest.CoordCol].PPiece <> Nil Then
         PMove.Capture := True

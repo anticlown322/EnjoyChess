@@ -73,6 +73,7 @@ Type
         Procedure FormDestroy(Sender: TObject);
         Procedure SdbtBoardEditorClick(Sender: TObject);
         Procedure SdbtProfileClick(Sender: TObject);
+        Procedure SdbtStartGameClick(Sender: TObject);
     Public
         Settings: TSettings;
     End;
@@ -148,6 +149,11 @@ End;
 Procedure TfrmWelcomeWindow.SdbtSettingsClick(Sender: TObject);
 Begin
     BbtGoToSettingsClick(Sender);
+End;
+
+Procedure TfrmWelcomeWindow.SdbtStartGameClick(Sender: TObject);
+Begin
+    BbtStartGameClick(Sender);
 End;
 
 Procedure TfrmWelcomeWindow.SdbtAnalysisClick(Sender: TObject);

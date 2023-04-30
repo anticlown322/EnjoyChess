@@ -5890,6 +5890,7 @@ object frmWelcomeWindow: TfrmWelcomeWindow
       Flat = True
       ParentShowHint = False
       ShowHint = True
+      OnClick = sdbtStartGameClick
     end
     object sdbtAnalysis: TSpeedButton
       Left = -1
